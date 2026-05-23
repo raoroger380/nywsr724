@@ -3,334 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎂 生日快乐</title>
+    <title>生日快乐</title>
     <style>
         :root {
-            --bg: #0a0a0f;
-            --card-bg: rgba(18, 18, 30, 0.88);
-            --card-border: rgba(255, 180, 100, 0.5);
-            --glow-gold: rgba(255, 170, 60, 0.6);
-            --glow-pink: rgba(255, 105, 150, 0.5);
-            --text-light: #f0e0d0;
-            --text-gold: #ffc880;
-            --accent: #ff9d5c;
+            --bg: #ece6e0;
+            --glass: rgba(255, 255, 255, 0.5);
+            --glass-border: rgba(59, 130, 246, 0.12);
+            --glass-hover: rgba(59, 130, 246, 0.06);
+            --accent: #3b82f6;
+            --accent-soft: rgba(59, 130, 246, 0.08);
+            --accent-glow: rgba(59, 130, 246, 0.1);
+            --text: #1e293b;
+            --text-secondary: #64748b;
+            --radius: 16px;
+            --radius-lg: 24px;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            background: #050508;
+            margin: 0; padding: 0; overflow: hidden;
+            background: var(--bg);
             font-family: 'PingFang SC', 'Microsoft YaHei', 'Helvetica', 'Arial', sans-serif;
-            height: 100vh;
-            width: 100vw;
+            height: 100vh; width: 100vw;
             position: relative;
-            cursor: default;
-            user-select: none;
-            -webkit-user-select: none;
+            cursor: default; user-select: none; -webkit-user-select: none;
+            background:
+                radial-gradient(ellipse at 50% 40%, rgba(59, 130, 246, 0.04) 0%, transparent 60%),
+                var(--bg);
         }
 
-        .stars-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
+        .control-panel {
+            position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9999;
+            text-align: center;
+            width: 88%; max-width: 400px;
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(59, 130, 246, 0.12);
+            border-radius: var(--radius-lg);
+            padding: 34px 28px;
+            box-shadow: 0 20px 60px rgba(59, 130, 246, 0.08), 0 0 40px var(--accent-glow);
+            display: flex; flex-direction: column; align-items: center;
+            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            opacity: 1; scale: 1;
+            animation: floatPanel 3.5s ease-in-out infinite, panelFadeIn 0.6s forwards;
         }
-        .star-dot {
-            position: absolute;
-            border-radius: 50%;
-            background: #fff;
-            animation: twinkle var(--dur) ease-in-out infinite;
-            animation-delay: var(--delay);
-            opacity: 0;
-            pointer-events: none;
+        @keyframes panelFadeIn {
+            from { scale: 0.85; opacity: 0; }
+            to { scale: 1; opacity: 1; }
         }
-        @keyframes twinkle {
-            0%,
-            100% {
-                opacity: 0.15;
-            }
-            30% {
-                opacity: 0.8;
-            }
-            60% {
-                opacity: 0.25;
-            }
-            85% {
-                opacity: 0.7;
-            }
+        @keyframes floatPanel {
+            0%, 100% { transform: translate(-50%, -50%) translateY(0px); }
+            50% { transform: translate(-50%, -50%) translateY(-10px); }
         }
+
+        .control-title {
+            font-size: 28px; font-weight: 400;
+            margin-bottom: 18px;
+            color: var(--accent);
+            letter-spacing: 3px;
+            text-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+        }
+        .control-message {
+            font-size: 15px; color: var(--text-secondary);
+            margin-bottom: 26px; line-height: 1.7;
+            font-weight: 300; letter-spacing: 0.5px;
+        }
+        .control-button {
+            padding: 14px 38px;
+            font-size: 17px; font-weight: 400;
+            color: var(--accent);
+            background: rgba(59, 130, 246, 0.06);
+            border: 1px solid rgba(59, 130, 246, 0.15);
+            border-radius: 30px;
+            cursor: pointer;
+            letter-spacing: 2px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.05);
+        }
+        .control-button:hover {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 0 30px var(--accent-glow);
+            transform: translateY(-2px);
+        }
+        .control-button:active {
+            transform: translateY(1px);
+            transition: all 0.08s ease;
+        }
+        .hidden { display: none !important; }
 
         .popup {
             position: absolute;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-radius: 16px;
-            box-shadow: 0 0 25px var(--glow-gold), 0 0 60px rgba(255, 140, 40, 0.25),
-                inset 0 0 40px rgba(255, 200, 140, 0.12);
-            border: 1.5px solid var(--card-border);
+            display: flex; justify-content: center; align-items: center;
+            border-radius: var(--radius);
             padding: 16px 14px;
             box-sizing: border-box;
             opacity: 0;
             transform: scale(0.75);
             transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             z-index: 1000;
-            cursor: default;
-            user-select: none;
+            cursor: default; user-select: none;
             max-width: 240px;
             text-align: center;
-            background: var(--card-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-            font-weight: 600;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            font-weight: 400;
             letter-spacing: 0.6px;
-            color: var(--text-light);
+            border: 1px solid;
         }
 
         .heart-popup {
             position: absolute;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            display: flex; justify-content: center; align-items: center;
             border-radius: 10px;
-            box-shadow: 0 0 18px var(--glow-pink), 0 0 40px rgba(255, 80, 130, 0.3),
-                inset 0 0 18px rgba(255, 180, 180, 0.2);
-            border: 1.5px solid rgba(255, 140, 170, 0.65);
             padding: 8px 6px;
             box-sizing: border-box;
             opacity: 0;
-            transition: all 0.45s ease-out;
+            transition: transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.28s ease-out, box-shadow 0.28s ease-out;
             z-index: 1001;
-            cursor: default;
-            user-select: none;
-            background: rgba(25, 15, 20, 0.85);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
+            cursor: default; user-select: none;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             font-size: 10.5px !important;
-            color: #ffb8c9;
-            font-weight: bold;
-            text-shadow: 0 0 6px rgba(255, 150, 180, 0.6);
-            transform: scale(0.7);
-            animation: pulseWarm 2.2s infinite;
-            min-width: 75px;
-            min-height: 38px;
-            max-width: 105px;
-            word-wrap: break-word;
-            white-space: normal;
-            line-height: 1.35;
-            text-align: center;
-            letter-spacing: 0.3px;
-        }
-
-        @keyframes pulseWarm {
-            0% {
-                transform: scale(0.75);
-                box-shadow: 0 0 18px var(--glow-pink), 0 0 40px rgba(255, 80, 130, 0.3);
-            }
-            50% {
-                transform: scale(0.92);
-                box-shadow: 0 0 30px rgba(255, 120, 160, 0.8), 0 0 60px rgba(255, 80, 130, 0.5);
-            }
-            100% {
-                transform: scale(0.75);
-                box-shadow: 0 0 18px var(--glow-pink), 0 0 40px rgba(255, 80, 130, 0.3);
-            }
-        }
-
-        .control-panel {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 9999;
-            text-align: center;
-            width: 88%;
-            max-width: 400px;
-            background: rgba(16, 14, 22, 0.92);
-            border-radius: 28px;
-            padding: 34px 28px;
-            box-shadow: 0 0 0 2px rgba(255, 160, 70, 0.5),
-                0 20px 50px rgba(0, 0, 0, 0.6),
-                0 0 80px rgba(255, 140, 50, 0.3);
-            border: 2px solid rgba(255, 170, 80, 0.55);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            opacity: 1;
-            scale: 1;
-            animation: floatPanel 3.5s ease-in-out infinite, panelFadeIn 0.6s forwards;
-        }
-        @keyframes panelFadeIn {
-            from {
-                scale: 0.85;
-                opacity: 0;
-            }
-            to {
-                scale: 1;
-                opacity: 1;
-            }
-        }
-        @keyframes floatPanel {
-            0%,
-            100% {
-                transform: translate(-50%, -50%) translateY(0px);
-            }
-            50% {
-                transform: translate(-50%, -50%) translateY(-12px);
-            }
-        }
-
-        .control-title {
-            font-size: 28px;
-            font-weight: bold;
-            margin-bottom: 18px;
-            background: linear-gradient(135deg, #ffb347, #ff6b8a, #ffb347);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            color: transparent;
-            text-shadow: none;
-            letter-spacing: 2px;
-        }
-        .control-message {
-            font-size: 15px;
-            color: #c8b8a8;
-            margin-bottom: 26px;
-            line-height: 1.7;
             font-weight: 500;
-            letter-spacing: 0.5px;
+            transform: translate3d(0, 10px, 0) scale(0.72);
+            min-width: 75px; min-height: 38px; max-width: 105px;
+            word-wrap: break-word; white-space: normal;
+            line-height: 1.35; text-align: center;
+            letter-spacing: 0.3px;
+            will-change: transform, opacity;
         }
-        .control-button {
-            padding: 15px 38px;
-            font-size: 19px;
-            font-weight: bold;
-            color: #1a1008;
-            background: linear-gradient(135deg, #ffb347, #ff8c42);
-            border: none;
-            border-radius: 30px;
-            cursor: pointer;
-            box-shadow: 0 8px 28px rgba(255, 150, 50, 0.55),
-                0 0 20px rgba(255, 160, 70, 0.35),
-                inset 0 -3px 6px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-            position: relative;
-            letter-spacing: 1.5px;
-            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-            z-index: 1;
+        .heart-popup.is-visible {
+            opacity: 1;
+            transform: translate3d(0, 0, 0) scale(0.96);
         }
-        .control-button:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 14px 36px rgba(255, 150, 50, 0.7),
-                0 0 30px rgba(255, 140, 60, 0.5),
-                inset 0 -3px 6px rgba(0, 0, 0, 0.2);
-            background: linear-gradient(135deg, #ffc164, #ff9d4d);
-        }
-        .control-button:active {
-            transform: translateY(1px);
-            box-shadow: 0 4px 14px rgba(255, 150, 50, 0.45);
-            transition: all 0.08s ease;
-        }
-        .control-button::before {
-            content: '🎂';
-            position: absolute;
-            left: -22px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 20px;
-            animation: bounceIcon 1.3s infinite;
-            z-index: 1;
-            pointer-events: none;
-        }
-        .control-button::after {
-            content: '🎉';
-            position: absolute;
-            right: -22px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 20px;
-            animation: bounceIcon 1.3s infinite 0.4s;
-            z-index: 1;
-            pointer-events: none;
-        }
-        @keyframes bounceIcon {
-            0%,
-            100% {
-                transform: translateY(-50%) scale(1);
-            }
-            40% {
-                transform: translateY(-65%) scale(1.25);
-            }
-            70% {
-                transform: translateY(-50%) scale(1.05);
-            }
-        }
-        .hidden {
-            display: none !important;
-        }
-
-        .heart-icon {
-            color: #ff7b9c;
-            font-size: 16px;
-            margin: 0 2px;
-            animation: heartbeat 1.5s ease-in-out infinite;
-            display: inline-block;
-        }
-        @keyframes heartbeat {
-            0%,
-            100% {
-                transform: scale(1);
-            }
-            20% {
-                transform: scale(1.2);
-            }
-            40% {
-                transform: scale(1);
-            }
-            60% {
-                transform: scale(1.18);
-            }
-            80% {
-                transform: scale(1);
-            }
+        .heart-popup.is-exit {
+            opacity: 0;
+            transform: translate3d(0, -8px, 0) scale(0.82);
         }
 
         #fireworkCanvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 9997;
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none; z-index: 9997;
             display: none;
         }
-        #fireworkCanvas.active {
-            display: block;
-        }
+        #fireworkCanvas.active { display: block; }
 
         .screen-flash {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 9996;
-            background: radial-gradient(circle, rgba(255, 220, 180, 0.35) 0%, transparent 70%);
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none; z-index: 9996;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
             opacity: 0;
             transition: opacity 0.08s ease-out;
             display: none;
@@ -339,14 +168,11 @@
 </head>
 <body>
 
-    <div class="stars-bg" id="starsBg"></div>
-
     <div id="controlPanel" class="control-panel">
-        <div class="control-title">🎂 生日快乐 🎂</div>
+        <div class="control-title">生日快乐</div>
         <div class="control-message">
             点击下方按钮<br>
-            收获满满的生日祝福与惊喜！<br>
-            <span class="heart-icon">💝</span>
+            收获满满的生日祝福与惊喜
         </div>
         <button id="startButton" class="control-button">开启祝福</button>
     </div>
@@ -356,123 +182,91 @@
 
     <script>
         (function() {
-            // ==================== 星空背景 ====================
-            const starsBg = document.getElementById('starsBg');
-            const starCount = 130;
-            for (let i = 0; i < starCount; i++) {
-                const dot = document.createElement('div');
-                dot.classList.add('star-dot');
-                const size = Math.random() * 2.5 + 1;
-                dot.style.width = size + 'px';
-                dot.style.height = size + 'px';
-                dot.style.left = Math.random() * 100 + '%';
-                dot.style.top = Math.random() * 100 + '%';
-                dot.style.setProperty('--dur', (Math.random() * 3 + 2) + 's');
-                dot.style.setProperty('--delay', (Math.random() * 5) + 's');
-                dot.style.opacity = Math.random() * 0.3 + 0.05;
-                starsBg.appendChild(dot);
-            }
-
-            // ==================== 配置 ====================
+            const compactDevice = window.innerWidth < 768;
+            const lowPowerDevice = (navigator.hardwareConcurrency || 4) <= 4;
             const config = {
-                popupCount: 35,
-                heartPopupCount: 120,
-                heartScale: 20,
+                popupCount: 30,
+                heartPopupCount: compactDevice ? 80 : (lowPowerDevice ? 90 : 110),
+                heartScale: compactDevice ? 17 : 20,
                 popupWidth: 225,
                 popupHeight: 82,
-                heartPopupWidth: 82,
+                heartPopupWidth: compactDevice ? 76 : 82,
                 heartPopupHeight: 10,
                 baseInterval: 0.18,
                 minInterval: 0.04,
-                popupDelayAfterHeart: 900,
+                popupDelayAfterHeart: compactDevice ? 650 : 820,
                 popupDisplayTime: 5000,
-                heartDisplayMin: 2800,
-                heartDisplayMax: 4800,
+                heartDisplayMin: compactDevice ? 2100 : 2400,
+                heartDisplayMax: compactDevice ? 3400 : 3800,
             };
 
-            // 暗色主题配色 — 弹窗背景色+边框发光色
             const darkColorThemes = [
-                { bg: 'rgba(22,18,26,0.88)', border: 'rgba(255,160,100,0.55)', glow: 'rgba(255,140,60,0.5)',
-                    text: '#f0d8c0' },
-                { bg: 'rgba(18,20,28,0.88)', border: 'rgba(255,130,150,0.55)', glow: 'rgba(255,100,130,0.5)',
-                    text: '#f8d0d8' },
-                { bg: 'rgba(16,22,24,0.88)', border: 'rgba(140,200,220,0.5)', glow: 'rgba(120,180,210,0.45)',
-                    text: '#d0e8f0' },
-                { bg: 'rgba(20,18,28,0.88)', border: 'rgba(200,150,220,0.5)', glow: 'rgba(170,120,200,0.45)',
-                    text: '#e8d8f8' },
-                { bg: 'rgba(18,24,20,0.88)', border: 'rgba(140,210,160,0.5)', glow: 'rgba(100,190,130,0.45)',
-                    text: '#d0f0d8' },
-                { bg: 'rgba(24,20,18,0.88)', border: 'rgba(230,170,100,0.5)', glow: 'rgba(210,140,70,0.5)',
-                    text: '#f8e0c8' },
-                { bg: 'rgba(20,16,24,0.88)', border: 'rgba(220,140,180,0.5)', glow: 'rgba(200,110,160,0.5)',
-                    text: '#f8d8e8' },
-                { bg: 'rgba(14,20,26,0.88)', border: 'rgba(160,190,230,0.5)', glow: 'rgba(130,160,210,0.45)',
-                    text: '#d8e4f8' },
+                { bg: 'rgba(255,255,255,0.7)', border: 'rgba(59,130,246,0.2)', glow: 'rgba(59,130,246,0.12)', text: '#1e293b' },
+                { bg: 'rgba(255,255,255,0.65)', border: 'rgba(59,130,246,0.15)', glow: 'rgba(59,130,246,0.1)', text: '#1e293b' },
+                { bg: 'rgba(255,255,255,0.7)', border: 'rgba(59,130,246,0.18)', glow: 'rgba(59,130,246,0.12)', text: '#1e293b' },
+                { bg: 'rgba(255,255,255,0.65)', border: 'rgba(59,130,246,0.15)', glow: 'rgba(59,130,246,0.1)', text: '#1e293b' },
+                { bg: 'rgba(255,255,255,0.7)', border: 'rgba(59,130,246,0.18)', glow: 'rgba(59,130,246,0.12)', text: '#1e293b' },
             ];
 
-            // 生日祝福语（完整版，用于普通弹窗）
             const birthdayTips = [
-                "🎂 生日快乐！愿你新的一岁充满无限可能！",
-                "✨ 在这特别的日子里，祝你笑口常开，幸福永伴！",
-                "🎁 又长大一岁啦，愿你收获更多的爱与美好！",
-                "🌟 生日快乐！愿每个愿望都能如愿以偿！",
-                "💫 祝福你：岁岁常欢愉，年年皆胜意！",
-                "🎈 生日快乐！愿你的每一天都闪闪发光！",
-                "🕯️ 许个愿吧！愿烛光带给你一整年的好运气！",
-                "🌹 生日快乐！愿你的生活如花朵般绚烂绽放！",
-                "🎀 新的一岁，新的精彩，愿你被世界温柔以待！",
-                "💎 祝你生日快乐，永远闪耀，永远珍贵！",
-                "🌈 愿你的生活像彩虹一样，充满缤纷色彩！",
-                "🎵 生日快乐！愿欢快的旋律永远伴随你左右！",
-                "🌸 又逢生辰，愿你如春日般温暖明媚！",
-                "🍀 幸运之神眷顾你，生日快乐，万事胜意！",
-                "🎪 人生是一场盛大的演出，愿你是最耀眼的主角！",
-                "💖 生日快乐！感谢你出现在这个世界，如此美好！",
-                "🦋 愿你破茧成蝶，在新的一岁里自由飞翔！",
-                "🌻 生日快乐！永远朝着阳光，永远积极向上！",
-                "🎯 新的一岁，愿你瞄准目标，收获所有想要的！",
-                "🏆 生日快乐！你就是自己人生中最大的赢家！",
-                "🌙 愿月光为你照亮前路，生日快乐，好梦成真！",
-                "⭐ 你值得所有的美好，生日快乐，我的星光！",
-                "🎨 愿你的生命画卷，每一笔都精彩绝伦！",
-                "🔮 未来可期，生日快乐！美好的事情即将发生！",
-                "🌊 愿你的快乐如海浪般，一波接着一波！",
-                "🏔️ 生日快乐！愿你攀登人生的每一座高峰！",
-                "🎠 永葆童心，永远快乐，生日快乐！",
-                "💐 送你满园芬芳，祝你生日快乐，幸福绵长！",
-                "☀️ 愿你的每一天都阳光灿烂，生日快乐！",
-                "🌿 在新的一岁里，愿你生机勃勃，茁壮成长！",
-                "🕊️ 生日快乐！愿和平与喜悦永远驻守你心间！",
-                "🎪 生活是个马戏团，愿你是最闪亮的那颗星！",
-                "🍰 蛋糕很甜，但你比蛋糕更甜，生日快乐！",
-                "💌 送上最真挚的祝福：生日快乐，永远幸福！",
-                "🎇 愿你的每一年，都如烟花般绚烂夺目！",
-                "🌍 世界因你而更美好，生日快乐！",
-                "🧸 愿温暖与柔软一直陪伴你，生日快乐！",
+                "生日快乐！愿你新的一岁充满无限可能",
+                "在这特别的日子里，祝你笑口常开，幸福永伴",
+                "又长大一岁啦，愿你收获更多的爱与美好",
+                "生日快乐！愿每个愿望都能如愿以偿",
+                "祝福你：岁岁常欢愉，年年皆胜意",
+                "生日快乐！愿你的每一天都闪闪发光",
+                "许个愿吧！愿烛光带给你一整年的好运气",
+                "生日快乐！愿你的生活如花朵般绚烂绽放",
+                "新的一岁，新的精彩，愿你被世界温柔以待",
+                "祝你生日快乐，永远闪耀，永远珍贵",
+                "愿你的生活像彩虹一样，充满缤纷色彩",
+                "生日快乐！愿欢快的旋律永远伴随你左右",
+                "又逢生辰，愿你如春日般温暖明媚",
+                "幸运之神眷顾你，生日快乐，万事胜意",
+                "人生是一场盛大的演出，愿你是最耀眼的主角",
+                "生日快乐！感谢你出现在这个世界，如此美好",
+                "愿你破茧成蝶，在新的一岁里自由飞翔",
+                "生日快乐！永远朝着阳光，永远积极向上",
+                "新的一岁，愿你瞄准目标，收获所有想要的",
+                "生日快乐！你就是自己人生中最大的赢家",
+                "愿月光为你照亮前路，生日快乐，好梦成真",
+                "你值得所有的美好，生日快乐",
+                "愿你的生命画卷，每一笔都精彩绝伦",
+                "未来可期，生日快乐！美好的事情即将发生",
+                "愿你的快乐如海浪般，一波接着一波",
+                "生日快乐！愿你攀登人生的每一座高峰",
+                "永葆童心，永远快乐，生日快乐",
+                "祝你生日快乐，幸福绵长",
+                "愿你的每一天都阳光灿烂，生日快乐",
+                "在新的一岁里，愿你生机勃勃，茁壮成长",
+                "生日快乐！愿喜悦永远驻守你心间",
+                "蛋糕很甜，但你比蛋糕更甜，生日快乐",
+                "送上最真挚的祝福：生日快乐，永远幸福",
+                "愿你的每一年，都如烟花般绚烂夺目",
+                "世界因你而更美好，生日快乐",
+                "愿温暖与柔软一直陪伴你，生日快乐",
             ];
 
-            // 短祝福（用于爱心弹窗，15字以内）
             const shortBlessings = [
-                "生日快乐🎂", "永远幸福💖", "天天开心😊", "万事如意✨",
-                "岁岁平安🕊️", "美梦成真🌙", "笑口常开😄", "好运连连🍀",
-                "心想事成🌟", "青春永驻🌹", "光芒万丈💎", "温暖如春🌸",
-                "自由飞翔🦋", "阳光灿烂☀️", "甜甜蜜蜜🍯", "精彩无限🎨",
-                "快乐至上🎵", "前程似锦🏆", "幸福绵长💐", "美好如愿🔮",
-                "闪闪发光⭐", "生机勃勃🌿", "一路繁花🌺", "爱满心间💝",
-                "幸运相随🍀", "梦想成真✨", "活力满满🔥", "福气满满🧧",
-                "开心每一天🥳", "永远闪耀💫",
+                "生日快乐", "永远幸福", "天天开心", "万事如意",
+                "岁岁平安", "美梦成真", "笑口常开", "好运连连",
+                "心想事成", "青春永驻", "光芒万丈", "温暖如春",
+                "自由飞翔", "阳光灿烂", "甜甜蜜蜜", "精彩无限",
+                "快乐至上", "前程似锦", "幸福绵长", "美好如愿",
+                "闪闪发光", "生机勃勃", "一路繁花", "爱满心间",
+                "幸运相随", "梦想成真", "活力满满", "福气满满",
+                "开心每一天", "永远闪耀",
             ];
 
             const availableFonts = [
-                { family: 'PingFang SC, Microsoft YaHei', size: '15px', weight: '600' },
-                { family: 'Helvetica, PingFang SC', size: '14px', weight: '600' },
-                { family: 'Georgia, PingFang SC', size: '14px', weight: '600' },
-                { family: 'Trebuchet MS, PingFang SC', size: '14px', weight: '600' },
-                { family: 'Verdana, PingFang SC', size: '14px', weight: '600' },
-                { family: 'Palatino, PingFang SC', size: '15px', weight: '600' },
+                { family: 'PingFang SC, Microsoft YaHei', size: '15px', weight: '400' },
+                { family: 'Helvetica, PingFang SC', size: '14px', weight: '400' },
+                { family: 'Georgia, PingFang SC', size: '14px', weight: '400' },
+                { family: 'Trebuchet MS, PingFang SC', size: '14px', weight: '400' },
+                { family: 'Verdana, PingFang SC', size: '14px', weight: '400' },
+                { family: 'Palatino, PingFang SC', size: '15px', weight: '400' },
             ];
 
-            // ==================== 心形曲线 ====================
             function heartCurve(t, scale) {
                 t = t * 2 * Math.PI;
                 const x = 16 * Math.pow(Math.sin(t), 3);
@@ -480,7 +274,6 @@
                 return { x: x * scale, y: y * scale };
             }
 
-            // ==================== 状态管理 ====================
             let activePopups = [];
             let popupQueue = [];
             let isProcessing = false;
@@ -488,7 +281,6 @@
             let allPopupsDone = false;
             let fireworksStarted = false;
 
-            // ==================== 普通弹窗 ====================
             function createPopup() {
                 if (popupQueue.length === 0) {
                     isProcessing = false;
@@ -509,8 +301,9 @@
                 popup.style.top = y + 'px';
                 popup.style.background = theme.bg;
                 popup.style.borderColor = theme.border;
-                popup.style.boxShadow =
-                    `0 0 22px ${theme.glow}, 0 0 55px ${theme.glow.replace('0.5', '0.2').replace('0.45', '0.18')}, inset 0 0 35px rgba(255,200,150,0.1)`;
+                popup.style.backdropFilter = 'blur(16px)';
+                popup.style.WebkitBackdropFilter = 'blur(16px)';
+                popup.style.boxShadow = `0 0 22px ${theme.glow}, 0 0 55px ${theme.glow.replace('0.12','0.06').replace('0.1','0.05')}`;
                 popup.style.color = theme.text;
                 popup.style.fontFamily = fontCfg.family;
                 popup.style.fontSize = fontCfg.size;
@@ -548,12 +341,10 @@
                     activeHeartPopups === 0 && !fireworksStarted) {
                     allPopupsDone = true;
                     document.getElementById('controlPanel').classList.add('hidden');
-                    // 直接启动烟花！
                     setTimeout(startFireworks, 400);
                 }
             }
 
-            // ==================== 爱心弹窗 ====================
             function createHeartPopups() {
                 const centerX = window.innerWidth / 2;
                 const centerY = window.innerHeight / 2 - 50;
@@ -578,17 +369,17 @@
                     const y = centerY + point.y - 28;
                     const popup = document.createElement('div');
                     popup.className = 'heart-popup';
-                    const theme = darkColorThemes[Math.floor(Math.random() * darkColorThemes.length)];
 
                     popup.style.width = config.heartPopupWidth + 'px';
                     popup.style.left = x + 'px';
                     popup.style.top = y + 'px';
-                    popup.style.background = 'rgba(22,14,20,0.82)';
-                    popup.style.borderColor = 'rgba(255,140,170,0.6)';
-                    popup.style.boxShadow =
-                        '0 0 16px rgba(255,100,150,0.55), 0 0 38px rgba(255,70,120,0.28), inset 0 0 16px rgba(255,160,180,0.18)';
-                    popup.style.color = '#ffc0d0';
-                    popup.style.textShadow = '0 0 8px rgba(255,140,170,0.7)';
+                    popup.style.background = 'rgba(255,255,255,0.55)';
+                    popup.style.borderColor = 'rgba(59,130,246,0.25)';
+                    popup.style.backdropFilter = 'blur(8px)';
+                    popup.style.WebkitBackdropFilter = 'blur(8px)';
+                    popup.style.boxShadow = '0 0 16px rgba(59,130,246,0.12), 0 0 38px rgba(59,130,246,0.06)';
+                    popup.style.color = '#1e293b';
+                    popup.style.textShadow = 'none';
 
                     const blessing = shortBlessings[Math.floor(Math.random() * shortBlessings.length)];
                     popup.textContent = blessing;
@@ -597,22 +388,19 @@
                     activeHeartPopups++;
 
                     requestAnimationFrame(() => {
-                        popup.style.opacity = '1';
-                        popup.style.transform = 'scale(0.88)';
+                        popup.classList.add('is-visible');
                     });
 
-                    const displayTime = config.heartDisplayMin + Math.random() * (config.heartDisplayMax - config
-                        .heartDisplayMin);
+                    const displayTime = config.heartDisplayMin + Math.random() * (config.heartDisplayMax - config.heartDisplayMin);
                     setTimeout(() => {
                         if (popup.parentNode) {
-                            popup.style.opacity = '0';
-                            popup.style.transform = 'scale(0.6)';
+                            popup.classList.remove('is-visible');
+                            popup.classList.add('is-exit');
                             setTimeout(() => {
                                 if (popup.parentNode) {
                                     popup.parentNode.removeChild(popup);
                                     activeHeartPopups--;
-                                    if (activeHeartPopups === 0 && activePopups.length === 0 && popupQueue
-                                        .length === 0 && !isProcessing && allPopupsDone) {
+                                    if (activeHeartPopups === 0 && activePopups.length === 0 && popupQueue.length === 0 && !isProcessing && allPopupsDone) {
                                         checkAllPopupsGone();
                                     }
                                 }
@@ -620,7 +408,7 @@
                         }
                     }, displayTime);
 
-                    setTimeout(() => createPoint(i + 1), 18);
+                    setTimeout(() => createPoint(i + 1), compactDevice ? 26 : 22);
                 }
                 createPoint(0);
             }
@@ -631,7 +419,6 @@
                 isProcessing = false;
             }
 
-            // ==================== 烟花系统 ====================
             const canvas = document.getElementById('fireworkCanvas');
             const ctx = canvas.getContext('2d');
             const screenFlash = document.getElementById('screenFlash');
@@ -662,14 +449,12 @@
 
             function fireworkColors() {
                 const palettes = [
-                    ['#ff6b6b', '#ff8e8e', '#ffaaaa', '#ff4d4d', '#ff7777'],
-                    ['#ffd93d', '#ffb347', '#ff8c00', '#ffcc00', '#ffe066'],
-                    ['#ff6b9d', '#ff85b3', '#ff4081', '#ffb3cc', '#ff5599'],
-                    ['#6bc5ff', '#4da6ff', '#80d4ff', '#3399ff', '#a0e0ff'],
-                    ['#c56bff', '#b347ea', '#d080ff', '#9d33e0', '#e0b3ff'],
-                    ['#6bff8e', '#4de67a', '#80ffa0', '#33cc55', '#b3ffcc'],
-                    ['#ff9d6b', '#ff7f4d', '#ffb380', '#ff6633', '#ffccaa'],
-                    ['#ffdd6b', '#ffcc33', '#ffe680', '#ffbb00', '#fff0aa'],
+                    ['#3b82f6', '#60a5fa', '#93c5fd', '#2563eb', '#7cb8ff'],
+                    ['#2563eb', '#3b82f6', '#60a5fa', '#1d4ed8', '#93c5fd'],
+                    ['#3b82f6', '#7cb8ff', '#2563eb', '#a5c8ff', '#1d4ed8'],
+                    ['#60a5fa', '#3b82f6', '#93c5fd', '#2563eb', '#7cb8ff'],
+                    ['#3b82f6', '#1d4ed8', '#93c5fd', '#2563eb', '#60a5fa'],
+                    ['#2563eb', '#60a5fa', '#1d4ed8', '#93c5fd', '#3b82f6'],
                 ];
                 return palettes[Math.floor(Math.random() * palettes.length)];
             }
@@ -701,7 +486,6 @@
                 const count = rocket.particleCount;
                 const colors = rocket.colors;
 
-                // 屏幕闪光
                 if (rocket.isHeart || rocket.explosionSize > 300) {
                     screenFlash.style.display = 'block';
                     screenFlash.style.opacity = '1';
@@ -712,7 +496,6 @@
                 }
 
                 if (rocket.isHeart) {
-                    // 心形爆炸
                     for (let i = 0; i < count; i++) {
                         const t = i / count;
                         const curvePt = heartCurve(t, 1);
@@ -724,50 +507,40 @@
                         const speed = 3.5 + Math.random() * 6.5;
                         const color = colors[Math.floor(Math.random() * colors.length)];
                         fwParticles.push({
-                            x: ex,
-                            y: ey,
+                            x: ex, y: ey,
                             vx: nx * speed + (Math.random() - 0.5) * 1.8,
                             vy: ny * speed + (Math.random() - 0.5) * 1.8,
-                            color: color,
-                            life: 1,
+                            color: color, life: 1,
                             decay: 0.006 + Math.random() * 0.018,
                             size: 1.5 + Math.random() * 3.5,
-                            gravity: 0.04,
-                            sparkle: Math.random() < 0.3,
+                            gravity: 0.04, sparkle: Math.random() < 0.3,
                         });
                     }
                 } else {
-                    // 圆形爆炸
                     for (let i = 0; i < count; i++) {
                         const angle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.5;
                         const speed = 2.5 + Math.random() * 7.5;
                         const color = colors[Math.floor(Math.random() * colors.length)];
                         fwParticles.push({
-                            x: ex,
-                            y: ey,
+                            x: ex, y: ey,
                             vx: Math.cos(angle) * speed,
                             vy: Math.sin(angle) * speed,
-                            color: color,
-                            life: 1,
+                            color: color, life: 1,
                             decay: 0.007 + Math.random() * 0.02,
                             size: 1.2 + Math.random() * 3.2,
-                            gravity: 0.045,
-                            sparkle: Math.random() < 0.25,
+                            gravity: 0.045, sparkle: Math.random() < 0.25,
                         });
                     }
                 }
 
-                // 中心闪光粒子
                 for (let i = 0; i < 40; i++) {
                     const angle = Math.random() * Math.PI * 2;
                     const speed = 0.3 + Math.random() * 2;
                     fwSparkles.push({
-                        x: ex,
-                        y: ey,
+                        x: ex, y: ey,
                         vx: Math.cos(angle) * speed,
                         vy: Math.sin(angle) * speed,
-                        life: 1,
-                        decay: 0.04 + Math.random() * 0.08,
+                        life: 1, decay: 0.04 + Math.random() * 0.08,
                         size: 1 + Math.random() * 4,
                     });
                 }
@@ -796,17 +569,14 @@
                 const elapsed = (timestamp - fwStartTime) / 1000;
                 ctx.clearRect(0, 0, canvasW, canvasH);
 
-                // 拖尾效果：半透明覆盖
-                ctx.fillStyle = 'rgba(5,5,12,0.22)';
+                ctx.fillStyle = 'rgba(236,230,224,0.3)';
                 ctx.fillRect(0, 0, canvasW, canvasH);
 
-                // 阶段管理
                 if (elapsed < 3) fwPhase = 0;
                 else if (elapsed < 6.5) fwPhase = 1;
                 else if (elapsed < 9.5) fwPhase = 2;
                 else fwPhase = 3;
 
-                // 发射新烟花
                 const launchIntervals = [0.15, 0.22, 0.3, 0.55];
                 const interval = launchIntervals[fwPhase] || 0.5;
                 const maxLaunches = [22, 18, 14, 6];
@@ -818,26 +588,22 @@
                     fwLaunchCount++;
                 }
 
-                // 如果还有火箭没发射且时间快结束，加速发射
                 if (fwPhase === 3 && fwLaunchCount < 8 && timestamp - fwLastLaunchTime > 0.35 * 1000 && elapsed < 10.5) {
                     fwRockets.push(createRocket());
                     fwLastLaunchTime = timestamp;
                     fwLaunchCount++;
                 }
 
-                // 更新火箭
                 for (let i = fwRockets.length - 1; i >= 0; i--) {
                     const r = fwRockets[i];
                     if (!r.exploded) {
-                        // 尾迹
                         if (Math.random() < 0.7) {
                             r.trailParticles.push({
                                 x: r.x + (Math.random() - 0.5) * 4,
-                                y: r.y,
-                                life: 1,
+                                y: r.y, life: 1,
                                 decay: 0.06 + Math.random() * 0.1,
                                 size: 0.8 + Math.random() * 2,
-                                color: '#ffcc88',
+                                color: '#93c5fd',
                             });
                         }
                         r.y -= r.speed;
@@ -848,25 +614,20 @@
                             explodeRocket(r);
                         }
                     }
-                    // 绘制火箭
                     if (!r.exploded) {
-                        ctx.fillStyle = '#fffef0';
-                        ctx.shadowColor = '#ffcc66';
+                        ctx.fillStyle = '#ffffff';
+                        ctx.shadowColor = '#60a5fa';
                         ctx.shadowBlur = 10;
                         ctx.beginPath();
                         ctx.arc(r.x, r.y, 3, 0, Math.PI * 2);
                         ctx.fill();
                         ctx.shadowBlur = 0;
                     }
-                    // 尾迹
                     for (let j = r.trailParticles.length - 1; j >= 0; j--) {
                         const tp = r.trailParticles[j];
                         tp.life -= tp.decay;
-                        if (tp.life <= 0) {
-                            r.trailParticles.splice(j, 1);
-                            continue;
-                        }
-                        ctx.fillStyle = `rgba(255,200,140,${tp.life})`;
+                        if (tp.life <= 0) { r.trailParticles.splice(j, 1); continue; }
+                        ctx.fillStyle = `rgba(147,197,253,${tp.life})`;
                         ctx.beginPath();
                         ctx.arc(tp.x, tp.y, tp.size * tp.life, 0, Math.PI * 2);
                         ctx.fill();
@@ -876,14 +637,10 @@
                     }
                 }
 
-                // 更新爆炸粒子
                 for (let i = fwParticles.length - 1; i >= 0; i--) {
                     const p = fwParticles[i];
                     p.life -= p.decay;
-                    if (p.life <= 0) {
-                        fwParticles.splice(i, 1);
-                        continue;
-                    }
+                    if (p.life <= 0) { fwParticles.splice(i, 1); continue; }
                     p.vy += p.gravity;
                     p.x += p.vx;
                     p.y += p.vy;
@@ -905,17 +662,13 @@
                     ctx.shadowBlur = 0;
                 }
 
-                // 更新闪光点
                 for (let i = fwSparkles.length - 1; i >= 0; i--) {
                     const s = fwSparkles[i];
                     s.life -= s.decay;
-                    if (s.life <= 0) {
-                        fwSparkles.splice(i, 1);
-                        continue;
-                    }
+                    if (s.life <= 0) { fwSparkles.splice(i, 1); continue; }
                     s.x += s.vx;
                     s.y += s.vy;
-                    ctx.fillStyle = `rgba(255,255,240,${s.life})`;
+                    ctx.fillStyle = `rgba(255,255,255,${s.life})`;
                     ctx.shadowColor = '#ffffff';
                     ctx.shadowBlur = 8 * s.life;
                     ctx.beginPath();
@@ -924,13 +677,11 @@
                     ctx.shadowBlur = 0;
                 }
 
-                // 判断是否结束
                 const allDone = fwRockets.length === 0 && fwParticles.length === 0 && fwSparkles.length === 0 &&
                     elapsed > 9 && fwLaunchCount >= 30;
                 const timeout = elapsed > 13;
 
                 if ((allDone || timeout) && fwPhase >= 3) {
-                    // 烟花表演结束
                     fwRunning = false;
                     canvas.classList.remove('active');
                     setTimeout(() => {
@@ -945,18 +696,12 @@
                 requestAnimationFrame(fireworkLoop);
             }
 
-            // ==================== 按钮事件 ====================
             window.addEventListener('load', () => {
                 const startButton = document.getElementById('startButton');
                 const controlPanel = document.getElementById('controlPanel');
 
                 startButton.addEventListener('click', () => {
-                    startButton.style.transform = 'translateY(2px)';
-                    setTimeout(() => {
-                        startButton.style.transform = '';
-                    }, 100);
                     controlPanel.classList.add('hidden');
-                    // 清除可能残留的弹窗
                     document.querySelectorAll('.popup, .heart-popup').forEach(el => el.remove());
                     activePopups = [];
                     popupQueue = [];
@@ -972,7 +717,6 @@
                 document.body.style.overflow = 'hidden';
             });
 
-            // 清理
             window.addEventListener('beforeunload', () => {
                 fwRunning = false;
             });

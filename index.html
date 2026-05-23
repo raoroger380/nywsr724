@@ -7,33 +7,39 @@
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg1: #1a0533;
-            --bg2: #2b1058;
-            --ink: #fff;
+            --bg: #ece6e0;
+            --glass: rgba(255, 255, 255, 0.5);
+            --glass-border: rgba(59, 130, 246, 0.12);
+            --glass-hover: rgba(59, 130, 246, 0.06);
+            --accent: #3b82f6;
+            --accent-soft: rgba(59, 130, 246, 0.08);
+            --accent-glow: rgba(59, 130, 246, 0.1);
+            --text: #1e293b;
+            --text-secondary: #64748b;
+            --radius: 16px;
+            --radius-sm: 10px;
+            --radius-lg: 24px;
         }
         * { box-sizing: border-box; }
-        html, body { margin: 0; padding: 0; background: #1a0533; color: var(--ink); }
+        html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); }
         body {
             font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
             overflow-x: hidden;
             background:
-                radial-gradient(circle at 20% 10%, #4b1575 0%, transparent 45%),
-                radial-gradient(circle at 80% 20%, #c44569 0%, transparent 40%),
-                radial-gradient(circle at 50% 80%, #2e1065 0%, transparent 45%),
-                linear-gradient(155deg, #1a0533, #3b1b6b);
+                radial-gradient(ellipse at 50% 30%, rgba(59, 130, 246, 0.03) 0%, transparent 60%);
         }
         .confetti-container {
             position: fixed; inset: 0; z-index: 1; pointer-events: none; overflow: hidden;
         }
         .confetti-piece {
             position: absolute;
-            width: 10px; height: 10px;
-            opacity: 0.7;
+            width: 8px; height: 8px;
+            opacity: 0.6;
             animation: confetti-fall linear infinite;
         }
         @keyframes confetti-fall {
-            0% { transform: translateY(-10vh) rotate(0deg); opacity: 0.9; }
-            100% { transform: translateY(110vh) rotate(720deg); opacity: 0.3; }
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 0.6; }
+            100% { transform: translateY(110vh) rotate(720deg); opacity: 0.1; }
         }
 
         #bg, #textFx {
@@ -41,7 +47,6 @@
         }
         #bg { z-index: 0; }
         #textFx { z-index: 2; pointer-events: none; }
-
         .screen {
             min-height: 100vh;
             position: relative;
@@ -52,7 +57,6 @@
         }
         .hidden { display: none !important; }
 
-        /* ===== 蛋糕场景 ===== */
         #cakeScreen {
             position: relative;
             display: flex;
@@ -70,48 +74,52 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            /* top 由 JS 动态设置，让蛋糕底部贴齐横线 */
         }
         .cake-layer {
-            border-radius: 14px;
-            background: #ffe0f0;
-            box-shadow: inset 0 2px 10px rgba(255,255,255,0.6), 0 6px 15px rgba(0,0,0,0.3);
+            border-radius: 12px;
+            box-shadow: inset 0 2px 10px rgba(255,255,255,0.5), 0 6px 20px rgba(0,0,0,0.06);
             position: relative;
             margin-top: -2px;
             opacity: 0;
             animation-fill-mode: forwards;
+            transform-origin: center bottom;
         }
         .cake-layer.show { opacity: 1; }
-        .layer1 { width: 180px; height: 50px; background: #fcd5ce; z-index: 3; }
-        .layer2 { width: 210px; height: 45px; background: #f8edeb; z-index: 2; }
-        .layer3 { width: 240px; height: 40px; background: #fcd5ce; z-index: 1; }
+        .layer1 { width: 180px; height: 50px; background: #f5e6d3; z-index: 3; }
+        .layer2 { width: 210px; height: 45px; background: #eddcc8; z-index: 2; }
+        .layer3 { width: 240px; height: 40px; background: #e8d4be; z-index: 1; }
         .drip-cream {
             position: absolute;
             top: -20px; left: 50%; transform: translateX(-50%);
             width: 180px; height: 30px;
-            background: #fff;
+            background: rgba(255, 248, 240, 0.92);
             border-radius: 50%;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
             z-index: 10; opacity: 0;
             transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        .drip-cream.show { opacity: 1; top: -10px; }
+        .drip-cream.show { opacity: 1; top: -10px; animation: creamOoze 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        @keyframes creamOoze {
+            0% { transform: translateX(-50%) scaleX(0.4) scaleY(0.2); opacity: 0; border-radius: 50%; }
+            50% { transform: translateX(-50%) scaleX(1.08) scaleY(0.9); opacity: 1; border-radius: 50%; }
+            100% { transform: translateX(-50%) scaleX(1) scaleY(1); opacity: 1; border-radius: 50%; }
+        }
         .drip-cream::after {
             content: ""; position: absolute; bottom: -8px; left: 15px;
-            width: 14px; height: 14px; background: #fff;
-            border-radius: 0 0 8px 8px; box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+            width: 14px; height: 14px; background: rgba(255, 248, 240, 0.92);
+            border-radius: 0 0 8px 8px; box-shadow: 0 3px 5px rgba(0,0,0,0.04);
         }
         .drip-cream::before {
             content: ""; position: absolute; bottom: -12px; right: 20px;
-            width: 10px; height: 12px; background: #fff;
-            border-radius: 0 0 6px 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            width: 10px; height: 12px; background: rgba(255, 248, 240, 0.92);
+            border-radius: 0 0 6px 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.03);
         }
         .candle {
             width: 14px; height: 36px;
-            background: linear-gradient(180deg, #fff 0%, #ffd6e0 80%);
+            background: linear-gradient(180deg, #fff 0%, #f5e6d3 80%);
             border-radius: 10px;
             position: absolute; top: -44px; left: 50%; margin-left: -7px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
             z-index: 12; opacity: 0;
             transition: all 0.5s ease;
         }
@@ -120,67 +128,98 @@
             position: absolute; left: 50%; top: -18px;
             width: 14px; height: 18px; margin-left: -7px;
             border-radius: 50% 50% 50% 50% / 55% 55% 45% 45%;
-            background: radial-gradient(circle at 50% 40%, #fff8af, #ffbb4d 50%, #ff6e31 80%);
+            background: radial-gradient(circle at 50% 40%, #fff8af, #f5c840 50%, #d08020 80%);
             animation: flicker 800ms ease-in-out infinite alternate;
-            box-shadow: 0 0 16px rgba(255,180,76,0.8);
+            box-shadow: 0 0 16px rgba(245, 200, 64, 0.6);
             transition: opacity 0.4s;
         }
         .flame.off { opacity: 0; animation: none; }
         .happy-birthday-text {
             font-family: 'Dancing Script', cursive;
             font-size: clamp(2.8rem, 8vw, 5rem);
-            color: #ffd966;
-            text-shadow: 0 0 20px rgba(255,200,100,0.8), 0 0 40px rgba(255,180,200,0.5);
+            color: var(--accent);
+            text-shadow: 0 0 20px rgba(59, 130, 246, 0.3), 0 0 40px rgba(59, 130, 246, 0.1);
             text-align: center; line-height: 1.2;
             opacity: 0; transform: translateY(20px);
             transition: all 0.8s ease;
             position: absolute;
             left: 50%; transform: translateX(-50%);
-            /* top 由 JS 动态设置，放在横线下方 */
         }
         .happy-birthday-text.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
         #micBtn {
-            background: rgba(255,255,255,0.15); backdrop-filter: blur(8px);
-            border: 1px solid rgba(255,255,255,0.35); border-radius: 40px;
-            padding: 12px 32px; font-weight: 600; color: white;
-            font-size: 1rem; cursor: pointer; transition: all 0.2s;
-            letter-spacing: 1px;
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 40px;
+            padding: 14px 36px;
+            font-weight: 500;
+            color: var(--text);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 2px;
             position: absolute;
-            /* 位置放在艺术字下方 */
+            font-family: inherit;
         }
-        #micBtn:hover { background: rgba(255,255,255,0.25); box-shadow: 0 0 20px rgba(255,150,200,0.5); }
-        #blowMeter {
-            width: 200px; height: 6px; border-radius: 10px;
-            background: rgba(255,255,255,0.2); overflow: hidden;
-            position: absolute;
-        }
-        #blowMeter i { display: block; height: 100%; width: 0%; background: #ffbb4d; border-radius: 10px; transition: width 90ms linear; }
-        .hint {
-            color: rgba(255,255,255,0.7); font-size: 0.85rem;
-            position: absolute;
+        #micBtn:hover {
+            background: rgba(59, 130, 246, 0.06);
+            border-color: rgba(59, 130, 246, 0.25);
+            box-shadow: 0 0 30px var(--accent-glow);
         }
 
-        @keyframes dropBounce {
-            0% { transform: translateY(-400px); opacity: 0; }
-            60% { transform: translateY(10px); opacity: 1; }
-            75% { transform: translateY(-20px); }
-            90% { transform: translateY(-5px); }
-            100% { transform: translateY(0); opacity: 1; }
+        #blowMeter {
+            width: 200px; height: 6px; border-radius: 10px;
+            background: rgba(59, 130, 246, 0.06);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(59, 130, 246, 0.1);
+            overflow: hidden;
+            position: absolute;
         }
-        .bounce-in { animation: dropBounce 0.7s cubic-bezier(0.2, 0.9, 0.3, 1.2) forwards; }
+        #blowMeter i {
+            display: block; height: 100%; width: 0%;
+            background: linear-gradient(90deg, var(--accent), #60a5fa);
+            border-radius: 10px;
+            transition: width 90ms linear;
+        }
+
+        .hint {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            position: absolute;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(59, 130, 246, 0.08);
+            border-radius: 12px;
+            padding: 6px 18px;
+            letter-spacing: 0.5px;
+        }
+
+        @keyframes dropSplat {
+            0% { transform: translateY(-380px) scaleX(1) scaleY(1); opacity: 0; }
+            48% { transform: translateY(3px) scaleX(0.96) scaleY(1.12); opacity: 1; }
+            60% { transform: translateY(0) scaleX(1.24) scaleY(0.65); }
+            74% { transform: translateY(0) scaleX(0.97) scaleY(1.08); }
+            88% { transform: translateY(0) scaleX(1.02) scaleY(0.96); }
+            100% { transform: translateY(0) scaleX(1) scaleY(1); opacity: 1; }
+        }
+        .splat-in { animation: dropSplat 0.7s cubic-bezier(0.22, 0.9, 0.35, 1.15) forwards; }
 
         @keyframes flicker {
             from { transform: translateY(0) scale(0.95); }
             to { transform: translateY(-2px) scale(1.05); }
         }
 
-        /* ===== 祝福语框 ===== */
         .bless-wrap {
             position: relative;
-            background: rgba(30, 7, 60, 0.6);
-            backdrop-filter: blur(14px);
-            border: 1px solid rgba(255, 200, 230, 0.5);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 30px rgba(255,150,200,0.5);
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(59, 130, 246, 0.12);
+            box-shadow: 0 20px 60px rgba(59, 130, 246, 0.06), 0 0 30px var(--accent-glow);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -194,8 +233,9 @@
             width: min(90%, 700px);
             height: auto;
             min-height: 300px;
-            border-radius: 24px;
+            border-radius: var(--radius-lg);
             padding: 30px;
+            border-color: rgba(59, 130, 246, 0.2);
         }
         .bless-content {
             opacity: 0;
@@ -210,29 +250,54 @@
         .bless-title {
             margin: 0;
             font-size: clamp(1.6rem, 4.5vw, 2.2rem);
-            color: #ffe6f0;
-            text-shadow: 0 0 20px rgba(255,150,200,0.7);
+            font-weight: 400;
+            color: var(--accent);
+            text-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+            letter-spacing: 2px;
         }
         .bless-text {
             white-space: pre-line;
             line-height: 2;
-            color: #fce4ec;
+            color: var(--text);
             font-size: clamp(1rem, 2.4vw, 1.15rem);
             min-height: 150px;
+            font-weight: 300;
         }
         .enter-link {
             display: inline-block;
             margin-top: 20px;
-            color: #ffd966;
-            text-decoration: underline;
+            color: var(--accent);
+            text-decoration: none;
             cursor: pointer;
-            font-weight: 600;
-            font-size: 1.2rem;
-            transition: all 0.2s;
+            font-weight: 400;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            padding: 8px 24px;
+            border-radius: 40px;
+            border: 1px solid rgba(59, 130, 246, 0.15);
+            background: rgba(59, 130, 246, 0.04);
         }
         .enter-link:hover {
-            color: #fff;
-            text-shadow: 0 0 15px #ffd966;
+            background: rgba(59, 130, 246, 0.08);
+            border-color: rgba(59, 130, 246, 0.3);
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        #ambientLights {
+            position: fixed;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 4;
+        }
+        .ambient-light {
+            position: absolute;
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: opacity 0.07s ease, box-shadow 0.07s ease;
+            will-change: opacity, box-shadow;
         }
 
         @media (max-width: 600px) {
@@ -257,17 +322,17 @@
             <div class="drip-cream" id="dripCream"></div>
             <div class="candle" id="candle"><div class="flame" id="flame"></div></div>
         </div>
+        <div id="ambientLights"></div>
         <div class="happy-birthday-text" id="happyText">happy birthday</div>
         <button id="micBtn"> 吹蜡烛</button>
         <div id="blowMeter"><i id="meterFill"></i></div>
         <div class="hint" id="cakeHint">对着麦克风吹气，蜡烛熄灭愿望成真 ✨</div>
     </section>
 
-    <!-- 祝福语框（圆变方） -->
     <section class="screen hidden" id="blessScreen">
         <div class="bless-wrap" id="blessWrap">
             <div class="bless-content">
-                <h2 class="bless-title">🎂 送给农友维的祝福 🎉</h2>
+                <h2 class="bless-title">送给农友维的祝福</h2>
                 <div class="bless-text" id="blessText"></div>
                 <div class="enter-link" id="enterLink" style="display:none;">✨ 点击进入惊喜 ✨</div>
             </div>
@@ -283,21 +348,71 @@
             const tCtx = textFx.getContext("2d");
             const off = document.createElement("canvas");
             const offCtx = off.getContext("2d");
+            const svgMask = document.createElement("canvas");
+            const svgMaskCtx = svgMask.getContext("2d");
             let w = 0, h = 0, dpr = 1;
-            const PARTICLE_COUNT = 4000;
+            const FONT_CANDIDATES = [
+                '"Segoe UI", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif',
+                '"Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", sans-serif',
+                '"Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif',
+                'sans-serif'
+            ];
+            let dots = [];
+            let ambientLightElements = [];
+
+            function getParticleCount() {
+                const area = window.innerWidth * window.innerHeight;
+                const cpu = navigator.hardwareConcurrency || 4;
+                const memory = navigator.deviceMemory || 4;
+                if (cpu <= 4 || memory <= 4) return area < 420000 ? 1800 : 2400;
+                if (area < 420000) return 2400;
+                if (area < 920000) return 3200;
+                return 4000;
+            }
+
+            function rebuildDots() {
+                const particleCount = getParticleCount();
+                dots = Array.from({ length: particleCount }, () => ({
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    tx: Math.random() * w,
+                    ty: Math.random() * h,
+                    vx: 0,
+                    vy: 0,
+                    a: 0.5 + Math.random() * 0.5,
+                    hue: 210 + Math.random() * 30
+                }));
+            }
+
+            function nextFrame() {
+                return new Promise(resolve => requestAnimationFrame(resolve));
+            }
+
+            async function waitForFonts() {
+                if (!document.fonts || !document.fonts.ready) return;
+                try {
+                    const fontLoads = FONT_CANDIDATES.map(fontFamily =>
+                        document.fonts.load(`800 72px ${fontFamily}`, `${friendName} Happy Birthday`)
+                    );
+                    await Promise.race([
+                        Promise.allSettled([document.fonts.ready, ...fontLoads]),
+                        new Promise(resolve => setTimeout(resolve, 2600))
+                    ]);
+                } catch (e) {}
+            }
 
             function createConfetti() {
                 const container = document.getElementById("confettiContainer");
-                const colors = ['#ff7eb3','#ff758c','#ffd966','#7bf1a8','#90e0ef','#c77dff','#ff9f1c'];
-                for (let i=0; i<60; i++) {
+                const colors = ['#3b82f6', '#60a5fa', '#2563eb', '#93c5fd', '#1d4ed8', '#7cb8ff', '#4a90d9'];
+                for (let i=0; i<40; i++) {
                     const piece = document.createElement("div");
                     piece.className = "confetti-piece";
                     piece.style.left = Math.random() * 100 + "%";
                     piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                    piece.style.animationDuration = (Math.random() * 3 + 4) + "s";
-                    piece.style.animationDelay = Math.random() * 5 + "s";
-                    piece.style.width = (Math.random() * 10 + 6) + "px";
-                    piece.style.height = (Math.random() * 10 + 6) + "px";
+                    piece.style.animationDuration = (Math.random() * 3 + 5) + "s";
+                    piece.style.animationDelay = Math.random() * 6 + "s";
+                    piece.style.width = (Math.random() * 8 + 4) + "px";
+                    piece.style.height = (Math.random() * 8 + 4) + "px";
                     piece.style.borderRadius = Math.random() > 0.5 ? "50%" : "2px";
                     container.appendChild(piece);
                 }
@@ -308,27 +423,39 @@
                 dpr = window.devicePixelRatio || 1;
                 w = window.innerWidth;
                 h = window.innerHeight;
-                [bg, textFx, off].forEach(c => {
+                [bg, textFx, off, svgMask].forEach(c => {
                     c.width = Math.floor(w * dpr);
                     c.height = Math.floor(h * dpr);
                 });
                 bgCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
                 tCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
                 offCtx.setTransform(1, 0, 0, 1, 0, 0);
+                svgMaskCtx.setTransform(1, 0, 0, 1, 0, 0);
+                const nextParticleCount = getParticleCount();
+                if (!dots.length || dots.length !== nextParticleCount) {
+                    rebuildDots();
+                } else {
+                    dots.forEach(dot => {
+                        dot.x = Math.min(Math.max(dot.x, 0), w);
+                        dot.y = Math.min(Math.max(dot.y, 0), h);
+                        dot.tx = Math.min(Math.max(dot.tx, 0), w);
+                        dot.ty = Math.min(Math.max(dot.ty, 0), h);
+                    });
+                }
             }
             window.addEventListener("resize", resize);
             resize();
 
             const balloons = [];
-            const balloonColors = ['#ff7eb3','#ff758c','#f9d56e','#7bf1a8','#90e0ef','#c77dff','#ff9f1c'];
-            for (let i=0; i<18; i++) {
+            const balloonColors = ['#3b82f6', '#60a5fa', '#2563eb', '#93c5fd', '#1d4ed8', '#7cb8ff', '#4a90d9'];
+            for (let i=0; i<14; i++) {
                 balloons.push({
                     x: Math.random() * w, y: h + Math.random() * 200,
                     radius: 22 + Math.random() * 20,
                     color: balloonColors[Math.floor(Math.random() * balloonColors.length)],
                     speed: 0.4 + Math.random() * 0.7,
                     wave: Math.random() * Math.PI*2, amplitude: 0.6 + Math.random() * 1.2,
-                    opacity: 0.7 + Math.random() * 0.3, stringLength: 40 + Math.random() * 30
+                    opacity: 0.6 + Math.random() * 0.3, stringLength: 40 + Math.random() * 30
                 });
             }
             function drawBalloons(ctx) {
@@ -337,16 +464,16 @@
                     ctx.beginPath();
                     ctx.ellipse(b.x, b.y, b.radius, b.radius*1.2, 0, 0, Math.PI*2);
                     ctx.fillStyle = b.color; ctx.fill();
-                    ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 1; ctx.stroke();
+                    ctx.strokeStyle = 'rgba(59, 130, 246, 0.15)'; ctx.lineWidth = 1; ctx.stroke();
                     ctx.beginPath();
                     ctx.ellipse(b.x - b.radius*0.25, b.y - b.radius*0.2, b.radius*0.15, b.radius*0.2, 0, 0, Math.PI*2);
                     ctx.fillStyle = 'rgba(255,255,255,0.6)'; ctx.fill();
-                    ctx.fillStyle = '#888';
+                    ctx.fillStyle = 'rgba(59, 130, 246, 0.2)';
                     ctx.fillRect(b.x-3, b.y+b.radius*1.05, 6, 6);
                     ctx.beginPath();
                     ctx.moveTo(b.x, b.y+b.radius*1.2);
                     ctx.lineTo(b.x + Math.sin(b.x*0.01)*2, b.y+b.radius*1.2+b.stringLength);
-                    ctx.strokeStyle = '#b0b0b0'; ctx.lineWidth = 1.2; ctx.stroke();
+                    ctx.strokeStyle = 'rgba(59, 130, 246, 0.15)'; ctx.lineWidth = 1; ctx.stroke();
                     ctx.restore();
                 }
             }
@@ -357,10 +484,10 @@
                 }
             }
 
-            const bgParticles = Array.from({ length: 100 }, () => ({
+            const bgParticles = Array.from({ length: 50 }, () => ({
                 x: Math.random() * w, y: Math.random() * h,
-                vx: -0.3 + Math.random() * 0.6, vy: -0.2 + Math.random() * 0.4,
-                r: 1.2 + Math.random() * 2.5, a: 0.3 + Math.random() * 0.5
+                vx: -0.1 + Math.random() * 0.2, vy: -0.08 + Math.random() * 0.16,
+                r: 0.6 + Math.random() * 1.2, a: 0.06 + Math.random() * 0.1
             }));
             function renderBg() {
                 bgCtx.clearRect(0, 0, w, h);
@@ -368,7 +495,7 @@
                     p.x += p.vx; p.y += p.vy;
                     if (p.x < -10) p.x = w + 10; if (p.x > w + 10) p.x = -10;
                     if (p.y < -10) p.y = h + 10; if (p.y > h + 10) p.y = -10;
-                    bgCtx.fillStyle = `rgba(255,255,200,${p.a})`;
+                    bgCtx.fillStyle = `rgba(59, 130, 246, ${p.a})`;
                     bgCtx.beginPath(); bgCtx.arc(p.x, p.y, p.r, 0, Math.PI*2); bgCtx.fill();
                 }
                 updateBalloons(); drawBalloons(bgCtx);
@@ -376,43 +503,127 @@
             }
             renderBg();
 
-            const dots = Array.from({ length: PARTICLE_COUNT }, () => ({
-                x: Math.random() * w, y: Math.random() * h,
-                tx: Math.random() * w, ty: Math.random() * h,
-                vx: 0, vy: 0, a: 0.45 + Math.random() * 0.55, hue: Math.random() * 360
-            }));
-
-            function fitFontSize(text, maxSize) {
+            function fitFontSize(text, maxSize, fontFamily) {
                 const cw = off.width;
                 let size = Math.min(maxSize, Math.floor(w * 0.2));
                 offCtx.setTransform(1,0,0,1,0,0);
-                offCtx.font = `800 ${size*dpr}px "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif`;
+                offCtx.font = `800 ${size*dpr}px ${fontFamily}`;
                 const maxWidth = cw * 0.82;
                 while (offCtx.measureText(text).width > maxWidth && size > 40) {
                     size -= 4;
-                    offCtx.font = `800 ${size*dpr}px "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif`;
+                    offCtx.font = `800 ${size*dpr}px ${fontFamily}`;
                 }
                 return size;
             }
-            function getTextPoints(text, sizePx) {
-                const cw = off.width, ch = off.height;
-                offCtx.setTransform(1,0,0,1,0,0); offCtx.clearRect(0,0,cw,ch);
-                offCtx.fillStyle = "#fff"; offCtx.textAlign = "center"; offCtx.textBaseline = "middle";
-                offCtx.font = `800 ${sizePx*dpr}px "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif`;
-                offCtx.fillText(text, cw/2, ch/2);
-                const img = offCtx.getImageData(0,0,cw,ch).data;
-                const pts = [];
-                const cssStep = Math.max(2, Math.floor(Math.min(w,h)/220));
+            function collectTextPoints(sourceCtx, sourceCanvas) {
+                const cw = sourceCanvas.width, ch = sourceCanvas.height;
+                const cssStep = Math.max(1, Math.floor(Math.min(w,h)/260));
                 const step = cssStep * dpr;
-                for (let y=0; y<ch; y+=step) { for (let x=0; x<cw; x+=step) { if (img[(y*cw+x)*4+3]>140) pts.push({x:x/dpr, y:y/dpr}); } }
+                const img = sourceCtx.getImageData(0,0,cw,ch).data;
+                const pts = [];
+                for (let y=0; y<ch; y+=step) {
+                    for (let x=0; x<cw; x+=step) {
+                        if (img[(y*cw+x)*4+3] > 140) pts.push({x:x/dpr, y:y/dpr});
+                    }
+                }
                 return pts;
+            }
+
+            function getTextPointsFromCanvas(text, sizePx, fontFamily) {
+                const cw = off.width, ch = off.height;
+                offCtx.setTransform(1,0,0,1,0,0);
+                offCtx.clearRect(0,0,cw,ch);
+                offCtx.fillStyle = "#fff";
+                offCtx.textAlign = "center";
+                offCtx.textBaseline = "middle";
+                offCtx.font = `800 ${sizePx*dpr}px ${fontFamily}`;
+                offCtx.fillText(text, cw/2, ch/2);
+                return collectTextPoints(offCtx, off);
+            }
+
+            function escapeSvgText(text) {
+                return text
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&apos;");
+            }
+
+            async function getTextPointsFromSvg(text, sizePx, fontFamily) {
+                const cw = svgMask.width;
+                const ch = svgMask.height;
+                const svg = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="${cw}" height="${ch}" viewBox="0 0 ${cw} ${ch}">
+                        <rect width="100%" height="100%" fill="black"/>
+                        <text
+                            x="50%"
+                            y="50%"
+                            fill="white"
+                            font-family="${fontFamily}"
+                            font-size="${sizePx * dpr}px"
+                            font-weight="800"
+                            text-anchor="middle"
+                            dominant-baseline="middle">${escapeSvgText(text)}</text>
+                    </svg>
+                `;
+                const img = new Image();
+                img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+                if (img.decode) {
+                    try {
+                        await img.decode();
+                    } catch (e) {
+                        await new Promise((resolve, reject) => {
+                            img.onload = resolve;
+                            img.onerror = reject;
+                        });
+                    }
+                } else {
+                    await new Promise((resolve, reject) => {
+                        img.onload = resolve;
+                        img.onerror = reject;
+                    });
+                }
+                svgMaskCtx.setTransform(1,0,0,1,0,0);
+                svgMaskCtx.clearRect(0,0,cw,ch);
+                svgMaskCtx.drawImage(img, 0, 0, cw, ch);
+                return collectTextPoints(svgMaskCtx, svgMask);
+            }
+
+            async function findBestTextPoints(text, maxSize) {
+                let bestPts = [];
+                let bestSize = maxSize;
+                for (const fontFamily of FONT_CANDIDATES) {
+                    const size = fitFontSize(text, maxSize, fontFamily);
+                    let pts = [];
+                    try {
+                        pts = await getTextPointsFromSvg(text, size, fontFamily);
+                    } catch (e) {}
+                    if (pts.length < Math.max(180, dots.length * 0.12)) {
+                        const canvasPts = getTextPointsFromCanvas(text, size, fontFamily);
+                        if (canvasPts.length > pts.length) pts = canvasPts;
+                    }
+                    if (pts.length > bestPts.length) {
+                        bestPts = pts;
+                        bestSize = size;
+                    }
+                    if (pts.length >= Math.max(180, dots.length * 0.12)) break;
+                }
+                return { pts: bestPts, size: bestSize };
             }
             function morphTo(text, maxSize, scatter=false) {
                 return new Promise(resolve => {
                     if (scatter) { for (const p of dots) { p.tx = Math.random()*w; p.ty = Math.random()*h; } }
-                    setTimeout(() => {
-                        const size = fitFontSize(text, maxSize);
-                        const pts = getTextPoints(text, size);
+                    setTimeout(async () => {
+                        let bestResult = await findBestTextPoints(text, maxSize);
+                        for (let attempt = 0; attempt < 3 && bestResult.pts.length < Math.max(180, dots.length * 0.12); attempt++) {
+                            await nextFrame();
+                            const retryResult = await findBestTextPoints(text, maxSize);
+                            if (retryResult.pts.length > bestResult.pts.length) {
+                                bestResult = retryResult;
+                            }
+                        }
+                        const { pts } = bestResult;
                         let selected;
                         if (pts.length >= dots.length) {
                             const sh = [...pts]; for (let i=sh.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[sh[i],sh[j]]=[sh[j],sh[i]];}
@@ -458,7 +669,7 @@
                         const dx=p.tx-p.x, dy=p.ty-p.y;
                         p.vx+=dx*0.018; p.vy+=dy*0.018; p.vx*=0.84; p.vy*=0.84;
                         p.x+=p.vx; p.y+=p.vy;
-                        tCtx.fillStyle=`hsla(${p.hue}, 85%, 75%, ${p.a})`;
+                        tCtx.fillStyle=`hsla(${p.hue}, 85%, 50%, ${p.a})`;
                         tCtx.beginPath(); tCtx.arc(p.x,p.y,1.8,0,Math.PI*2); tCtx.fill();
                     }
                 }
@@ -486,31 +697,86 @@
 
             function sleep(ms) { return new Promise(r=>setTimeout(r,ms)); }
 
-            // 精确对齐：蛋糕底部接触横线，艺术字在横线下方，按钮在艺术字下方
             function alignAllToLine() {
                 const lineY = h / 2;
-                const cakeHeight = cakeLayer3.offsetHeight + cakeLayer2.offsetHeight + cakeLayer1.offsetHeight - 6; // 三层紧贴
-                // 蛋糕容器顶部位置 = 横线y - 蛋糕总高度
+                const cakeHeight = cakeLayer3.offsetHeight + cakeLayer2.offsetHeight + cakeLayer1.offsetHeight - 6;
                 cakeStage.style.top = (lineY - cakeHeight) + "px";
 
-                // 艺术字放在横线下方 20px 开始
                 const textTop = lineY + 20;
                 happyText.style.top = textTop + "px";
 
-                // 按钮放在艺术字下方 50px
                 micBtn.style.top = (textTop + happyText.offsetHeight + 50) + "px";
-                // 音量条和提示再往下
                 document.getElementById("blowMeter").style.top = (textTop + happyText.offsetHeight + 110) + "px";
                 document.getElementById("cakeHint").style.top = (textTop + happyText.offsetHeight + 130) + "px";
             }
 
+            function createAmbientLights() {
+                const container = document.getElementById('ambientLights');
+                if (!container) return;
+                container.innerHTML = '';
+                ambientLightElements = [];
+                const cx = window.innerWidth / 2;
+                const cy = window.innerHeight / 2 - 55;
+                const radiusX = Math.min(200, window.innerWidth * 0.28);
+                const radiusY = Math.min(110, window.innerHeight * 0.12);
+                const count = Math.min(24, Math.floor(window.innerWidth / 18));
+                for (let i = 0; i < count; i++) {
+                    const angle = (i / count) * Math.PI * 2;
+                    const x = cx + Math.cos(angle) * radiusX;
+                    const y = cy + Math.sin(angle) * radiusY;
+                    const el = document.createElement('div');
+                    el.className = 'ambient-light';
+                    el.style.cssText = `left:${x}px;top:${y}px;background:rgba(59,130,246,0.3);box-shadow:0 0 6px rgba(59,130,246,0.15);opacity:0.03`;
+                    container.appendChild(el);
+                    ambientLightElements.push(el);
+                }
+            }
+            function updateAmbientLights(level) {
+                for (const el of ambientLightElements) {
+                    const brightness = 0.03 + level * 0.6;
+                    el.style.opacity = brightness;
+                    el.style.boxShadow = `0 0 ${2 + level * 18}px rgba(59,130,246,0.3)`;
+                }
+            }
+
+            function createSplashDrops(layerEl) {
+                const stage = document.getElementById('cakeStage');
+                const bg = getComputedStyle(layerEl).backgroundColor;
+                const count = 5 + Math.floor(Math.random() * 4);
+                for (let i = 0; i < count; i++) {
+                    const drop = document.createElement('div');
+                    const size = 3 + Math.random() * 7;
+                    const xOffset = (Math.random() - 0.5) * layerEl.offsetWidth * 1.2;
+                    const dy = 8 + Math.random() * 24;
+                    const dx = (Math.random() - 0.5) * 14;
+                    drop.style.cssText = `
+                        position:absolute; left:${layerEl.offsetWidth/2+xOffset}px;
+                        top:${layerEl.offsetHeight-4}px;
+                        width:${size}px; height:${size}px;
+                        border-radius:50%; background:${bg};
+                        z-index:5; pointer-events:none;
+                        opacity:0.85; filter:blur(0.5px);
+                    `;
+                    stage.appendChild(drop);
+                    const dur = 0.25 + Math.random() * 0.35;
+                    drop.animate([
+                        { transform: 'translate(0,0) scale(1)', opacity: 0.85 },
+                        { transform: `translate(${dx}px, ${dy}px) scale(0.15)`, opacity: 0 }
+                    ], { duration: dur * 1000, easing: 'ease-out', fill: 'forwards' });
+                    setTimeout(() => drop.remove(), dur * 1000 + 50);
+                }
+            }
+
             async function buildCake() {
                 alignAllToLine();
+                createAmbientLights();
                 const layers = [cakeLayer3, cakeLayer2, cakeLayer1];
                 for (let i = 0; i < layers.length; i++) {
-                    layers[i].classList.add("bounce-in");
+                    layers[i].classList.add("splat-in");
                     layers[i].style.opacity = "1";
-                    await sleep(400);
+                    await sleep(300);
+                    createSplashDrops(layers[i]);
+                    await sleep(250);
                 }
                 dripCream.classList.add("show");
                 await sleep(300);
@@ -554,9 +820,10 @@
                         let sum=0; for (let i=0;i<arr.length;i++) { const v=(arr[i]-128)/128; sum+=v*v; }
                         const rms=Math.sqrt(sum/arr.length), level=Math.min(1,rms*7.5);
                         meterFill.style.width=(level*100).toFixed(0)+"%";
+                        updateAmbientLights(level);
                         if (level>0.62) hold+=1; else hold=Math.max(0,hold-1);
                         if (hold>8) {
-                            flame.classList.add("off"); cakeHint.textContent="🎉 蜡烛熄灭！愿望成真！";
+                            flame.classList.add("off"); cakeHint.textContent="蜡烛熄灭！愿望成真！";
                             stream.getTracks().forEach(t=>t.stop());
                             textActive = false;
                             textFx.classList.add("hidden");
@@ -582,31 +849,30 @@
 
             async function playBlessing() {
                 const lines = [
-                    "农友维，生日快乐！🎈",
-                    "愿新的一岁，每一天都闪闪发光✨",
-                    "保持热爱，奔赴山海，前程似锦🌟",
-                    "平安喜乐，万事顺遂，友谊长存💖"
+                    "农友维，生日快乐！",
+                    "愿新的一岁，每一天都闪闪发光",
+                    "保持热爱，奔赴山海，前程似锦",
+                    "平安喜乐，万事顺遂，友谊长存"
                 ];
                 blessText.textContent = "";
                 for (const line of lines) {
                     for (const ch of line) { blessText.textContent += ch; await sleep(45); }
                     blessText.textContent += "\n"; await sleep(420);
                 }
-                // 显示跳转链接
                 enterLink.style.display = "inline-block";
-                // 点击跳转到另一个HTML文件（此处以“friend.html”为例，可自行修改）
                 enterLink.addEventListener("click", () => {
                     window.location.href = "jingxi.html";
                 });
             }
 
             window.addEventListener("resize", () => {
-                if (!cakeScreen.classList.contains("hidden")) alignAllToLine();
+                if (!cakeScreen.classList.contains("hidden")) { alignAllToLine(); createAmbientLights(); }
             });
 
             micBtn.addEventListener("click", enableBlowDetect);
 
             async function run() {
+                await waitForFonts();
                 await morphTo("嗨，朋友", 220, false);
                 await morphTo(`${friendName}，生日快乐`, 180, true);
                 await morphTo("Happy Birthday", 180, true);
