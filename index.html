@@ -654,6 +654,9 @@
             <div class="cd-sub" id="cdSub">2026年7月24日 · 15岁生日</div>
             <div class="cd-birthday" id="cdBirthday">🎂 生日快乐！🎉</div>
         </div>
+        <div style="text-align:center;margin-top:16px;">
+            <button class="msg-btn-index" id="msgBtn">💬 留言</button>
+        </div>
         <div class="cd-entry" id="cdEntry">测试入口</div>
     </div>
 
@@ -685,7 +688,6 @@
                 <h2 class="bless-title">来自机长的祝福</h2>
                 <div class="bless-text" id="blessText"></div>
                 <div class="enter-link" id="enterLink" style="display:none;">✨ 点击进入惊喜 ✨</div>
-                <button class="msg-btn-index" id="msgBtn" style="display:none;">💬 留言</button>
             </div>
         </div>
     </section>
@@ -1259,7 +1261,6 @@
                     blessText.textContent += "\n"; await sleep(420);
                 }
                 enterLink.style.display = "inline-block";
-                document.getElementById('msgBtn').style.display = "inline-block";
                 enterLink.addEventListener("click", () => {
                     window.location.href = "jingxi.html";
                 });
