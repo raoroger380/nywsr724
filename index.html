@@ -162,6 +162,8 @@
             letter-spacing: 2px;
             position: absolute;
             font-family: inherit;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
         }
         #micBtn:hover {
             background: rgba(59, 130, 246, 0.06);
@@ -209,8 +211,25 @@
         .splat-in { animation: dropSplat 0.7s cubic-bezier(0.22, 0.9, 0.35, 1.15) forwards; }
 
         @keyframes flicker {
-            from { transform: translateY(0) scale(0.95); }
-            to { transform: translateY(-2px) scale(1.05); }
+            0% { transform: translateY(0) scale(1) rotate(0deg); }
+            20% { transform: translateY(-2.5px) scale(1.08, 1.12) rotate(-1deg); }
+            40% { transform: translateY(0.5px) scale(0.9, 0.85) rotate(0.5deg); }
+            60% { transform: translateY(-1.5px) scale(1.05, 1.08) rotate(-0.8deg); }
+            80% { transform: translateY(0) scale(0.95, 0.92) rotate(0.3deg); }
+            100% { transform: translateY(-1px) scale(1.02, 1.05) rotate(0deg); }
+        }
+        .flame-glow {
+            position: absolute;
+            left: -10px; top: -10px;
+            width: 34px; height: 34px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(245,200,64,0.25) 0%, transparent 70%);
+            animation: glowPulse 1.2s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+        @keyframes glowPulse {
+            0% { transform: scale(0.7); opacity: 0.3; }
+            100% { transform: scale(1.4); opacity: 0.7; }
         }
 
         .bless-wrap {
@@ -284,6 +303,56 @@
             box-shadow: 0 0 20px var(--accent-glow);
         }
 
+        #danmakuContainer {
+            position: fixed; inset: 0; z-index: 5;
+            pointer-events: none; overflow: hidden;
+        }
+        .danmaku {
+            position: absolute;
+            white-space: nowrap;
+            font-weight: 300;
+            letter-spacing: 1px;
+            opacity: 0;
+            animation: danmakuScroll linear forwards;
+            text-shadow: 0 0 8px rgba(59, 130, 246, 0.15);
+        }
+        @keyframes danmakuScroll {
+            0% { transform: translateX(100vw); opacity: 0.5; }
+            8% { opacity: 0.85; }
+            85% { opacity: 0.85; }
+            100% { transform: translateX(-100%); opacity: 0; }
+        }
+
+        #wishOverlay {
+            position: fixed; inset: 0; z-index: 50;
+            display: none;
+            justify-content: center; align-items: center;
+            background: rgba(0,0,0,0.12);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+        #wishOverlay.show { display: flex; }
+        .wish-card {
+            background: rgba(255,255,255,0.78);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(59,130,246,0.15);
+            border-radius: var(--radius-lg);
+            padding: 36px 32px;
+            text-align: center;
+            max-width: 380px; width: 88%;
+            box-shadow: 0 24px 80px rgba(59,130,246,0.12);
+            animation: wishPopIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        @keyframes wishPopIn {
+            0% { transform: scale(0.78); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .wish-emoji { font-size: 2.6rem; margin-bottom: 10px; }
+        .wish-title { font-size: 1.5rem; color: var(--accent); font-weight: 400; margin-bottom: 12px; letter-spacing: 2px; }
+        .wish-desc { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.8; }
+        .wish-countdown { margin-top: 20px; font-size: 0.85rem; color: var(--text-secondary); opacity: 0.6; }
+
         #ambientLights {
             position: fixed;
             left: 0; top: 0;
@@ -300,18 +369,147 @@
             will-change: opacity, box-shadow;
         }
 
+        /* 生日倒计时 */
+        #countdownOverlay {
+            position: fixed; inset: 0; z-index: 99999;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            background: var(--bg);
+            background: radial-gradient(ellipse at 50% 30%, rgba(59,130,246,0.04) 0%, transparent 60%), var(--bg);
+            transition: opacity 0.8s ease;
+        }
+        #countdownOverlay.hidden { opacity: 0; pointer-events: none; }
+        .cd-card {
+            text-align: center;
+            background: rgba(255,255,255,0.55);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(59,130,246,0.12);
+            border-radius: var(--radius-lg);
+            padding: 40px 36px;
+            box-shadow: 0 20px 60px rgba(59,130,246,0.08);
+            max-width: 520px; width: 90%;
+            animation: cdFadeIn 0.8s ease;
+        }
+        @keyframes cdFadeIn {
+            0% { opacity: 0; transform: translateY(20px) scale(0.96); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .cd-title {
+            font-size: clamp(1.3rem, 4vw, 1.8rem);
+            color: var(--accent);
+            letter-spacing: 4px;
+            font-weight: 400;
+            margin-bottom: 4px;
+            text-shadow: 0 0 20px rgba(59,130,246,0.15);
+        }
+        .cd-label {
+            font-size: 1rem; color: var(--text-secondary);
+            letter-spacing: 4px; font-weight: 300;
+            margin-bottom: 24px;
+        }
+        .cd-numbers {
+            display: flex; justify-content: center; align-items: baseline;
+            gap: 4px; margin-bottom: 20px;
+        }
+        .cd-unit {
+            display: flex; flex-direction: column; align-items: center;
+            min-width: 64px;
+        }
+        .cd-unit .num {
+            font-size: clamp(2.4rem, 6vw, 3.6rem);
+            font-weight: 300; color: var(--accent);
+            letter-spacing: 2px;
+            line-height: 1.1;
+            font-variant-numeric: tabular-nums;
+            text-shadow: 0 0 20px rgba(59,130,246,0.15);
+        }
+        .cd-unit small {
+            font-size: 0.7rem; color: var(--text-secondary);
+            letter-spacing: 1px; margin-top: 2px;
+        }
+        .cd-sep {
+            font-size: clamp(1.6rem, 4vw, 2.6rem);
+            color: var(--accent); opacity: 0.35;
+            font-weight: 200; margin: 0 2px;
+            padding-bottom: 18px;
+        }
+        .cd-sub {
+            font-size: 0.85rem; color: var(--text-secondary);
+            letter-spacing: 1px; font-weight: 300;
+        }
+        .cd-birthday {
+            display: none;
+            font-size: clamp(1.6rem, 5vw, 2.4rem);
+            color: var(--accent);
+            letter-spacing: 3px;
+            font-weight: 400;
+            margin-top: 12px;
+            animation: cdFadeIn 0.6s ease;
+        }
+        .cd-entry {
+            position: fixed; left: 16px; bottom: 16px;
+            font-size: 0.78rem; color: var(--text-secondary);
+            opacity: 0.35; cursor: pointer;
+            letter-spacing: 0.5px; z-index: 100000;
+            transition: opacity 0.3s;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .cd-entry:hover { opacity: 0.7; }
+
+        @media (max-width: 480px) {
+            .cd-card { padding: 28px 18px; }
+            .cd-unit { min-width: 48px; }
+        }
+
         @media (max-width: 600px) {
             .cake-layer.layer1 { width: 140px; height: 40px; }
             .cake-layer.layer2 { width: 160px; height: 36px; }
             .cake-layer.layer3 { width: 180px; height: 32px; }
-            .bless-wrap.expanded { width: 95%; min-height: 250px; }
+            .bless-wrap.expanded { width: 88%; min-height: 250px; }
+            .danmaku { animation-duration: 5s !important; font-size: 13px !important; }
         }
+
+        #ambientLights {
     </style>
 </head>
 <body>
+    <div id="countdownOverlay">
+        <div class="cd-card">
+            <div class="cd-title">农友维</div>
+            <div class="cd-label">距离生日还有</div>
+            <div class="cd-numbers">
+                <div class="cd-unit">
+                    <span class="num" id="cdDays">00</span>
+                    <small>天</small>
+                </div>
+                <span class="cd-sep">:</span>
+                <div class="cd-unit">
+                    <span class="num" id="cdHours">00</span>
+                    <small>时</small>
+                </div>
+                <span class="cd-sep">:</span>
+                <div class="cd-unit">
+                    <span class="num" id="cdMins">00</span>
+                    <small>分</small>
+                </div>
+                <span class="cd-sep">:</span>
+                <div class="cd-unit">
+                    <span class="num" id="cdSecs">00</span>
+                    <small>秒</small>
+                </div>
+            </div>
+            <div class="cd-sub">2026年7月24日 · 15岁生日</div>
+            <div class="cd-birthday" id="cdBirthday">🎂 生日快乐！🎉</div>
+        </div>
+        <div class="cd-entry" id="cdEntry">测试入口</div>
+    </div>
+
     <canvas id="bg"></canvas>
     <div class="confetti-container" id="confettiContainer"></div>
     <canvas id="textFx"></canvas>
+    <div id="danmakuContainer"></div>
     <section class="screen" id="introScreen"></section>
 
     <section class="screen hidden" id="cakeScreen">
@@ -320,7 +518,7 @@
             <div class="cake-layer layer2" id="cakeLayer2"></div>
             <div class="cake-layer layer3" id="cakeLayer3"></div>
             <div class="drip-cream" id="dripCream"></div>
-            <div class="candle" id="candle"><div class="flame" id="flame"></div></div>
+            <div class="candle" id="candle"><div class="flame" id="flame"><div class="flame-glow"></div></div></div>
         </div>
         <div id="ambientLights"></div>
         <div class="happy-birthday-text" id="happyText">happy birthday</div>
@@ -332,12 +530,24 @@
     <section class="screen hidden" id="blessScreen">
         <div class="bless-wrap" id="blessWrap">
             <div class="bless-content">
-                <h2 class="bless-title">送给农友维的祝福</h2>
+                <h2 class="bless-title">来自机长的祝福</h2>
                 <div class="bless-text" id="blessText"></div>
                 <div class="enter-link" id="enterLink" style="display:none;">✨ 点击进入惊喜 ✨</div>
             </div>
         </div>
     </section>
+
+    <div id="wishOverlay">
+        <div class="wish-card">
+            <div class="wish-emoji">🕯️</div>
+            <div class="wish-title">许个愿吧</div>
+            <div class="wish-desc">
+                闭上眼睛，默默许下心愿<br>
+                然后吹灭蜡烛，愿望就会实现
+            </div>
+            <div class="wish-countdown" id="wishCountdown">5秒后可吹蜡烛</div>
+        </div>
+    </div>
 
     <script>
         (function() {
@@ -698,16 +908,19 @@
             function sleep(ms) { return new Promise(r=>setTimeout(r,ms)); }
 
             function alignAllToLine() {
-                const lineY = h / 2;
+                const isMobile = window.innerWidth < 600;
+                const lineY = h * (isMobile ? 0.45 : 0.48);
                 const cakeHeight = cakeLayer3.offsetHeight + cakeLayer2.offsetHeight + cakeLayer1.offsetHeight - 6;
                 cakeStage.style.top = (lineY - cakeHeight) + "px";
 
-                const textTop = lineY + 20;
+                const textH = happyText.offsetHeight || (isMobile ? 36 : 50);
+                const textTop = lineY + (isMobile ? 6 : 20);
                 happyText.style.top = textTop + "px";
 
-                micBtn.style.top = (textTop + happyText.offsetHeight + 50) + "px";
-                document.getElementById("blowMeter").style.top = (textTop + happyText.offsetHeight + 110) + "px";
-                document.getElementById("cakeHint").style.top = (textTop + happyText.offsetHeight + 130) + "px";
+                const btnTop = textTop + textH + (isMobile ? 12 : 50);
+                micBtn.style.top = btnTop + "px";
+                document.getElementById("blowMeter").style.top = (btnTop + (isMobile ? 38 : 60)) + "px";
+                document.getElementById("cakeHint").style.top = (btnTop + (isMobile ? 48 : 80)) + "px";
             }
 
             function createAmbientLights() {
@@ -821,8 +1034,8 @@
                         const rms=Math.sqrt(sum/arr.length), level=Math.min(1,rms*7.5);
                         meterFill.style.width=(level*100).toFixed(0)+"%";
                         updateAmbientLights(level);
-                        if (level>0.62) hold+=1; else hold=Math.max(0,hold-1);
-                        if (hold>8) {
+                        if (level>0.52) hold+=1; else hold=Math.max(0,hold-1);
+                        if (hold>6) {
                             flame.classList.add("off"); cakeHint.textContent="蜡烛熄灭！愿望成真！";
                             stream.getTracks().forEach(t=>t.stop());
                             textActive = false;
@@ -871,19 +1084,149 @@
 
             micBtn.addEventListener("click", enableBlowDetect);
 
+            // ---- 弹幕祝福 ----
+            const danmakuMessages = [
+                "生日快乐", "永远幸福", "天天开心", "万事如意",
+                "岁岁平安", "美梦成真", "前程似锦", "好运连连",
+                "心想事成", "光芒万丈", "温暖如春", "自由飞翔",
+                "甜甜蜜蜜", "精彩无限", "快乐至上", "幸福绵长",
+                "闪闪发光", "一路繁花", "幸运相随", "活力满满",
+                "愿你快乐", "平安喜乐", "笑口常开", "青春永驻",
+            ];
+            let danmakuTimer = null;
+            let danmakuIdx = 0;
+            function startDanmaku() {
+                const container = document.getElementById('danmakuContainer');
+                if (!container) return;
+                function spawn() {
+                    if (introScreen.classList.contains('hidden')) return;
+                    const msg = danmakuMessages[danmakuIdx % danmakuMessages.length];
+                    danmakuIdx++;
+                    const el = document.createElement('div');
+                    el.className = 'danmaku';
+                    el.textContent = msg;
+                    const top = 5 + Math.random() * 70;
+                    const fontSize = 14 + Math.random() * 14;
+                    const duration = 6 + Math.random() * 6;
+                    const hue = 210 + Math.random() * 30;
+                    el.style.cssText = `
+                        top:${top}vh; font-size:${fontSize}px;
+                        color:hsla(${hue},80%,50%,0.8);
+                        animation-duration:${duration}s;
+                    `;
+                    container.appendChild(el);
+                    setTimeout(() => el.remove(), duration * 1000 + 500);
+                    danmakuTimer = setTimeout(spawn, 600 + Math.random() * 1200);
+                }
+                spawn();
+            }
+            function stopDanmaku() {
+                if (danmakuTimer) { clearTimeout(danmakuTimer); danmakuTimer = null; }
+            }
+
+            // ---- 许愿弹窗 ----
+            async function showWishPopup() {
+                const overlay = document.getElementById('wishOverlay');
+                const countdown = document.getElementById('wishCountdown');
+                overlay.classList.add('show');
+                micBtn.style.opacity = '0.35';
+                micBtn.style.pointerEvents = 'none';
+                let remaining = 5;
+                const timer = setInterval(() => {
+                    remaining--;
+                    if (remaining > 0) countdown.textContent = `${remaining}秒后可吹蜡烛`;
+                }, 1000);
+                await sleep(5000);
+                clearInterval(timer);
+                countdown.textContent = '可以吹蜡烛啦！';
+                await sleep(600);
+                overlay.classList.remove('show');
+                micBtn.style.opacity = '1';
+                micBtn.style.pointerEvents = 'auto';
+            }
+
             async function run() {
                 await waitForFonts();
+                startDanmaku();
                 await morphTo("嗨，朋友", 220, false);
                 await morphTo(`${friendName}，生日快乐`, 180, true);
                 await morphTo("Happy Birthday", 180, true);
                 await sleep(800);
                 await morphToLine();
+                stopDanmaku();
+                document.getElementById('danmakuContainer').innerHTML = '';
                 introScreen.classList.add("hidden");
                 cakeScreen.classList.remove("hidden");
                 playBirthdaySong();
                 await buildCake();
+                showWishPopup();
             }
-            run();
+            // ---- 生日倒计时 ----
+            const BIRTHDAY = new Date(2026, 6, 24, 0, 0, 0);
+            const cdDays = document.getElementById('cdDays');
+            const cdHours = document.getElementById('cdHours');
+            const cdMins = document.getElementById('cdMins');
+            const cdSecs = document.getElementById('cdSecs');
+            const cdBirthday = document.getElementById('cdBirthday');
+            const cdNumbers = document.querySelector('.cd-numbers');
+            const cdSub = document.querySelector('.cd-sub');
+            let countdownTimer = null;
+            let entered = false;
+
+            function enterCelebration() {
+                if (entered) return;
+                entered = true;
+                document.getElementById('countdownOverlay').classList.add('hidden');
+                setTimeout(run, 900);
+            }
+
+            function updateCountdown() {
+                const now = Date.now();
+                const diff = BIRTHDAY - now;
+                if (diff <= 0) {
+                    // 生日当天 —— 自动进入
+                    if (!entered) {
+                        cdNumbers.style.display = 'none';
+                        cdSub.style.display = 'none';
+                        cdBirthday.style.display = 'block';
+                        document.querySelector('.cd-label').textContent = '今天';
+                        document.getElementById('cdEntry').textContent = '✨ 点击进入 ✨';
+                        if (countdownTimer) {
+                            clearInterval(countdownTimer);
+                            countdownTimer = null;
+                        }
+                        setTimeout(enterCelebration, 3000);
+                    }
+                    return;
+                }
+                const totalSec = Math.floor(diff / 1000);
+                const d = Math.floor(totalSec / 86400);
+                const h = Math.floor((totalSec % 86400) / 3600);
+                const m = Math.floor((totalSec % 3600) / 60);
+                const s = totalSec % 60;
+                cdDays.textContent = String(d).padStart(2, '0');
+                cdHours.textContent = String(h).padStart(2, '0');
+                cdMins.textContent = String(m).padStart(2, '0');
+                cdSecs.textContent = String(s).padStart(2, '0');
+            }
+            updateCountdown();
+            countdownTimer = setInterval(updateCountdown, 1000);
+
+            // ---- 测试入口 ----
+            const PASSWORD = '326811';
+            document.getElementById('cdEntry').addEventListener('click', () => {
+                // 生日当天可直接进入
+                if (Date.now() >= BIRTHDAY) {
+                    enterCelebration();
+                    return;
+                }
+                const input = prompt('请输入测试密码：');
+                if (input === PASSWORD) {
+                    enterCelebration();
+                } else if (input !== null) {
+                    alert('密码错误');
+                }
+            });
         })();
     </script>
 </body>

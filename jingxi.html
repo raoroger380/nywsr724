@@ -155,6 +155,60 @@
         }
         #fireworkCanvas.active { display: block; }
 
+        /* 祝福贺卡 */
+        .bless-card {
+            position: fixed; left: 50%; bottom: -280px;
+            transform: translateX(-50%);
+            width: 88%; max-width: 340px;
+            background: rgba(255,255,255,0.72);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(59,130,246,0.15);
+            border-radius: var(--radius-lg);
+            padding: 28px 24px;
+            z-index: 9998;
+            box-shadow: 0 20px 60px rgba(59,130,246,0.1);
+            transition: bottom 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            text-align: center;
+        }
+        .bless-card.show { bottom: 24px; }
+        .bless-card .card-emoji { font-size: 2rem; margin-bottom: 6px; }
+        .bless-card .card-name {
+            font-size: 1.2rem; color: var(--accent);
+            font-weight: 400; letter-spacing: 2px;
+        }
+        .bless-card .card-divider {
+            width: 36px; height: 2px;
+            background: var(--accent); opacity: 0.25;
+            margin: 10px auto;
+        }
+        .bless-card .card-msg {
+            font-size: 0.88rem; color: var(--text-secondary);
+            line-height: 1.9; margin-bottom: 20px;
+        }
+        .bless-card .card-msg strong { color: var(--accent); font-weight: 500; }
+        .save-btn {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 11px 26px;
+            background: linear-gradient(135deg, var(--accent), #2563eb);
+            color: #fff; border: none;
+            border-radius: 30px;
+            font-size: 0.9rem; font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(59,130,246,0.3);
+        }
+        .save-btn:active { transform: translateY(1px); }
+        @media (max-width: 600px) {
+            .bless-card { padding: 22px 18px; }
+            .bless-card .card-name { font-size: 1.1rem; }
+        }
+
         .screen-flash {
             position: fixed; top: 0; left: 0;
             width: 100%; height: 100%;
@@ -179,6 +233,14 @@
 
     <div class="screen-flash" id="screenFlash"></div>
     <canvas id="fireworkCanvas"></canvas>
+
+    <div class="bless-card" id="blessCard">
+        <div class="card-emoji">🎂</div>
+        <div class="card-name">机长 · 农友维生日快乐</div>
+        <div class="card-divider"></div>
+        <div class="card-msg" id="cardStats"></div>
+        <button class="save-btn" id="saveBtn">📷 保存图片</button>
+    </div>
 
     <script>
         (function() {
@@ -690,6 +752,7 @@
                             ctx.clearRect(0, 0, canvasW, canvasH);
                         }
                     }, 600);
+                    setTimeout(showBlessCard, 800);
                     return;
                 }
 
@@ -720,6 +783,122 @@
             window.addEventListener('beforeunload', () => {
                 fwRunning = false;
             });
+
+            // ---- 祝福贺卡 ----
+            function showBlessCard() {
+                const card = document.getElementById('blessCard');
+                const stats = document.getElementById('cardStats');
+                const birthDate = new Date(2011, 6, 24);
+                const diffMs = Date.now() - birthDate;
+                const daysAlive = Math.floor(diffMs / 86400000);
+                const hoursAlive = Math.floor(diffMs / 3600000);
+                stats.innerHTML =
+                    `度过了 <strong>${hoursAlive.toLocaleString()}</strong> 小时<br>` +
+                    `来到世上 <strong>${daysAlive.toLocaleString()}</strong> 天<br>` +
+                    `这是你的 <strong>15</strong> 岁生日 🎉`;
+                card.classList.add('show');
+            }
+
+            function saveBlessingImage() {
+                const lines = [
+                    "农友维，生日快乐！",
+                    "愿新的一岁，每一天都闪闪发光",
+                    "保持热爱，奔赴山海，前程似锦",
+                    "平安喜乐，万事顺遂，友谊长存"
+                ];
+                const c = document.createElement('canvas');
+                const W = 600, H = 800;
+                c.width = W; c.height = H;
+                const ctx = c.getContext('2d');
+
+                ctx.fillStyle = '#ece6e0';
+                ctx.fillRect(0, 0, W, H);
+                const grad = ctx.createRadialGradient(300, 400, 0, 300, 400, 350);
+                grad.addColorStop(0, 'rgba(59, 130, 246, 0.05)');
+                grad.addColorStop(1, 'rgba(59, 130, 246, 0)');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, W, H);
+                for (let i = 0; i < 30; i++) {
+                    ctx.fillStyle = `rgba(59, 130, 246, ${0.04 + Math.random() * 0.08})`;
+                    ctx.beginPath();
+                    ctx.arc(Math.random() * W, Math.random() * H, 1 + Math.random() * 3, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.shadowColor = 'rgba(59, 130, 246, 0.1)';
+                ctx.shadowBlur = 50;
+                ctx.fillStyle = 'rgba(255,255,255,0.75)';
+                roundRect(ctx, 50, 80, 500, 640, 24);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+                ctx.fillStyle = '#3b82f6';
+                roundRect(ctx, 250, 110, 100, 3, 2);
+                ctx.fill();
+                ctx.fillStyle = '#3b82f6';
+                ctx.font = '32px "PingFang SC", "Microsoft YaHei", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('来自机长的祝福', 300, 210);
+                ctx.strokeStyle = 'rgba(59, 130, 246, 0.15)';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(180, 235);
+                ctx.lineTo(420, 235);
+                ctx.stroke();
+                ctx.fillStyle = '#1e293b';
+                ctx.font = '20px "PingFang SC", "Microsoft YaHei", sans-serif';
+                ctx.textAlign = 'center';
+                let y = 310;
+                for (const line of lines) {
+                    ctx.fillText(line, 300, y);
+                    y += 65;
+                }
+                const birthDate = new Date(2011, 6, 24);
+                const diffMs = Date.now() - birthDate;
+                const daysAlive = Math.floor(diffMs / 86400000);
+                const hoursAlive = Math.floor(diffMs / 3600000);
+                ctx.fillStyle = '#64748b';
+                ctx.font = '15px "PingFang SC", "Microsoft YaHei", sans-serif';
+                ctx.fillText(`已度过 ${hoursAlive.toLocaleString()} 小时 · 来到世上 ${daysAlive.toLocaleString()} 天`, 300, y + 15);
+                ctx.fillStyle = '#3b82f6';
+                ctx.font = '17px "PingFang SC", "Microsoft YaHei", sans-serif';
+                ctx.fillText('这是你的 15 岁生日 🎉', 300, y + 48);
+                ctx.fillStyle = 'rgba(59, 130, 246, 0.06)';
+                ctx.beginPath();
+                ctx.arc(300, 560, 80, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = 'rgba(59, 130, 246, 0.04)';
+                ctx.beginPath();
+                ctx.arc(300, 560, 120, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#64748b';
+                ctx.font = '14px "PingFang SC", "Microsoft YaHei", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('— 机长 · 祝福 —', 300, 670);
+                const now = new Date();
+                ctx.fillStyle = '#94a3b8';
+                ctx.font = '12px "PingFang SC", sans-serif';
+                ctx.fillText(`${now.getFullYear()}年${now.getMonth()+1}月`, 300, 700);
+                const link = document.createElement('a');
+                link.download = '来自机长的祝福-农友维.png';
+                link.href = c.toDataURL('image/png');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+            function roundRect(ctx, x, y, w, h, r) {
+                ctx.beginPath();
+                ctx.moveTo(x + r, y);
+                ctx.lineTo(x + w - r, y);
+                ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+                ctx.lineTo(x + w, y + h - r);
+                ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+                ctx.lineTo(x + r, y + h);
+                ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+                ctx.lineTo(x, y + r);
+                ctx.quadraticCurveTo(x, y, x + r, y);
+                ctx.closePath();
+                ctx.fill();
+            }
+            document.getElementById('saveBtn').addEventListener('click', saveBlessingImage);
         })();
     </script>
 </body>
