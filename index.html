@@ -134,6 +134,17 @@
             transition: opacity 0.4s;
         }
         .flame.off { opacity: 0; animation: none; }
+        .flame.wobble {
+            animation: flameWobble 0.12s ease-in-out infinite !important;
+        }
+        @keyframes flameWobble {
+            0% { transform: translateX(0) scale(1) rotate(0deg); }
+            20% { transform: translateX(-3px) scale(0.75, 1.35) rotate(-4deg); }
+            40% { transform: translateX(2.5px) scale(1.15, 0.65) rotate(3deg); }
+            60% { transform: translateX(-2px) scale(0.8, 1.2) rotate(-3deg); }
+            80% { transform: translateX(1.5px) scale(1.05, 0.85) rotate(2deg); }
+            100% { transform: translateX(0) scale(1) rotate(0deg); }
+        }
         .happy-birthday-text {
             font-family: 'Dancing Script', cursive;
             font-size: clamp(2.8rem, 8vw, 5rem);
@@ -198,6 +209,21 @@
             border-radius: 12px;
             padding: 6px 18px;
             letter-spacing: 0.5px;
+        }
+        .skip-hint {
+            color: var(--accent) !important;
+            font-size: 1rem !important;
+            font-weight: 500 !important;
+            background: rgba(255,255,255,0.6) !important;
+            border-color: rgba(59,130,246,0.25) !important;
+            cursor: pointer !important;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            transition: all 0.3s ease;
+        }
+        .skip-hint:hover {
+            background: rgba(255,255,255,0.8) !important;
+            box-shadow: 0 0 20px rgba(59,130,246,0.15);
         }
 
         @keyframes dropSplat {
@@ -500,7 +526,7 @@
                     <small>秒</small>
                 </div>
             </div>
-            <div class="cd-sub">2026年7月24日 · 15岁生日</div>
+            <div class="cd-sub" id="cdSub">2026年7月24日 · 15岁生日</div>
             <div class="cd-birthday" id="cdBirthday">🎂 生日快乐！🎉</div>
         </div>
         <div class="cd-entry" id="cdEntry">测试入口</div>
@@ -525,6 +551,7 @@
         <button id="micBtn"> 吹蜡烛</button>
         <div id="blowMeter"><i id="meterFill"></i></div>
         <div class="hint" id="cakeHint">对着麦克风吹气，蜡烛熄灭愿望成真 ✨</div>
+        <div class="hint skip-hint hidden" id="skipBlow">点击跳过</div>
     </section>
 
     <section class="screen hidden" id="blessScreen">
@@ -921,6 +948,7 @@
                 micBtn.style.top = btnTop + "px";
                 document.getElementById("blowMeter").style.top = (btnTop + (isMobile ? 38 : 60)) + "px";
                 document.getElementById("cakeHint").style.top = (btnTop + (isMobile ? 48 : 80)) + "px";
+                document.getElementById("skipBlow").style.top = (btnTop + (isMobile ? 48 : 80) + 34) + "px";
             }
 
             function createAmbientLights() {
@@ -1034,8 +1062,16 @@
                         const rms=Math.sqrt(sum/arr.length), level=Math.min(1,rms*7.5);
                         meterFill.style.width=(level*100).toFixed(0)+"%";
                         updateAmbientLights(level);
-                        if (level>0.52) hold+=1; else hold=Math.max(0,hold-1);
+                        const blowing = level > 0.48;
+                        if (blowing) hold+=1; else hold=Math.max(0,hold-1);
+                        // 吹气时蜡烛晃动
+                        if (blowing && hold >= 2 && hold <= 6) {
+                            flame.classList.add('wobble');
+                        } else if (!blowing || hold > 6) {
+                            flame.classList.remove('wobble');
+                        }
                         if (hold>6) {
+                            flame.classList.remove('wobble');
                             flame.classList.add("off"); cakeHint.textContent="蜡烛熄灭！愿望成真！";
                             stream.getTracks().forEach(t=>t.stop());
                             textActive = false;
@@ -1057,6 +1093,7 @@
                 } catch (e) {
                     micStarted = false;
                     cakeHint.textContent = "麦克风未授权，请允许后再试。";
+                    document.getElementById('skipBlow').classList.remove('hidden');
                 }
             }
 
@@ -1083,21 +1120,44 @@
             });
 
             micBtn.addEventListener("click", enableBlowDetect);
+            document.getElementById('skipBlow').addEventListener('click', function skipCandle() {
+                this.removeEventListener('click', skipCandle);
+                flame.classList.add("off");
+                cakeHint.textContent = "已跳过！愿望成真！";
+                document.getElementById('skipBlow').classList.add('hidden');
+                if (micStarted) return;
+                textActive = false;
+                textFx.classList.add("hidden");
+                setTimeout(async () => {
+                    cakeScreen.classList.add("hidden");
+                    blessScreen.classList.remove("hidden");
+                    requestAnimationFrame(() => blessWrap.classList.add("expanded"));
+                    await sleep(700);
+                    await playBlessing();
+                }, 600);
+            });
 
-            // ---- 弹幕祝福 ----
-            const danmakuMessages = [
-                "生日快乐", "永远幸福", "天天开心", "万事如意",
-                "岁岁平安", "美梦成真", "前程似锦", "好运连连",
-                "心想事成", "光芒万丈", "温暖如春", "自由飞翔",
-                "甜甜蜜蜜", "精彩无限", "快乐至上", "幸福绵长",
-                "闪闪发光", "一路繁花", "幸运相随", "活力满满",
-                "愿你快乐", "平安喜乐", "笑口常开", "青春永驻",
-            ];
+            // ---- 弹幕祝福（从 GitHub Issues 加载） ----
+            let danmakuMessages = [];
             let danmakuTimer = null;
             let danmakuIdx = 0;
+
+            async function loadDanmakuMessages() {
+                try {
+                    const res = await fetch('https://api.github.com/repos/raoroger380/nywsr724/issues?labels=message&state=all&per_page=50&sort=created&direction=desc');
+                    if (res.ok) {
+                        const issues = await res.json();
+                        danmakuMessages = issues.map(issue => issue.title).filter(Boolean);
+                    }
+                } catch(e) {}
+                if (danmakuMessages.length === 0) {
+                    danmakuMessages = ["🎂 生日快乐"];
+                }
+            }
+
             function startDanmaku() {
                 const container = document.getElementById('danmakuContainer');
-                if (!container) return;
+                if (!container || danmakuMessages.length === 0) return;
                 function spawn() {
                     if (introScreen.classList.contains('hidden')) return;
                     const msg = danmakuMessages[danmakuIdx % danmakuMessages.length];
@@ -1147,6 +1207,7 @@
 
             async function run() {
                 await waitForFonts();
+                await loadDanmakuMessages();
                 startDanmaku();
                 await morphTo("嗨，朋友", 220, false);
                 await morphTo(`${friendName}，生日快乐`, 180, true);
@@ -1161,15 +1222,26 @@
                 await buildCake();
                 showWishPopup();
             }
-            // ---- 生日倒计时 ----
-            const BIRTHDAY = new Date(2026, 6, 24, 0, 0, 0);
+            // ---- 生日倒计时（每年自动更新） ----
+            const BIRTH_YEAR = 2011;
+            const BIRTH_MONTH = 6; // 7月（0-indexed）
+            const BIRTH_DAY = 24;
+
+            function getNextBirthday() {
+                const now = new Date();
+                const year = now.getFullYear();
+                let bd = new Date(year, BIRTH_MONTH, BIRTH_DAY, 0, 0, 0);
+                if (now >= bd) bd = new Date(year + 1, BIRTH_MONTH, BIRTH_DAY, 0, 0, 0);
+                return bd;
+            }
+
             const cdDays = document.getElementById('cdDays');
             const cdHours = document.getElementById('cdHours');
             const cdMins = document.getElementById('cdMins');
             const cdSecs = document.getElementById('cdSecs');
             const cdBirthday = document.getElementById('cdBirthday');
             const cdNumbers = document.querySelector('.cd-numbers');
-            const cdSub = document.querySelector('.cd-sub');
+            const cdSub = document.getElementById('cdSub');
             let countdownTimer = null;
             let entered = false;
 
@@ -1182,9 +1254,12 @@
 
             function updateCountdown() {
                 const now = Date.now();
-                const diff = BIRTHDAY - now;
+                const birthday = getNextBirthday();
+                const age = birthday.getFullYear() - BIRTH_YEAR;
+                cdSub.textContent = `${birthday.getFullYear()}年7月24日 · ${age}岁生日`;
+
+                const diff = birthday - now;
                 if (diff <= 0) {
-                    // 生日当天 —— 自动进入
                     if (!entered) {
                         cdNumbers.style.display = 'none';
                         cdSub.style.display = 'none';
@@ -1215,8 +1290,7 @@
             // ---- 测试入口 ----
             const PASSWORD = '326811';
             document.getElementById('cdEntry').addEventListener('click', () => {
-                // 生日当天可直接进入
-                if (Date.now() >= BIRTHDAY) {
+                if (Date.now() >= getNextBirthday()) {
                     enterCelebration();
                     return;
                 }

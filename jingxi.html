@@ -218,6 +218,137 @@
             transition: opacity 0.08s ease-out;
             display: none;
         }
+
+        /* 留言板弹窗 */
+        .msg-overlay {
+            position: fixed; inset: 0; z-index: 99999;
+            background: rgba(0,0,0,0.12);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            display: none;
+            justify-content: center; align-items: center;
+            padding: 20px;
+        }
+        .msg-overlay.show { display: flex; }
+        .msg-modal {
+            background: rgba(255,255,255,0.82);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border: 1px solid rgba(59,130,246,0.15);
+            border-radius: var(--radius-lg);
+            padding: 28px 24px;
+            width: 88%; max-width: 420px;
+            max-height: 80vh;
+            box-shadow: 0 24px 80px rgba(59,130,246,0.15);
+            display: flex; flex-direction: column;
+            animation: modalIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        @keyframes modalIn {
+            0% { transform: scale(0.85); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .msg-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 16px;
+        }
+        .msg-title { font-size: 1.2rem; color: var(--accent); letter-spacing: 2px; }
+        .msg-close {
+            font-size: 1.6rem; color: var(--text-secondary); cursor: pointer;
+            padding: 0 8px; line-height: 1;
+            transition: color 0.2s; touch-action: manipulation;
+        }
+        .msg-close:hover { color: var(--text); }
+        .msg-body { overflow-y: auto; flex: 1; }
+        .msg-input, .msg-textarea {
+            width: 100%; padding: 12px 14px;
+            border: 1px solid rgba(59,130,246,0.15);
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem; font-family: inherit;
+            background: rgba(255,255,255,0.6);
+            color: var(--text); outline: none;
+            transition: border-color 0.3s;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+        .msg-input:focus, .msg-textarea:focus { border-color: var(--accent); }
+        .msg-textarea { min-height: 80px; resize: vertical; }
+        .msg-submit {
+            width: 100%; padding: 12px;
+            background: linear-gradient(135deg, var(--accent), #2563eb);
+            color: #fff; border: none;
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem; font-family: inherit;
+            cursor: pointer; letter-spacing: 1px;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+            touch-action: manipulation;
+        }
+        .msg-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(59,130,246,0.3); }
+        .msg-submit:active { transform: translateY(1px); }
+        .msg-submit:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+        .msg-list-title {
+            font-size: 0.82rem; color: var(--text-secondary);
+            margin-bottom: 10px; text-align: left; letter-spacing: 0.5px;
+        }
+        .msg-items { max-height: 200px; overflow-y: auto; }
+        .msg-item {
+            padding: 10px 12px;
+            background: rgba(255,255,255,0.5);
+            border-radius: var(--radius-sm);
+            margin-bottom: 8px;
+            text-align: left;
+            font-size: 0.85rem;
+            border: 1px solid rgba(59,130,246,0.08);
+        }
+        .msg-item .msg-item-name {
+            font-weight: 500; color: var(--accent); font-size: 0.78rem;
+        }
+        .msg-item .msg-item-text {
+            color: var(--text); line-height: 1.5; margin-top: 2px;
+        }
+        .msg-item .msg-item-time {
+            font-size: 0.68rem; color: var(--text-secondary); opacity: 0.5;
+            margin-top: 4px;
+        }
+        .msg-empty {
+            text-align: center; color: var(--text-secondary);
+            font-size: 0.85rem; padding: 20px 0; opacity: 0.6;
+        }
+        .msg-toast {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.7);
+            color: #fff; padding: 12px 24px;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem; z-index: 100000;
+            pointer-events: none;
+            animation: toastFade 2s ease forwards;
+        }
+        @keyframes toastFade {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+            15% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+        }
+        .msg-btn {
+            display: inline-block; margin-top: 12px;
+            padding: 8px 20px;
+            background: rgba(59,130,246,0.06);
+            border: 1px solid rgba(59,130,246,0.15);
+            border-radius: 30px;
+            color: var(--accent); font-size: 0.85rem;
+            cursor: pointer; font-family: inherit;
+            transition: all 0.3s; touch-action: manipulation;
+        }
+        .msg-btn:hover {
+            background: rgba(59,130,246,0.1);
+            border-color: rgba(59,130,246,0.3);
+        }
+
+        @media (max-width: 480px) {
+            .msg-modal { padding: 20px 16px; max-height: 85vh; }
+            .msg-textarea { min-height: 64px; }
+            .msg-items { max-height: 150px; }
+        }
     </style>
 </head>
 <body>
@@ -240,6 +371,30 @@
         <div class="card-divider"></div>
         <div class="card-msg" id="cardStats"></div>
         <button class="save-btn" id="saveBtn">📷 保存图片</button>
+        <button class="msg-btn" id="msgBtn">💬 留言</button>
+    </div>
+
+    <!-- 留言板弹窗 -->
+    <div id="messageOverlay" class="msg-overlay">
+        <div class="msg-modal">
+            <div class="msg-header">
+                <span class="msg-title">💬 留言板</span>
+                <span class="msg-close" id="msgClose">&times;</span>
+            </div>
+            <div class="msg-body">
+                <div class="msg-form">
+                    <input type="text" id="msgName" placeholder="你的名字（选填）" class="msg-input" maxlength="20">
+                    <textarea id="msgContent" placeholder="写下你的祝福..." class="msg-textarea" maxlength="200"></textarea>
+                    <button id="msgSubmit" class="msg-submit">发送祝福 ✨</button>
+                </div>
+                <div class="msg-list" id="msgList">
+                    <div class="msg-list-title">已有祝福</div>
+                    <div class="msg-items" id="msgItems">
+                        <div class="msg-empty" id="msgEmpty">加载中...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -899,6 +1054,138 @@
                 ctx.fill();
             }
             document.getElementById('saveBtn').addEventListener('click', saveBlessingImage);
+
+            // ---- 留言板（GitHub Issues API） ----
+            const GITHUB_TOKEN = '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';
+            const ISSUES_API = 'https://api.github.com/repos/raoroger380/nywsr724/issues';
+
+            async function fetchMessages() {
+                try {
+                    const res = await fetch(`${ISSUES_API}?labels=message&state=all&per_page=50&sort=created&direction=desc`);
+                    if (!res.ok) throw new Error('Fetch failed');
+                    const issues = await res.json();
+                    return issues.map(issue => {
+                        const nameMatch = issue.body ? issue.body.match(/^name:(.*)$/m) : null;
+                        return {
+                            title: issue.title,
+                            name: nameMatch ? nameMatch[1].trim() : '',
+                            time: issue.created_at,
+                        };
+                    });
+                } catch (e) {
+                    return [];
+                }
+            }
+
+            function displayMessages(messages) {
+                const container = document.getElementById('msgItems');
+                const empty = document.getElementById('msgEmpty');
+                if (messages.length === 0) {
+                    container.innerHTML = '<div class="msg-empty">还没有祝福，快来留言吧 💬</div>';
+                    return;
+                }
+                container.innerHTML = messages.map(msg => {
+                    const nameHtml = msg.name ? `<div class="msg-item-name">${escapeHtml(msg.name)}</div>` : '';
+                    const timeStr = msg.time ? new Date(msg.time).toLocaleDateString('zh-CN') : '';
+                    return `
+                        <div class="msg-item">
+                            ${nameHtml}
+                            <div class="msg-item-text">${escapeHtml(msg.title)}</div>
+                            <div class="msg-item-time">${timeStr}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            function escapeHtml(str) {
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            }
+
+            async function submitMessage(name, content) {
+                if (!GITHUB_TOKEN) {
+                    showMsgToast('请先设置 GitHub Token 以启用留言功能');
+                    return false;
+                }
+                const title = name ? `${content} — ${name}` : content;
+                try {
+                    const res = await fetch(ISSUES_API, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `token ${GITHUB_TOKEN}`,
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            title: title,
+                            body: name ? `name:${name}` : 'name:匿名',
+                            labels: ['message'],
+                        }),
+                    });
+                    if (!res.ok) throw new Error('Submit failed');
+                    showMsgToast('祝福已发送 ✨ 将出现在首页弹幕中');
+                    return true;
+                } catch (e) {
+                    showMsgToast('发送失败，请稍后再试');
+                    return false;
+                }
+            }
+
+            function showMsgToast(text) {
+                const existing = document.querySelector('.msg-toast');
+                if (existing) existing.remove();
+                const toast = document.createElement('div');
+                toast.className = 'msg-toast';
+                toast.textContent = text;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 2200);
+            }
+
+            // 打开/关闭留言板
+            function openMessageWall() {
+                document.getElementById('messageOverlay').classList.add('show');
+                loadAndDisplayMessages();
+            }
+            function closeMessageWall() {
+                document.getElementById('messageOverlay').classList.remove('show');
+            }
+
+            async function loadAndDisplayMessages() {
+                const msgs = await fetchMessages();
+                displayMessages(msgs);
+            }
+
+            // 事件绑定
+            document.getElementById('msgBtn').addEventListener('click', openMessageWall);
+            document.getElementById('msgClose').addEventListener('click', closeMessageWall);
+            document.getElementById('messageOverlay').addEventListener('click', (e) => {
+                if (e.target === e.currentTarget) closeMessageWall();
+            });
+
+            document.getElementById('msgSubmit').addEventListener('click', async () => {
+                const nameInput = document.getElementById('msgName');
+                const contentInput = document.getElementById('msgContent');
+                const name = nameInput.value.trim();
+                const content = contentInput.value.trim();
+                if (!content) {
+                    showMsgToast('请输入祝福内容');
+                    return;
+                }
+                const btn = document.getElementById('msgSubmit');
+                btn.disabled = true;
+                btn.textContent = '发送中...';
+                const ok = await submitMessage(name, content);
+                btn.disabled = false;
+                btn.textContent = '发送祝福 ✨';
+                if (ok) {
+                    contentInput.value = '';
+                    nameInput.value = '';
+                    await loadAndDisplayMessages();
+                }
+            });
+
+            // 加载初始留言
+            loadAndDisplayMessages();
         })();
     </script>
 </body>
