@@ -1056,12 +1056,11 @@
             document.getElementById('saveBtn').addEventListener('click', saveBlessingImage);
 
             // ---- 留言板（GitHub Issues API） ----
-            const GITHUB_TOKEN = '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';
-            const ISSUES_API = 'https://api.github.com/repos/raoroger380/nywsr724/issues';
+            const WORKER_URL = 'https://nywsr724-messages.raoroger380.workers.dev';
 
             async function fetchMessages() {
                 try {
-                    const res = await fetch(`${ISSUES_API}?labels=message&state=all&per_page=50&sort=created&direction=desc`);
+                    const res = await fetch(`${WORKER_URL}/messages`);
                     if (!res.ok) throw new Error('Fetch failed');
                     const issues = await res.json();
                     return issues.map(issue => {
@@ -1104,23 +1103,12 @@
             }
 
             async function submitMessage(name, content) {
-                if (!GITHUB_TOKEN) {
-                    showMsgToast('请先设置 GitHub Token 以启用留言功能');
-                    return false;
-                }
                 const title = name ? `${content} — ${name}` : content;
                 try {
-                    const res = await fetch(ISSUES_API, {
+                    const res = await fetch(`${WORKER_URL}/messages`, {
                         method: 'POST',
-                        headers: {
-                            'Authorization': `token ${GITHUB_TOKEN}`,
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            title: title,
-                            body: name ? `name:${name}` : 'name:匿名',
-                            labels: ['message'],
-                        }),
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ title, body: name ? `name:${name}` : 'name:匿名' }),
                     });
                     if (!res.ok) throw new Error('Submit failed');
                     showMsgToast('祝福已发送 ✨ 将出现在首页弹幕中');
