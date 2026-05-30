@@ -1056,11 +1056,12 @@
             document.getElementById('saveBtn').addEventListener('click', saveBlessingImage);
 
             // ---- 留言板（GitHub Issues API） ----
-            const WORKER_URL = 'https://nywsr724-messages.raoroger380.workers.dev';
+            const GITHUB_TOKEN = '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';
+            const ISSUES_API = 'https://api.github.com/repos/raoroger380/nywsr724/issues';
 
             async function fetchMessages() {
                 try {
-                    const res = await fetch(`${WORKER_URL}/messages`);
+                    const res = await fetch(`${ISSUES_API}?labels=message&state=all&per_page=50&sort=created&direction=desc`);
                     if (!res.ok) throw new Error('Fetch failed');
                     const issues = await res.json();
                     return issues.map(issue => {
@@ -1105,10 +1106,13 @@
             async function submitMessage(name, content) {
                 const title = name ? `${content} — ${name}` : content;
                 try {
-                    const res = await fetch(`${WORKER_URL}/messages`, {
+                    const res = await fetch(ISSUES_API, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ title, body: name ? `name:${name}` : 'name:匿名' }),
+                        headers: {
+                            'Authorization': `token ${GITHUB_TOKEN}`,
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ title, body: name ? `name:${name}` : 'name:匿名', labels: ['message'] }),
                     });
                     if (!res.ok) throw new Error('Submit failed');
                     showMsgToast('祝福已发送 ✨ 将出现在首页弹幕中');
