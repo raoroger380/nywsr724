@@ -1295,7 +1295,7 @@
 
             async function loadDanmakuMessages() {
                 try {
-                    const res = await fetch('https://api.github.com/repos/raoroger380/nywsr724/issues?labels=message&state=all&per_page=50&sort=created&direction=desc');
+                    const res = await fetch('https://vercel-proxy-one-ashy.vercel.app/api/messages');
                     if (res.ok) {
                         const issues = await res.json();
                         danmakuMessages = issues.map(issue => issue.title).filter(Boolean);
@@ -1453,12 +1453,11 @@
                 }
             });
             // ---- 留言板（GitHub Issues API） ----
-            const GITHUB_TOKEN = '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';
-            const ISSUES_API = 'https://api.github.com/repos/raoroger380/nywsr724/issues';
+            const PROXY_URL = 'https://vercel-proxy-one-ashy.vercel.app/api/messages';
 
             async function fetchMessages() {
                 try {
-                    const res = await fetch(`${ISSUES_API}?labels=message&state=all&per_page=50&sort=created&direction=desc`);
+                    const res = await fetch(PROXY_URL);
                     if (!res.ok) throw new Error('Fetch failed');
                     const issues = await res.json();
                     return issues.map(issue => {
@@ -1502,13 +1501,10 @@
             async function submitMessage(name, content) {
                 const title = name ? `${content} — ${name}` : content;
                 try {
-                    const res = await fetch(ISSUES_API, {
+                    const res = await fetch(PROXY_URL, {
                         method: 'POST',
-                        headers: {
-                            'Authorization': `token ${GITHUB_TOKEN}`,
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ title, body: name ? `name:${name}` : 'name:匿名', labels: ['message'] }),
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ title, body: name ? `name:${name}` : 'name:匿名' }),
                     });
                     if (!res.ok) throw new Error('Submit failed');
                     showMsgToast('祝福已发送 ✨ 将出现在首页弹幕中');
