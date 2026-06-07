@@ -393,6 +393,9 @@
                         <div class="msg-empty" id="msgEmpty">加载中...</div>
                     </div>
                 </div>
+                <div style="text-align:center;margin-top:6px;">
+                    <span id="adminEntry" style="font-size:0.65rem;color:var(--text-secondary);opacity:0.2;cursor:pointer;transition:opacity 0.3s;touch-action:manipulation;" title="管理入口">⚙️</span>
+                </div>
             </div>
         </div>
     </div>
@@ -1061,7 +1064,7 @@
 
             async function fetchMessages() {
                 try {
-                    const res = await fetch(`${ISSUES_API}?labels=message&state=all&per_page=50&sort=created&direction=desc`);
+                    const res = await fetch(`${ISSUES_API}?labels=message&state=open&per_page=50&sort=created&direction=desc`);
                     if (!res.ok) throw new Error('Fetch failed');
                     const issues = await res.json();
                     return issues.map(issue => {
@@ -1178,6 +1181,11 @@
 
             // 加载初始留言
             loadAndDisplayMessages();
+
+            // ---- 管理后台入口（隐藏） ----
+            document.getElementById('adminEntry').addEventListener('click', () => {
+                window.location.href = 'admin.html';
+            });
         })();
     </script>
 </body>

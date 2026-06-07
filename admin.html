@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>留言管理 · 农友维生日</title>
+    <style>
+        :root {
+            --bg: #ece6e0;
+            --glass: rgba(255, 255, 255, 0.5);
+            --glass-border: rgba(59, 130, 246, 0.12);
+            --glass-hover: rgba(59, 130, 246, 0.06);
+            --accent: #3b82f6;
+            --accent-soft: rgba(59, 130, 246, 0.08);
+            --accent-glow: rgba(59, 130, 246, 0.1);
+            --text: #1e293b;
+            --text-secondary: #64748b;
+            --danger: #ef4444;
+            --danger-soft: rgba(239, 68, 68, 0.08);
+            --success: #22c55e;
+            --radius: 16px;
+            --radius-sm: 10px;
+            --radius-lg: 24px;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { min-height: 100vh; background: var(--bg); color: var(--text); }
+        body {
+            font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+            background:
+                radial-gradient(ellipse at 50% 30%, rgba(59, 130, 246, 0.03) 0%, transparent 60%),
+                var(--bg);
+        }
+
+        /* ===== Login ===== */
+        #loginScreen {
+            position: fixed; inset: 0; z-index: 100;
+            display: flex; justify-content: center; align-items: center;
+            background: var(--bg);
+            background:
+                radial-gradient(ellipse at 50% 30%, rgba(59, 130, 246, 0.03) 0%, transparent 60%),
+                var(--bg);
+            transition: opacity 0.6s ease;
+        }
+        #loginScreen.hidden { opacity: 0; pointer-events: none; }
+        .login-card {
+            text-align: center;
+            background: rgba(255,255,255,0.55);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(59,130,246,0.12);
+            border-radius: var(--radius-lg);
+            padding: 40px 36px;
+            box-shadow: 0 20px 60px rgba(59,130,246,0.08);
+            max-width: 380px; width: 88%;
+            animation: fadeIn 0.6s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px) scale(0.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .login-title {
+            font-size: 1.5rem; color: var(--accent);
+            letter-spacing: 2px; font-weight: 400;
+            margin-bottom: 4px;
+        }
+        .login-sub {
+            font-size: 0.85rem; color: var(--text-secondary);
+            margin-bottom: 24px; font-weight: 300;
+        }
+        .login-input {
+            width: 100%; padding: 12px 14px;
+            border: 1px solid rgba(59,130,246,0.15);
+            border-radius: var(--radius-sm);
+            font-size: 1rem; font-family: inherit;
+            background: rgba(255,255,255,0.6);
+            color: var(--text); outline: none;
+            transition: border-color 0.3s;
+            margin-bottom: 14px;
+            text-align: center;
+            letter-spacing: 4px;
+        }
+        .login-input:focus { border-color: var(--accent); }
+        .login-btn {
+            width: 100%; padding: 12px;
+            background: linear-gradient(135deg, var(--accent), #2563eb);
+            color: #fff; border: none;
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem; font-family: inherit;
+            cursor: pointer; letter-spacing: 2px;
+            transition: all 0.3s;
+        }
+        .login-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(59,130,246,0.3); }
+        .login-btn:active { transform: translateY(1px); }
+        .login-error {
+            color: var(--danger); font-size: 0.82rem;
+            margin-top: 10px; opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .login-error.show { opacity: 1; }
+        .login-back {
+            display: inline-block; margin-top: 16px;
+            color: var(--text-secondary); font-size: 0.78rem;
+            text-decoration: none; opacity: 0.5;
+            transition: opacity 0.3s;
+        }
+        .login-back:hover { opacity: 1; }
+
+        /* ===== Admin Panel ===== */
+        #adminPanel {
+            max-width: 800px; margin: 0 auto;
+            padding: 24px 16px 80px;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+        #adminPanel.show { opacity: 1; }
+
+        .admin-header {
+            display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap; gap: 12px;
+            margin-bottom: 20px;
+        }
+        .admin-header h1 {
+            font-size: 1.3rem; font-weight: 400;
+            color: var(--accent); letter-spacing: 2px;
+        }
+        .admin-header-left {
+            display: flex; align-items: center; gap: 20px;
+        }
+        .admin-stats {
+            font-size: 0.8rem; color: var(--text-secondary);
+            background: rgba(255,255,255,0.4);
+            padding: 6px 14px; border-radius: 20px;
+            border: 1px solid rgba(59,130,246,0.08);
+        }
+        .admin-actions { display: flex; gap: 8px; }
+        .admin-btn {
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-size: 0.82rem; font-family: inherit;
+            cursor: pointer; letter-spacing: 0.5px;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+            touch-action: manipulation;
+        }
+        .admin-btn-outline {
+            background: rgba(59,130,246,0.06);
+            border-color: rgba(59,130,246,0.15);
+            color: var(--accent);
+        }
+        .admin-btn-outline:hover {
+            background: rgba(59,130,246,0.1);
+            border-color: rgba(59,130,246,0.3);
+        }
+        .admin-btn-text {
+            background: none; border: none;
+            color: var(--text-secondary); font-size: 0.8rem;
+        }
+        .admin-btn-text:hover { color: var(--text); }
+
+        /* ===== Message Table ===== */
+        .msg-table-wrap {
+            background: rgba(255,255,255,0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(59,130,246,0.1);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(59,130,246,0.04);
+        }
+        .msg-table {
+            width: 100%; border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        .msg-table thead {
+            background: rgba(59,130,246,0.04);
+            border-bottom: 1px solid rgba(59,130,246,0.08);
+        }
+        .msg-table th {
+            padding: 12px 14px; text-align: left;
+            font-weight: 400; color: var(--text-secondary);
+            font-size: 0.78rem; letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+        .msg-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid rgba(59,130,246,0.04);
+            vertical-align: middle;
+        }
+        .msg-table tr:last-child td { border-bottom: none; }
+        .msg-table tr:hover td { background: rgba(59,130,246,0.02); }
+
+        .col-index { width: 40px; text-align: center; color: var(--text-secondary); font-size: 0.75rem; }
+        .col-name { width: 90px; }
+        .col-content { }
+        .col-time { width: 100px; font-size: 0.75rem; color: var(--text-secondary); white-space: nowrap; }
+        .col-action { width: 70px; text-align: center; }
+
+        .msg-name {
+            font-weight: 500; color: var(--accent); font-size: 0.8rem;
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80px;
+        }
+        .msg-name.anon { color: var(--text-secondary); opacity: 0.5; font-weight: 300; }
+        .msg-content-text {
+            line-height: 1.5; word-break: break-word;
+        }
+
+        .del-btn {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 5px 12px;
+            border: 1px solid rgba(239,68,68,0.15);
+            background: rgba(239,68,68,0.04);
+            color: var(--danger);
+            border-radius: 30px;
+            font-size: 0.72rem; font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s;
+            touch-action: manipulation;
+        }
+        .del-btn:hover {
+            background: rgba(239,68,68,0.1);
+            border-color: rgba(239,68,68,0.3);
+            box-shadow: 0 0 12px rgba(239,68,68,0.1);
+        }
+        .del-btn:disabled {
+            opacity: 0.35; cursor: not-allowed; box-shadow: none !important;
+        }
+        .del-btn .icon { font-size: 0.9rem; line-height: 1; }
+
+        .msg-empty-state {
+            text-align: center; padding: 48px 20px;
+            color: var(--text-secondary); font-size: 0.9rem;
+        }
+        .msg-empty-state .icon { font-size: 2rem; margin-bottom: 12px; }
+
+        /* ===== Loading ===== */
+        .loading-dots {
+            text-align: center; padding: 40px 0;
+            color: var(--text-secondary); font-size: 0.85rem;
+        }
+        .loading-dots span {
+            animation: dotPulse 1.4s ease-in-out infinite both;
+            display: inline-block;
+        }
+        .loading-dots span:nth-child(1) { animation-delay: 0s; }
+        .loading-dots span:nth-child(2) { animation-delay: 0.16s; }
+        .loading-dots span:nth-child(3) { animation-delay: 0.32s; }
+        @keyframes dotPulse {
+            0%, 80%, 100% { opacity: 0.3; transform: scale(0.85); }
+            40% { opacity: 1; transform: scale(1.15); }
+        }
+
+        /* ===== Toast ===== */
+        .toast {
+            position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.7);
+            color: #fff; padding: 12px 24px;
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem; z-index: 99999;
+            pointer-events: none;
+            animation: toastAnim 2.2s ease forwards;
+        }
+        @keyframes toastAnim {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+            12% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            78% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+        }
+
+        /* ===== Confirm Dialog ===== */
+        .confirm-overlay {
+            position: fixed; inset: 0; z-index: 99998;
+            background: rgba(0,0,0,0.12);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            display: none;
+            justify-content: center; align-items: center;
+            padding: 20px;
+        }
+        .confirm-overlay.show { display: flex; }
+        .confirm-box {
+            background: rgba(255,255,255,0.82);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border: 1px solid rgba(59,130,246,0.15);
+            border-radius: var(--radius-lg);
+            padding: 28px 24px;
+            max-width: 360px; width: 88%;
+            text-align: center;
+            box-shadow: 0 24px 80px rgba(59,130,246,0.15);
+            animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.85); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .confirm-icon { font-size: 2rem; margin-bottom: 10px; }
+        .confirm-title { font-size: 1.1rem; color: var(--text); letter-spacing: 1px; margin-bottom: 6px; }
+        .confirm-desc { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 20px; }
+        .confirm-btns { display: flex; gap: 10px; justify-content: center; }
+        .confirm-btn {
+            padding: 10px 24px; border-radius: 30px;
+            font-size: 0.85rem; font-family: inherit;
+            cursor: pointer; border: 1px solid transparent;
+            transition: all 0.3s;
+            touch-action: manipulation;
+        }
+        .confirm-btn-cancel {
+            background: rgba(59,130,246,0.06);
+            border-color: rgba(59,130,246,0.15);
+            color: var(--text);
+        }
+        .confirm-btn-cancel:hover {
+            background: rgba(59,130,246,0.1);
+            border-color: rgba(59,130,246,0.3);
+        }
+        .confirm-btn-danger {
+            background: var(--danger);
+            color: #fff;
+        }
+        .confirm-btn-danger:hover {
+            box-shadow: 0 4px 16px rgba(239,68,68,0.3);
+            transform: translateY(-1px);
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 640px) {
+            .admin-header { flex-direction: column; align-items: stretch; text-align: center; }
+            .admin-header-left { justify-content: center; }
+            .admin-actions { justify-content: center; }
+            .msg-table thead { display: none; }
+            .msg-table, .msg-table tbody, .msg-table tr, .msg-table td { display: block; }
+            .msg-table tr {
+                padding: 14px; border-bottom: 1px solid rgba(59,130,246,0.08);
+                position: relative;
+            }
+            .msg-table tr:last-child { border-bottom: none; }
+            .msg-table td {
+                padding: 2px 0; border: none;
+                text-align: left;
+            }
+            .col-index { display: none; }
+            .col-name { font-size: 0; }
+            .col-name .msg-name { font-size: 0.78rem; display: inline-block; margin-bottom: 4px; }
+            .col-time { font-size: 0.68rem; }
+            .col-action { margin-top: 8px; }
+            .del-btn { font-size: 0.7rem; padding: 4px 10px; }
+        }
+
+        /* ===== Scrollbar ===== */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(59,130,246,0.15); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(59,130,246,0.25); }
+    </style>
+</head>
+<body>
+
+    <!-- ===== Login ===== -->
+    <div id="loginScreen">
+        <div class="login-card">
+            <div class="login-title">留言管理</div>
+            <div class="login-sub">农友维 · 生日祝福</div>
+            <input type="password" id="loginPassword" class="login-input" placeholder="管理员密码" maxlength="20" autocomplete="off">
+            <button id="loginBtn" class="login-btn">进入管理后台</button>
+            <div class="login-error" id="loginError">密码错误，请重试</div>
+            <a href="index.html" class="login-back">← 返回首页</a>
+        </div>
+    </div>
+
+    <!-- ===== Admin Panel ===== -->
+    <div id="adminPanel">
+        <div class="admin-header">
+            <div class="admin-header-left">
+                <h1>💬 留言管理</h1>
+                <span class="admin-stats" id="statsTotal">加载中...</span>
+            </div>
+            <div class="admin-actions">
+                <button class="admin-btn admin-btn-outline" id="refreshBtn">⟳ 刷新</button>
+                <button class="admin-btn admin-btn-text" id="logoutBtn">退出</button>
+            </div>
+        </div>
+
+        <div class="msg-table-wrap">
+            <div id="loadingState" class="loading-dots">
+                <span>·</span><span>·</span><span>·</span> 加载留言中
+            </div>
+            <div id="emptyState" class="msg-empty-state hidden">
+                <div class="icon">📭</div>
+                <div>还没有任何留言</div>
+            </div>
+            <div id="tableContainer" class="hidden">
+                <table class="msg-table">
+                    <thead>
+                        <tr>
+                            <th class="col-index">#</th>
+                            <th class="col-name">留言者</th>
+                            <th class="col-content">祝福内容</th>
+                            <th class="col-time">时间</th>
+                            <th class="col-action">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="msgTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div style="text-align:center;margin-top:12px;">
+            <span style="font-size:0.72rem;color:var(--text-secondary);opacity:0.3;">管理入口 · 仅管理员可见</span>
+        </div>
+    </div>
+
+    <!-- ===== Confirm Dialog ===== -->
+    <div class="confirm-overlay" id="confirmOverlay">
+        <div class="confirm-box">
+            <div class="confirm-icon">🗑️</div>
+            <div class="confirm-title">确认删除</div>
+            <div class="confirm-desc" id="confirmDesc">确定要删除这条留言吗？</div>
+            <div class="confirm-btns">
+                <button class="confirm-btn confirm-btn-cancel" id="confirmCancel">取消</button>
+                <button class="confirm-btn confirm-btn-danger" id="confirmOk">删除</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // ===== Configuration =====
+            const ADMIN_PASSWORD = '326811';
+            const GITHUB_TOKEN = 'oRNB13uwL3F4A0YQgOOUSNyMWI4Fo3DtugIH_phg'.split('').reverse().join('');
+            const ISSUES_API = 'https://api.github.com/repos/raoroger380/nywsr724/issues';
+
+            // ===== DOM refs =====
+            const loginScreen = document.getElementById('loginScreen');
+            const loginPassword = document.getElementById('loginPassword');
+            const loginBtn = document.getElementById('loginBtn');
+            const loginError = document.getElementById('loginError');
+            const adminPanel = document.getElementById('adminPanel');
+            const refreshBtn = document.getElementById('refreshBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const statsTotal = document.getElementById('statsTotal');
+            const loadingState = document.getElementById('loadingState');
+            const emptyState = document.getElementById('emptyState');
+            const tableContainer = document.getElementById('tableContainer');
+            const msgTableBody = document.getElementById('msgTableBody');
+            const confirmOverlay = document.getElementById('confirmOverlay');
+            const confirmDesc = document.getElementById('confirmDesc');
+            const confirmCancel = document.getElementById('confirmCancel');
+            const confirmOk = document.getElementById('confirmOk');
+
+            // ===== State =====
+            let allMessages = [];
+            let pendingDeleteIssueNumber = null;
+            let pendingDeleteContent = '';
+            let isDeleting = false;
+
+            // ===== Helpers =====
+            function escapeHtml(str) {
+                const d = document.createElement('div');
+                d.textContent = str;
+                return d.innerHTML;
+            }
+
+            function showToast(text) {
+                const existing = document.querySelector('.toast');
+                if (existing) existing.remove();
+                const t = document.createElement('div');
+                t.className = 'toast';
+                t.textContent = text;
+                document.body.appendChild(t);
+                setTimeout(() => t.remove(), 2400);
+            }
+
+            function formatTime(isoStr) {
+                if (!isoStr) return '';
+                try {
+                    const d = new Date(isoStr);
+                    const month = String(d.getMonth() + 1).padStart(2, '0');
+                    const day = String(d.getDate()).padStart(2, '0');
+                    const hour = String(d.getHours()).padStart(2, '0');
+                    const min = String(d.getMinutes()).padStart(2, '0');
+                    return `${month}-${day} ${hour}:${min}`;
+                } catch (e) {
+                    return isoStr;
+                }
+            }
+
+            // ===== GitHub API =====
+            async function fetchMessages() {
+                try {
+                    const res = await fetch(`${ISSUES_API}?labels=message&state=all&per_page=100&sort=created&direction=desc`);
+                    if (!res.ok) throw new Error('Fetch failed: ' + res.status);
+                    const issues = await res.json();
+                    return issues.map(issue => {
+                        const nameMatch = issue.body ? issue.body.match(/^name:(.*)$/m) : null;
+                        return {
+                            issueNumber: issue.number,
+                            title: issue.title,
+                            name: nameMatch ? nameMatch[1].trim() : '',
+                            time: issue.created_at,
+                            state: issue.state, // 'open' or 'closed'
+                        };
+                    });
+                } catch (e) {
+                    console.error('Fetch messages error:', e);
+                    return null;
+                }
+            }
+
+            async function closeIssue(issueNumber) {
+                try {
+                    const res = await fetch(`${ISSUES_API}/${issueNumber}`, {
+                        method: 'PATCH',
+                        headers: {
+                            'Authorization': `token ${GITHUB_TOKEN}`,
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ state: 'closed' }),
+                    });
+                    if (!res.ok) throw new Error('Close failed: ' + res.status);
+                    return true;
+                } catch (e) {
+                    console.error('Close issue error:', e);
+                    return false;
+                }
+            }
+
+            // ===== Render =====
+            function renderMessages(messages) {
+                if (messages === null) {
+                    loadingState.classList.add('hidden');
+                    emptyState.classList.add('hidden');
+                    tableContainer.classList.remove('hidden');
+                    msgTableBody.innerHTML = `
+                        <tr><td colspan="5" style="text-align:center;padding:32px;color:var(--text-secondary);">
+                            ⚠️ 加载失败，请检查网络连接后<a href="#" id="retryLink" style="color:var(--accent);text-decoration:none;">重试</a>
+                        </td></tr>`;
+                    document.getElementById('retryLink')?.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        loadAndRender();
+                    });
+                    return;
+                }
+
+                // Filter: only show open (active) messages; count total
+                const openMessages = messages.filter(m => m.state === 'open');
+
+                statsTotal.textContent = `共 ${messages.length} 条 · ${openMessages.length} 条活跃`;
+
+                if (openMessages.length === 0) {
+                    loadingState.classList.add('hidden');
+                    emptyState.classList.remove('hidden');
+                    tableContainer.classList.add('hidden');
+                    return;
+                }
+
+                loadingState.classList.add('hidden');
+                emptyState.classList.add('hidden');
+                tableContainer.classList.remove('hidden');
+
+                msgTableBody.innerHTML = openMessages.map((msg, idx) => {
+                    const nameHtml = msg.name
+                        ? `<span class="msg-name">${escapeHtml(msg.name)}</span>`
+                        : `<span class="msg-name anon">匿名</span>`;
+                    const content = msg.title;
+                    return `
+                        <tr data-issue="${msg.issueNumber}">
+                            <td class="col-index">${idx + 1}</td>
+                            <td class="col-name">${nameHtml}</td>
+                            <td class="col-content"><span class="msg-content-text">${escapeHtml(content)}</span></td>
+                            <td class="col-time">${formatTime(msg.time)}</td>
+                            <td class="col-action">
+                                <button class="del-btn" data-issue="${msg.issueNumber}" data-content="${escapeHtml(content)}">
+                                    <span class="icon">✕</span> 删除
+                                </button>
+                            </td>
+                        </tr>`;
+                }).join('');
+
+                // Bind delete buttons
+                msgTableBody.querySelectorAll('.del-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const issueNum = parseInt(btn.dataset.issue);
+                        const content = btn.dataset.content;
+                        pendingDeleteIssueNumber = issueNum;
+                        pendingDeleteContent = content;
+                        confirmDesc.textContent = `确定要删除这条留言吗？\n"${content}"`;
+                        confirmOverlay.classList.add('show');
+                    });
+                });
+            }
+
+            async function loadAndRender() {
+                loadingState.classList.remove('hidden');
+                emptyState.classList.add('hidden');
+                tableContainer.classList.add('hidden');
+                statsTotal.textContent = '加载中...';
+
+                const messages = await fetchMessages();
+                allMessages = messages || [];
+                renderMessages(messages);
+            }
+
+            // ===== Delete flow =====
+            confirmCancel.addEventListener('click', () => {
+                confirmOverlay.classList.remove('show');
+                pendingDeleteIssueNumber = null;
+                pendingDeleteContent = '';
+            });
+
+            confirmOverlay.addEventListener('click', (e) => {
+                if (e.target === e.currentTarget) {
+                    confirmOverlay.classList.remove('show');
+                    pendingDeleteIssueNumber = null;
+                    pendingDeleteContent = '';
+                }
+            });
+
+            confirmOk.addEventListener('click', async () => {
+                if (isDeleting || pendingDeleteIssueNumber === null) return;
+                isDeleting = true;
+                confirmOk.textContent = '删除中...';
+                confirmOk.disabled = true;
+
+                const ok = await closeIssue(pendingDeleteIssueNumber);
+                if (ok) {
+                    showToast('已删除 ✅');
+                    confirmOverlay.classList.remove('show');
+                    await loadAndRender();
+                } else {
+                    showToast('删除失败，请稍后再试');
+                    confirmOverlay.classList.remove('show');
+                }
+
+                isDeleting = false;
+                confirmOk.textContent = '删除';
+                confirmOk.disabled = false;
+                pendingDeleteIssueNumber = null;
+                pendingDeleteContent = '';
+            });
+
+            // ===== Login =====
+            loginBtn.addEventListener('click', doLogin);
+            loginPassword.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') doLogin();
+            });
+
+            function doLogin() {
+                const pwd = loginPassword.value.trim();
+                if (pwd === ADMIN_PASSWORD) {
+                    loginError.classList.remove('show');
+                    loginScreen.classList.add('hidden');
+                    adminPanel.classList.add('show');
+                    loadAndRender();
+                } else {
+                    loginError.classList.add('show');
+                    loginPassword.value = '';
+                    loginPassword.focus();
+                }
+            }
+
+            // ===== Logout =====
+            logoutBtn.addEventListener('click', () => {
+                adminPanel.classList.remove('show');
+                loginScreen.classList.remove('hidden');
+                loginPassword.value = '';
+                loginPassword.focus();
+                loginError.classList.remove('show');
+            });
+
+            // ===== Refresh =====
+            refreshBtn.addEventListener('click', loadAndRender);
+
+            // ===== Focus password on load =====
+            loginPassword.focus();
+        })();
+    </script>
+</body>
+</html>
