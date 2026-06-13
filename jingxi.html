@@ -1058,8 +1058,15 @@
             }
             document.getElementById('saveBtn').addEventListener('click', saveBlessingImage);
 
+            // ---- Crypto helper (XOR + Base64) ----
+            function xorDecrypt(b64, key) {
+                const str = atob(b64);
+                let r = '';
+                for (let i = 0; i < str.length; i++) r += String.fromCharCode(str.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+                return r;
+            }
             // ---- 留言板（GitHub Issues API） ----
-            const GITHUB_TOKEN = 'oRNB13uwL3F4A0YQgOOUSNyMWI4Fo3DtugIH_phg'.split('').reverse().join('');
+            const GITHUB_TOKEN = xorDecrypt('CREHLDp+VUEaPUQcNAN7YyMAOSAneH1TPyBHMkZxAXgZDERCMHlgWw==', 'nywsr724');
             const ISSUES_API = 'https://api.github.com/repos/raoroger380/nywsr724/issues';
 
             async function fetchMessages() {

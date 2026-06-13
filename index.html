@@ -1914,7 +1914,8 @@
                     resetCameraView();
                     await loadPhotoTimeline();
                 } catch (e) {
-                    showPhotoToast("保存失败，请稍后再试");
+                    showPhotoToast(e.message || "保存失败");
+                    console.error("Photo save error:", e);
                 } finally {
                     photoSaving = false;
                     photoSaveBtn.disabled = false;
