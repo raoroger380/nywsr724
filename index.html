@@ -1810,7 +1810,7 @@
             async function startCamera() {
                 try {
                     photoStream = await navigator.mediaDevices.getUserMedia({
-                        video: { facingMode: "user", width: { ideal: 960 }, height: { ideal: 720 } }
+                        video: { facingMode: "user", width: { ideal: 320 }, height: { ideal: 240 } }
                     });
                     photoVideo.srcObject = photoStream;
                     await photoVideo.play();
@@ -1858,7 +1858,7 @@
                     photoCaptureBtn.classList.add("hidden");
                     photoRejectBtn.classList.remove("hidden");
                     photoSaveBtn.classList.remove("hidden");
-                }, "image/jpeg", 0.85);
+                }, "image/jpeg", 0.6);
             });
 
             photoRejectBtn.addEventListener("click", resetCameraView);
@@ -1870,8 +1870,25 @@
                 photoSaveBtn.textContent = "保存中...";
                 try {
                     const b64 = await blobToBase64(capturedBlob);
+                    // 检查base64长度，GitHub Issue body限制约65000字符
+                    if (b64.length > 60000) {
+                        showPhotoToast("照片太大，请降低分辨率重试");
+                        photoSaving = false;
+                        photoSaveBtn.disabled = false;
+                        photoSaveBtn.textContent = "💾 保存留念";
+                        return;
+                    }
                     const note = photoNote.value.trim() || "生日留念";
                     const timestamp = new Date().toISOString();
+                    const body = `photo:true\ndate:${timestamp}\nimage:${b64}`;
+                    // body总长度不能超过65000
+                    if (body.length > 64000) {
+                        showPhotoToast("照片太大，请降低分辨率重试");
+                        photoSaving = false;
+                        photoSaveBtn.disabled = false;
+                        photoSaveBtn.textContent = "💾 保存留念";
+                        return;
+                    }
                     const res = await fetch(ISSUES_API, {
                         method: "POST",
                         headers: {
@@ -1880,11 +1897,18 @@
                         },
                         body: JSON.stringify({
                             title: `照片 ${note}`,
-                            body: `photo:true\ndate:${timestamp}\nimage:${b64}`,
+                            body: body,
                             labels: ["photo"],
                         }),
                     });
-                    if (!res.ok) throw new Error("Save failed");
+                    if (!res.ok) {
+                        const errText = await res.text().catch(() => '');
+                        const errMsg = res.status === 403 ? 'GitHub 接口限制，稍后再试'
+                            : res.status === 401 ? 'Token 无效，联系管理员'
+                            : res.status === 404 ? '保存失败，仓库不存在'
+                            : `保存失败 (${res.status})`;
+                        throw new Error(errMsg);
+                    }
                     showPhotoToast("照片已保存到时光轴 📸");
                     photoNote.value = "";
                     resetCameraView();
