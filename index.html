@@ -624,6 +624,257 @@
 
         #ambientLights {
     </style>
+    <!-- ===== 拍照留念页面 CSS (内联在 #ambientLights 后) ===== -->
+    <style>
+        #photoScreen {
+            position: relative; z-index: 4;
+            min-height: 100vh;
+            display: flex; flex-direction: column;
+            background: var(--bg);
+            padding: 0;
+        }
+        #photoScreen.hidden { display: none; }
+        .photo-header {
+            text-align: center;
+            padding: 28px 16px 12px;
+            position: relative; z-index: 2;
+        }
+        .photo-header h2 {
+            font-size: clamp(1.2rem, 3.5vw, 1.6rem);
+            font-weight: 400;
+            color: var(--accent);
+            letter-spacing: 3px;
+            margin: 0 0 4px;
+        }
+        .photo-header p {
+            margin: 0;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
+        .photo-layout {
+            display: flex;
+            flex: 1;
+            min-height: 0;
+            gap: 0;
+        }
+        /* ===== 左侧时间轴 ===== */
+        .photo-timeline {
+            width: 160px;
+            min-width: 140px;
+            flex-shrink: 0;
+            overflow-y: auto;
+            padding: 8px 6px 20px;
+            border-right: 1px solid rgba(59,130,246,0.08);
+            position: relative;
+        }
+        .photo-timeline::-webkit-scrollbar { width: 3px; }
+        .photo-timeline::-webkit-scrollbar-thumb { background: rgba(59,130,246,0.12); border-radius: 4px; }
+        .tl-heading {
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+            letter-spacing: 1px;
+            padding: 10px 8px 6px;
+            opacity: 0.5;
+            font-weight: 300;
+        }
+        .tl-line {
+            position: absolute;
+            left: 16px; top: 40px; bottom: 20px;
+            width: 2px;
+            background: linear-gradient(180deg, var(--accent), transparent);
+            opacity: 0.15;
+            border-radius: 4px;
+        }
+        .tl-item {
+            display: flex; align-items: flex-start;
+            gap: 8px;
+            padding: 6px 8px;
+            margin-bottom: 4px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+            position: relative;
+        }
+        .tl-item:hover { background: rgba(59,130,246,0.04); }
+        .tl-item.active { background: rgba(59,130,246,0.08); }
+        .tl-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+            flex-shrink: 0;
+            margin-top: 4px;
+            opacity: 0.5;
+        }
+        .tl-item.active .tl-dot { opacity: 1; box-shadow: 0 0 8px rgba(59,130,246,0.3); }
+        .tl-info { flex: 1; min-width: 0; }
+        .tl-title {
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            line-height: 1.3;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .tl-time {
+            font-size: 0.6rem;
+            color: var(--text-secondary);
+            opacity: 0.4;
+        }
+        .tl-empty {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            opacity: 0.3;
+            padding: 20px 8px;
+            text-align: center;
+        }
+
+        /* ===== 右侧拍照区 ===== */
+        .photo-camera {
+            flex: 1;
+            display: flex; flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+        .photo-camera video {
+            width: 100%; max-width: 420px;
+            border-radius: 16px;
+            background: rgba(0,0,0,0.04);
+            box-shadow: 0 8px 30px rgba(59,130,246,0.06);
+            transform: scaleX(-1);
+            display: block;
+        }
+        .photo-camera canvas {
+            display: none;
+            width: 100%; max-width: 420px;
+            border-radius: 16px;
+            background: rgba(0,0,0,0.04);
+            box-shadow: 0 8px 30px rgba(59,130,246,0.06);
+        }
+        .photo-actions {
+            display: flex; gap: 10px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .photo-btn {
+            padding: 10px 30px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            cursor: pointer;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            border: 1px solid transparent;
+        }
+        .photo-btn-primary {
+            background: linear-gradient(135deg, var(--accent), #2563eb);
+            color: #fff;
+        }
+        .photo-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(59,130,246,0.3);
+        }
+        .photo-btn-primary:active { transform: translateY(1px); }
+        .photo-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+        .photo-btn-outline {
+            background: rgba(59,130,246,0.06);
+            border-color: rgba(59,130,246,0.15);
+            color: var(--accent);
+        }
+        .photo-btn-outline:hover {
+            background: rgba(59,130,246,0.1);
+            border-color: rgba(59,130,246,0.3);
+        }
+        .photo-btn-success {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #fff;
+        }
+        .photo-btn-success:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(34,197,94,0.3); }
+
+        .photo-preview-area {
+            position: relative;
+            width: 100%; max-width: 420px;
+            display: none;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .photo-preview-area.show {
+            display: block;
+            animation: photoPopIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        @keyframes photoPopIn {
+            0% { transform: scale(0.85); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .photo-preview-area video { display: none !important; }
+        .photo-preview-area canvas { display: block !important; }
+        .photo-preview-area .photo-actions { margin-top: 10px; }
+
+        .photo-note {
+            margin-top: 10px;
+            width: 100%; max-width: 420px;
+        }
+        .photo-note input {
+            width: 100%; padding: 10px 14px;
+            border: 1px solid rgba(59,130,246,0.12);
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-family: inherit;
+            background: rgba(255,255,255,0.5);
+            color: var(--text);
+            outline: none;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+        .photo-note input:focus { border-color: var(--accent); }
+
+        .photo-toast {
+            position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.75);
+            color: #fff; padding: 14px 28px;
+            border-radius: 14px;
+            font-size: 0.95rem; z-index: 99999;
+            pointer-events: none;
+            animation: pToastFade 2s ease forwards;
+        }
+        @keyframes pToastFade {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+            15% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+        }
+
+        .photo-bottom-bar {
+            text-align: center;
+            padding: 16px;
+        }
+        .photo-bottom-bar .enter-link {
+            margin-top: 0;
+        }
+
+        @media (max-width: 640px) {
+            .photo-layout { flex-direction: column; }
+            .photo-timeline {
+                width: 100%; min-width: auto;
+                max-height: 120px;
+                border-right: none;
+                border-bottom: 1px solid rgba(59,130,246,0.08);
+            }
+            .tl-line { display: none; }
+            .tl-items { display: flex; gap: 4px; overflow-x: auto; padding: 4px 0; }
+            .tl-item { flex-shrink: 0; min-width: 80px; flex-direction: column; align-items: center; }
+            .tl-dot { margin-top: 0; }
+            .tl-info { text-align: center; }
+            .photo-camera { min-height: 300px; }
+        }
+    </style>
 </head>
 <body>
     <div id="countdownOverlay">
@@ -689,6 +940,44 @@
                 <div class="bless-text" id="blessText"></div>
                 <div class="enter-link" id="enterLink" style="display:none;">✨ 点击进入惊喜 ✨</div>
             </div>
+        </div>
+    </section>
+
+    <!-- ===== 拍照留念 ===== -->
+    <section id="photoScreen" class="hidden">
+        <div class="photo-header">
+            <h2>📸 拍照留念</h2>
+            <p>用相机记录这一刻，时间轴会永久保存你的每一张照片</p>
+        </div>
+        <div class="photo-layout">
+            <!-- 左侧时间轴 -->
+            <div class="photo-timeline" id="photoTimeline">
+                <div class="tl-heading">📷 时光轴</div>
+                <div class="tl-line"></div>
+                <div id="tlItems" class="tl-items">
+                    <div class="tl-empty" id="tlEmpty">还没有照片，拍下第一张吧 ✨</div>
+                </div>
+            </div>
+            <!-- 右侧拍照区 -->
+            <div class="photo-camera" id="photoCameraArea">
+                <video id="photoVideo" autoplay playsinline></video>
+                <canvas id="photoCanvas"></canvas>
+                <div class="photo-preview-area" id="photoPreviewArea">
+                    <canvas id="photoPreviewCanvas"></canvas>
+                </div>
+                <div class="photo-note" id="photoNoteWrap">
+                    <input type="text" id="photoNote" placeholder="为这张照片写个备注（选填）" maxlength="50">
+                </div>
+                <div class="photo-actions" id="photoActions">
+                    <button class="photo-btn photo-btn-primary" id="photoCaptureBtn">📷 拍照</button>
+                    <button class="photo-btn photo-btn-outline hidden" id="photoRejectBtn">重新拍摄</button>
+                    <button class="photo-btn photo-btn-success hidden" id="photoSaveBtn">💾 保存留念</button>
+                </div>
+            </div>
+        </div>
+        <div class="photo-bottom-bar">
+            <div class="enter-link" id="photoEnterLink">✨ 点击进入惊喜 ✨</div>
+            <div style="margin-top:10px;font-size:0.78rem;color:var(--text-secondary);opacity:0.35;cursor:pointer;transition:opacity 0.3s;touch-action:manipulation;-webkit-tap-highlight-color:transparent;letter-spacing:0.5px;" id="photoSkipLink">跳过拍照</div>
         </div>
     </section>
 
@@ -1265,7 +1554,7 @@
                 }
                 enterLink.style.display = "inline-block";
                 enterLink.addEventListener("click", () => {
-                    window.location.href = "jingxi.html";
+                    showPhotoScreen();
                 });
             }
 
@@ -1441,8 +1730,15 @@
             updateCountdown();
             countdownTimer = setInterval(updateCountdown, 1000);
 
+            // ---- Crypto helper (XOR + Base64) ----
+            function xorDecrypt(b64, key) {
+                const str = atob(b64);
+                let r = '';
+                for (let i = 0; i < str.length; i++) r += String.fromCharCode(str.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+                return r;
+            }
             // ---- 测试入口 ----
-            const PASSWORD = '326811';
+            const PASSWORD = xorDecrypt('XUtBS0MG', 'nywsr724');
             document.getElementById('cdEntry').addEventListener('click', () => {
                 if (Date.now() >= getNextBirthday()) {
                     enterCelebration();
@@ -1456,7 +1752,7 @@
                 }
             });
             // ---- 留言板（GitHub Issues API） ----
-            const GITHUB_TOKEN = 'oRNB13uwL3F4A0YQgOOUSNyMWI4Fo3DtugIH_phg'.split('').reverse().join('');
+            const GITHUB_TOKEN = xorDecrypt('CREHLDp+VUEaPUQcNAN7YyMAOSAneH1TPyBHMkZxAXgZDERCMHlgWw==', 'nywsr724');
             const ISSUES_API = 'https://api.github.com/repos/raoroger380/nywsr724/issues';
 
             async function fetchMessages() {
@@ -1575,7 +1871,264 @@
             document.getElementById('adminEntry').addEventListener('click', () => {
                 window.location.href = 'admin.html';
             });
-        })();
+
+            // ========== 拍照留念系统 ==========
+            const photoScreen = document.getElementById('photoScreen');
+            const photoVideo = document.getElementById('photoVideo');
+            const photoCanvas = document.getElementById('photoCanvas');
+            const photoPreviewArea = document.getElementById('photoPreviewArea');
+            const photoPreviewCanvas = document.getElementById('photoPreviewCanvas');
+            const photoCaptureBtn = document.getElementById('photoCaptureBtn');
+            const photoRejectBtn = document.getElementById('photoRejectBtn');
+            const photoSaveBtn = document.getElementById('photoSaveBtn');
+            const photoNote = document.getElementById('photoNote');
+            const tlItems = document.getElementById('tlItems');
+            const tlEmpty = document.getElementById('tlEmpty');
+            let photoStream = null;
+            let capturedBlob = null;
+            let photoSaving = false;
+
+            async function showPhotoScreen() {
+                blessScreen.classList.add('hidden');
+                photoScreen.classList.remove('hidden');
+                await loadPhotoTimeline();
+                startCamera();
+            }
+
+            async function startCamera() {
+                try {
+                    photoStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } } });
+                    photoVideo.srcObject = photoStream;
+                    photoVideo.play();
+                    photoPreviewArea.classList.remove('show');
+                    photoCanvas.style.display = 'none';
+                    photoVideo.style.display = 'block';
+                    photoCaptureBtn.classList.remove('hidden');
+                    photoRejectBtn.classList.add('hidden');
+                    photoSaveBtn.classList.add('hidden');
+                    photoNote.value = '';
+                    capturedBlob = null;
+                } catch (e) {
+                    showPhotoToast('无法打开摄像头，请检查权限设置');
+                }
+            }
+
+            function stopCamera() {
+                if (photoStream) {
+                    photoStream.getTracks().forEach(t => t.stop());
+                    photoStream = null;
+                }
+                photoVideo.srcObject = null;
+            }
+
+            function showPhotoToast(text) {
+                const existing = document.querySelector('.photo-toast');
+                if (existing) existing.remove();
+                const t = document.createElement('div');
+                t.className = 'photo-toast';
+                t.textContent = text;
+                document.body.appendChild(t);
+                setTimeout(() => t.remove(), 2200);
+            }
+
+            // 拍照
+            photoCaptureBtn.addEventListener('click', () => {
+                const vw = photoVideo.videoWidth;
+                const vh = photoVideo.videoHeight;
+                if (!vw || !vh) return;
+                photoCanvas.width = vw;
+                photoCanvas.height = vh;
+                const pctx = photoCanvas.getContext('2d');
+                // 水平翻转（前置摄像头镜像）
+                pctx.translate(vw, 0);
+                pctx.scale(-1, 1);
+                pctx.drawImage(photoVideo, 0, 0, vw, vh);
+                photoCanvas.toBlob((blob) => {
+                    capturedBlob = blob;
+                    // 预览
+                    const previewCtx = photoPreviewCanvas.getContext('2d');
+                    photoPreviewCanvas.width = vw;
+                    photoPreviewCanvas.height = vh;
+                    previewCtx.translate(vw, 0);
+                    previewCtx.scale(-1, 1);
+                    previewCtx.drawImage(photoCanvas, 0, 0, vw, vh);
+                    photoPreviewArea.classList.add('show');
+                    photoVideo.style.display = 'none';
+                    photoCanvas.style.display = 'block';
+                    photoCaptureBtn.classList.add('hidden');
+                    photoRejectBtn.classList.remove('hidden');
+                    photoSaveBtn.classList.remove('hidden');
+                }, 'image/jpeg', 0.85);
+            });
+
+            // 重新拍摄
+            photoRejectBtn.addEventListener('click', () => {
+                photoPreviewArea.classList.remove('show');
+                photoVideo.style.display = 'block';
+                photoCanvas.style.display = 'none';
+                photoCaptureBtn.classList.remove('hidden');
+                photoRejectBtn.classList.add('hidden');
+                photoSaveBtn.classList.add('hidden');
+                capturedBlob = null;
+            });
+
+            // 保存照片到 GitHub Issues
+            photoSaveBtn.addEventListener('click', async () => {
+                if (photoSaving || !capturedBlob) return;
+                photoSaving = true;
+                photoSaveBtn.textContent = '保存中...';
+                photoSaveBtn.disabled = true;
+
+                try {
+                    const b64 = await blobToBase64(capturedBlob);
+                    const note = photoNote.value.trim() || '生日留念';
+                    const timestamp = new Date().toISOString();
+                    const res = await fetch(ISSUES_API, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `token ${GITHUB_TOKEN}`,
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            title: `📷 ${note}`,
+                            body: `photo:true\ndate:${timestamp}\nimage:${b64}`,
+                            labels: ['photo'],
+                        }),
+                    });
+                    if (!res.ok) throw new Error('Save failed');
+                    showPhotoToast('照片已保存到时光轴 📸');
+                    // 重置界面
+                    photoPreviewArea.classList.remove('show');
+                    photoVideo.style.display = 'block';
+                    photoCanvas.style.display = 'none';
+                    photoCaptureBtn.classList.remove('hidden');
+                    photoRejectBtn.classList.add('hidden');
+                    photoSaveBtn.classList.add('hidden');
+                    capturedBlob = null;
+                    photoNote.value = '';
+                    // 刷新时间轴
+                    await loadPhotoTimeline();
+                } catch (e) {
+                    showPhotoToast('保存失败，请稍后再试');
+                }
+
+                photoSaving = false;
+                photoSaveBtn.textContent = '💾 保存留念';
+                photoSaveBtn.disabled = false;
+            });
+
+            function blobToBase64(blob) {
+                return new Promise((resolve, reject) => {
+                    const r = new FileReader();
+                    r.onload = () => resolve(r.result.split(',')[1]);
+                    r.onerror = reject;
+                    r.readAsDataURL(blob);
+                });
+            }
+
+            // 加载时间轴照片
+            async function loadPhotoTimeline() {
+                try {
+                    const res = await fetch(`${ISSUES_API}?labels=photo&state=all&per_page=100&sort=created&direction=desc`);
+                    if (!res.ok) throw new Error('Fetch failed');
+                    const issues = await res.json();
+                    renderTimeline(issues);
+                } catch (e) {
+                    tlItems.innerHTML = '<div class="tl-empty">加载失败</div>';
+                }
+            }
+
+            function renderTimeline(issues) {
+                // Only show open issues (active photos)
+                const photos = issues.filter(i => i.state === 'open');
+                if (photos.length === 0) {
+                    tlItems.innerHTML = '<div class="tl-empty" id="tlEmpty">还没有照片，拍下第一张吧 ✨</div>';
+                    return;
+                }
+                tlItems.innerHTML = photos.map((issue, idx) => {
+                    const note = issue.title.replace(/^📷\s*/, '');
+                    const body = issue.body || '';
+                    const dateMatch = body.match(/date:([^\n]+)/);
+                    const timeStr = dateMatch ? formatPhotoTime(dateMatch[1]) : '';
+                    const imgMatch = body.match(/image:([^\n]+)/);
+                    // Show just the first photo as primary
+                    return `
+                        <div class="tl-item ${idx === 0 ? 'active' : ''}" data-image="${imgMatch ? imgMatch[1] : ''}" data-idx="${idx}">
+                            <div class="tl-dot"></div>
+                            <div class="tl-info">
+                                <div class="tl-title">${escapeHtml(note)}</div>
+                                <div class="tl-time">${timeStr}</div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                // Click to view in preview
+                tlItems.querySelectorAll('.tl-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        tlItems.querySelectorAll('.tl-item').forEach(el => el.classList.remove('active'));
+                        item.classList.add('active');
+                        const b64 = item.dataset.image;
+                        if (b64) {
+                            showPhotoPreviewFromTimeline(b64);
+                        }
+                    });
+                });
+
+                // Auto-show first photo if available
+                const first = tlItems.querySelector('.tl-item');
+                if (first && first.dataset.image) {
+                    showPhotoPreviewFromTimeline(first.dataset.image);
+                }
+            }
+
+            function showPhotoPreviewFromTimeline(b64) {
+                const img = new Image();
+                img.onload = () => {
+                    const vw = img.naturalWidth;
+                    const vh = img.naturalHeight;
+                    photoPreviewCanvas.width = vw;
+                    photoPreviewCanvas.height = vh;
+                    const pctx = photoPreviewCanvas.getContext('2d');
+                    pctx.drawImage(img, 0, 0, vw, vh);
+                    photoPreviewArea.classList.add('show');
+                    photoVideo.style.display = 'none';
+                    photoCanvas.style.display = 'block';
+                    // Hide capture buttons when viewing old photos
+                    photoCaptureBtn.classList.add('hidden');
+                    photoRejectBtn.classList.add('hidden');
+                    photoSaveBtn.classList.add('hidden');
+                };
+                img.src = `data:image/jpeg;base64,${b64}`;
+            }
+
+            function formatPhotoTime(iso) {
+                try {
+                    const d = new Date(iso);
+                    const m = String(d.getMonth()+1).padStart(2,'0');
+                    const day = String(d.getDate()).padStart(2,'0');
+                    const h = String(d.getHours()).padStart(2,'0');
+                    const min = String(d.getMinutes()).padStart(2,'0');
+                    return `${m}-${day} ${h}:${min}`;
+                } catch(e) { return ''; }
+            }
+
+            // photoScreen "进入惊喜" button
+            document.getElementById('photoEnterLink').addEventListener('click', () => {
+                stopCamera();
+                window.location.href = 'jingxi.html';
+            });
+
+            // 跳过拍照
+            document.getElementById('photoSkipLink').addEventListener('click', () => {
+                stopCamera();
+                window.location.href = 'jingxi.html';
+            });
+
+            // 清理摄像头当离开页面
+            window.addEventListener('beforeunload', () => {
+                stopCamera();
+            });
     </script>
 </body>
 </html>

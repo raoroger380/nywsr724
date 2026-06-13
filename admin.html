@@ -352,6 +352,165 @@
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(59,130,246,0.15); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(59,130,246,0.25); }
+
+        /* ===== Photo Management ===== */
+        .admin-tabs {
+            display: flex; gap: 2px;
+            margin-bottom: 20px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 40px;
+            padding: 3px;
+            border: 1px solid rgba(59,130,246,0.08);
+            width: fit-content;
+        }
+        .admin-tab {
+            padding: 8px 22px;
+            border-radius: 30px;
+            font-size: 0.82rem;
+            font-family: inherit;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            transition: all 0.3s;
+            letter-spacing: 1px;
+            touch-action: manipulation;
+        }
+        .admin-tab.active {
+            background: rgba(255,255,255,0.6);
+            color: var(--accent);
+            box-shadow: 0 2px 8px rgba(59,130,246,0.06);
+        }
+        .admin-tab:hover:not(.active) { color: var(--text); }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 14px;
+            padding: 4px 0;
+        }
+        .photo-card {
+            background: rgba(255,255,255,0.4);
+            border-radius: var(--radius);
+            border: 1px solid rgba(59,130,246,0.08);
+            overflow: hidden;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .photo-card:hover {
+            box-shadow: 0 8px 24px rgba(59,130,246,0.08);
+            border-color: rgba(59,130,246,0.15);
+        }
+        .photo-card img {
+            width: 100%;
+            aspect-ratio: 4/3;
+            object-fit: cover;
+            display: block;
+            background: rgba(59,130,246,0.02);
+            cursor: pointer;
+        }
+        .photo-card .photo-card-info {
+            padding: 8px 10px;
+        }
+        .photo-card .photo-card-title {
+            font-size: 0.72rem;
+            color: var(--text);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .photo-card .photo-card-time {
+            font-size: 0.6rem;
+            color: var(--text-secondary);
+            opacity: 0.5;
+            margin-top: 2px;
+        }
+        .photo-card .photo-del-btn {
+            position: absolute;
+            top: 6px; right: 6px;
+            width: 26px; height: 26px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(239,68,68,0.7);
+            color: #fff;
+            font-size: 0.8rem;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            touch-action: manipulation;
+        }
+        .photo-card:hover .photo-del-btn { opacity: 1; }
+
+        .photo-detail-overlay {
+            position: fixed; inset: 0; z-index: 99999;
+            background: rgba(0,0,0,0.15);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center; align-items: center;
+            padding: 20px;
+        }
+        .photo-detail-overlay.show { display: flex; }
+        .photo-detail-box {
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+            border: 1px solid rgba(59,130,246,0.12);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            text-align: center;
+            box-shadow: 0 24px 80px rgba(59,130,246,0.12);
+            animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        .photo-detail-box img {
+            width: 100%;
+            max-height: 60vh;
+            object-fit: contain;
+            border-radius: var(--radius-sm);
+            background: rgba(0,0,0,0.02);
+        }
+        .photo-detail-info {
+            margin-top: 12px;
+            text-align: left;
+        }
+        .photo-detail-info .detail-note {
+            font-size: 0.9rem;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+        .photo-detail-info .detail-time {
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+        }
+        .photo-detail-close {
+            margin-top: 14px;
+            padding: 8px 24px;
+            border-radius: 30px;
+            border: 1px solid rgba(59,130,246,0.15);
+            background: rgba(59,130,246,0.06);
+            color: var(--text);
+            font-size: 0.82rem;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s;
+            touch-action: manipulation;
+        }
+        .photo-detail-close:hover {
+            background: rgba(59,130,246,0.1);
+            border-color: rgba(59,130,246,0.3);
+        }
+        .photo-empty {
+            text-align: center; padding: 48px 20px;
+            color: var(--text-secondary); font-size: 0.9rem;
+        }
+        .photo-empty .icon { font-size: 2rem; margin-bottom: 12px; }
     </style>
 </head>
 <body>
@@ -372,7 +531,7 @@
     <div id="adminPanel">
         <div class="admin-header">
             <div class="admin-header-left">
-                <h1>💬 留言管理</h1>
+                <h1>📋 管理后台</h1>
                 <span class="admin-stats" id="statsTotal">加载中...</span>
             </div>
             <div class="admin-actions">
@@ -381,32 +540,67 @@
             </div>
         </div>
 
-        <div class="msg-table-wrap">
-            <div id="loadingState" class="loading-dots">
-                <span>·</span><span>·</span><span>·</span> 加载留言中
+        <!-- Tabs -->
+        <div class="admin-tabs">
+            <button class="admin-tab active" data-tab="messages">💬 留言</button>
+            <button class="admin-tab" data-tab="photos">📸 照片</button>
+        </div>
+
+        <!-- Messages Section -->
+        <div id="messagesSection" class="tab-section">
+            <div class="msg-table-wrap">
+                <div id="loadingState" class="loading-dots">
+                    <span>·</span><span>·</span><span>·</span> 加载留言中
+                </div>
+                <div id="emptyState" class="msg-empty-state hidden">
+                    <div class="icon">📭</div>
+                    <div>还没有任何留言</div>
+                </div>
+                <div id="tableContainer" class="hidden">
+                    <table class="msg-table">
+                        <thead>
+                            <tr>
+                                <th class="col-index">#</th>
+                                <th class="col-name">留言者</th>
+                                <th class="col-content">祝福内容</th>
+                                <th class="col-time">时间</th>
+                                <th class="col-action">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="msgTableBody"></tbody>
+                    </table>
+                </div>
             </div>
-            <div id="emptyState" class="msg-empty-state hidden">
-                <div class="icon">📭</div>
-                <div>还没有任何留言</div>
-            </div>
-            <div id="tableContainer" class="hidden">
-                <table class="msg-table">
-                    <thead>
-                        <tr>
-                            <th class="col-index">#</th>
-                            <th class="col-name">留言者</th>
-                            <th class="col-content">祝福内容</th>
-                            <th class="col-time">时间</th>
-                            <th class="col-action">操作</th>
-                        </tr>
-                    </thead>
-                    <tbody id="msgTableBody"></tbody>
-                </table>
+        </div>
+
+        <!-- Photos Section -->
+        <div id="photosSection" class="tab-section" style="display:none;">
+            <div class="msg-table-wrap" style="padding:16px;">
+                <div id="photoLoading" class="loading-dots">
+                    <span>·</span><span>·</span><span>·</span> 加载照片中
+                </div>
+                <div id="photoEmpty" class="photo-empty hidden">
+                    <div class="icon">📸</div>
+                    <div>还没有保存的照片</div>
+                </div>
+                <div id="photoGrid" class="photo-grid hidden"></div>
             </div>
         </div>
 
         <div style="text-align:center;margin-top:12px;">
             <span style="font-size:0.72rem;color:var(--text-secondary);opacity:0.3;">管理入口 · 仅管理员可见</span>
+        </div>
+    </div>
+
+    <!-- ===== Photo Detail Overlay ===== -->
+    <div class="photo-detail-overlay" id="photoDetailOverlay">
+        <div class="photo-detail-box">
+            <img id="photoDetailImg" src="" alt="photo">
+            <div class="photo-detail-info">
+                <div class="detail-note" id="photoDetailNote"></div>
+                <div class="detail-time" id="photoDetailTime"></div>
+            </div>
+            <button class="photo-detail-close" id="photoDetailClose">关闭</button>
         </div>
     </div>
 
@@ -425,9 +619,16 @@
 
     <script>
         (function() {
+            // ===== Crypto helper (XOR + Base64) =====
+            function xorDecrypt(b64, key) {
+                const str = atob(b64);
+                let r = '';
+                for (let i = 0; i < str.length; i++) r += String.fromCharCode(str.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+                return r;
+            }
             // ===== Configuration =====
-            const ADMIN_PASSWORD = '326811';
-            const GITHUB_TOKEN = 'oRNB13uwL3F4A0YQgOOUSNyMWI4Fo3DtugIH_phg'.split('').reverse().join('');
+            const ADMIN_PASSWORD = xorDecrypt('XUtBS0MG', 'nywsr724');
+            const GITHUB_TOKEN = xorDecrypt('CREHLDp+VUEaPUQcNAN7YyMAOSAneH1TPyBHMkZxAXgZDERCMHlgWw==', 'nywsr724');
             const ISSUES_API = 'https://api.github.com/repos/raoroger380/nywsr724/issues';
 
             // ===== DOM refs =====
@@ -606,6 +807,7 @@
                 confirmOverlay.classList.remove('show');
                 pendingDeleteIssueNumber = null;
                 pendingDeleteContent = '';
+                pendingDeleteIsPhoto = false;
             });
 
             confirmOverlay.addEventListener('click', (e) => {
@@ -613,6 +815,7 @@
                     confirmOverlay.classList.remove('show');
                     pendingDeleteIssueNumber = null;
                     pendingDeleteContent = '';
+                    pendingDeleteIsPhoto = false;
                 }
             });
 
@@ -626,7 +829,12 @@
                 if (ok) {
                     showToast('已删除 ✅');
                     confirmOverlay.classList.remove('show');
-                    await loadAndRender();
+                    if (pendingDeleteIsPhoto) {
+                        pendingDeleteIsPhoto = false;
+                        await loadPhotos();
+                    } else {
+                        await loadAndRender();
+                    }
                 } else {
                     showToast('删除失败，请稍后再试');
                     confirmOverlay.classList.remove('show');
@@ -637,6 +845,7 @@
                 confirmOk.disabled = false;
                 pendingDeleteIssueNumber = null;
                 pendingDeleteContent = '';
+                pendingDeleteIsPhoto = false;
             });
 
             // ===== Login =====
@@ -668,8 +877,152 @@
                 loginError.classList.remove('show');
             });
 
+            // ===== Tabs =====
+            const tabButtons = document.querySelectorAll('.admin-tab');
+            const messagesSection = document.getElementById('messagesSection');
+            const photosSection = document.getElementById('photosSection');
+
+            tabButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    tabButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    const tab = btn.dataset.tab;
+                    if (tab === 'messages') {
+                        messagesSection.style.display = 'block';
+                        photosSection.style.display = 'none';
+                    } else {
+                        messagesSection.style.display = 'none';
+                        photosSection.style.display = 'block';
+                        loadPhotos();
+                    }
+                });
+            });
+
+            // ===== Photo Management =====
+            let allPhotoIssues = [];
+
+            async function loadPhotos() {
+                const photoLoading = document.getElementById('photoLoading');
+                const photoEmpty = document.getElementById('photoEmpty');
+                const photoGrid = document.getElementById('photoGrid');
+
+                photoLoading.classList.remove('hidden');
+                photoEmpty.classList.add('hidden');
+                photoGrid.classList.add('hidden');
+
+                try {
+                    const res = await fetch(`${ISSUES_API}?labels=photo&state=all&per_page=100&sort=created&direction=desc`);
+                    if (!res.ok) throw new Error('Fetch failed');
+                    allPhotoIssues = await res.json();
+                    renderPhotos(allPhotoIssues);
+                } catch (e) {
+                    photoLoading.classList.add('hidden');
+                    photoGrid.innerHTML = '<div class="photo-empty">⚠️ 加载失败</div>';
+                    photoGrid.classList.remove('hidden');
+                }
+            }
+
+            function renderPhotos(issues) {
+                const photoLoading = document.getElementById('photoLoading');
+                const photoEmpty = document.getElementById('photoEmpty');
+                const photoGrid = document.getElementById('photoGrid');
+
+                photoLoading.classList.add('hidden');
+
+                const openPhotos = issues.filter(i => i.state === 'open');
+
+                if (openPhotos.length === 0) {
+                    photoEmpty.classList.remove('hidden');
+                    photoGrid.classList.add('hidden');
+                    return;
+                }
+
+                photoEmpty.classList.add('hidden');
+                photoGrid.classList.remove('hidden');
+
+                statsTotal.textContent = `${issues.length} 条留言 · ${openPhotos.length} 张照片`;
+
+                photoGrid.innerHTML = openPhotos.map(issue => {
+                    const note = issue.title.replace(/^📷\s*/, '');
+                    const body = issue.body || '';
+                    const dateMatch = body.match(/date:([^\n]+)/);
+                    const imgB64 = body.match(/image:([^\n]+)/);
+                    const timeStr = dateMatch ? formatAdminTime(dateMatch[1]) : formatAdminTime(issue.created_at);
+                    return `
+                        <div class="photo-card" data-issue="${issue.number}" data-b64="${imgB64 ? imgB64[1] : ''}">
+                            <img src="${imgB64 ? 'data:image/jpeg;base64,' + imgB64[1] : ''}" alt="${escapeHtml(note)}" loading="lazy">
+                            <button class="photo-del-btn" data-issue="${issue.number}" data-note="${escapeHtml(note)}">✕</button>
+                            <div class="photo-card-info">
+                                <div class="photo-card-title">${escapeHtml(note)}</div>
+                                <div class="photo-card-time">${timeStr}</div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                // Click to view detail
+                photoGrid.querySelectorAll('.photo-card img').forEach(img => {
+                    img.addEventListener('click', (e) => {
+                        const card = e.currentTarget.closest('.photo-card');
+                        const b64 = card.dataset.b64;
+                        const note = card.querySelector('.photo-card-title').textContent;
+                        const time = card.querySelector('.photo-card-time').textContent;
+                        document.getElementById('photoDetailImg').src = card.querySelector('img').src;
+                        document.getElementById('photoDetailNote').textContent = note;
+                        document.getElementById('photoDetailTime').textContent = time;
+                        document.getElementById('photoDetailOverlay').classList.add('show');
+                    });
+                });
+
+                // Delete button
+                photoGrid.querySelectorAll('.photo-del-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const issueNum = parseInt(btn.dataset.issue);
+                        const note = btn.dataset.note;
+                        pendingDeleteIssueNumber = issueNum;
+                        pendingDeleteContent = note;
+                        confirmDesc.textContent = `确定要删除这张照片吗？\n"${note}"`;
+                        confirmOverlay.classList.add('show');
+                        // Override the delete action for photos
+                        pendingDeleteIsPhoto = true;
+                    });
+                });
+            }
+
+            let pendingDeleteIsPhoto = false;
+
+            function formatAdminTime(iso) {
+                if (!iso) return '';
+                try {
+                    const d = new Date(iso);
+                    const m = String(d.getMonth()+1).padStart(2,'0');
+                    const day = String(d.getDate()).padStart(2,'0');
+                    const h = String(d.getHours()).padStart(2,'0');
+                    const min = String(d.getMinutes()).padStart(2,'0');
+                    return `${m}-${day} ${h}:${min}`;
+                } catch(e) { return ''; }
+            }
+
+            // Photo detail overlay
+            document.getElementById('photoDetailClose').addEventListener('click', () => {
+                document.getElementById('photoDetailOverlay').classList.remove('show');
+            });
+            document.getElementById('photoDetailOverlay').addEventListener('click', (e) => {
+                if (e.target === e.currentTarget) {
+                    document.getElementById('photoDetailOverlay').classList.remove('show');
+                }
+            });
+
             // ===== Refresh =====
-            refreshBtn.addEventListener('click', loadAndRender);
+            refreshBtn.addEventListener('click', () => {
+                const activeTab = document.querySelector('.admin-tab.active');
+                if (activeTab && activeTab.dataset.tab === 'photos') {
+                    loadPhotos();
+                } else {
+                    loadAndRender();
+                }
+            });
 
             // ===== Focus password on load =====
             loginPassword.focus();
