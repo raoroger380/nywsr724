@@ -1834,6 +1834,8 @@
                 photoRejectBtn.classList.add("hidden");
                 photoSaveBtn.classList.add("hidden");
                 capturedBlob = null;
+                const backBtn = document.getElementById("photoBackBtn");
+                if (backBtn) backBtn.remove();
             }
 
             photoCaptureBtn.addEventListener("click", () => {
@@ -1986,17 +1988,39 @@
                     photoCaptureBtn.classList.add("hidden");
                     photoRejectBtn.classList.add("hidden");
                     photoSaveBtn.classList.add("hidden");
+                    // 添加"返回拍照"按钮
+                    let backBtn = document.getElementById("photoBackBtn");
+                    if (!backBtn) {
+                        backBtn = document.createElement("button");
+                        backBtn.className = "photo-btn";
+                        backBtn.id = "photoBackBtn";
+                        backBtn.textContent = "返回拍照";
+                        document.querySelector(".photo-actions").appendChild(backBtn);
+                        backBtn.addEventListener("click", () => {
+                            backBtn.remove();
+                            photoPreviewArea.classList.remove("show");
+                            photoCanvas.style.display = "none";
+                            photoVideo.style.display = "block";
+                            photoCaptureBtn.classList.remove("hidden");
+                            photoRejectBtn.classList.add("hidden");
+                            photoSaveBtn.classList.add("hidden");
+                            capturedBlob = null;
+                        });
+                    } else {
+                        backBtn.classList.remove("hidden");
+                    }
                 };
                 img.src = `data:image/jpeg;base64,${b64}`;
             }
 
             function formatPhotoTime(iso) {
                 const d = new Date(iso);
+                const year = d.getFullYear();
                 const month = String(d.getMonth() + 1).padStart(2, "0");
                 const day = String(d.getDate()).padStart(2, "0");
                 const hour = String(d.getHours()).padStart(2, "0");
                 const min = String(d.getMinutes()).padStart(2, "0");
-                return `${month}-${day} ${hour}:${min}`;
+                return `${year}/${month}-${day} ${hour}:${min}`;
             }
 
             // photo navigation
