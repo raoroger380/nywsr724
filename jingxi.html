@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -171,7 +171,10 @@
             transition: bottom 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
             text-align: center;
         }
-        .bless-card.show { bottom: 24px; }
+        .bless-card.show {
+            bottom: auto; top: 50%;
+            transform: translate(-50%, -50%);
+        }
         .bless-card .card-emoji { font-size: 2rem; margin-bottom: 6px; }
         .bless-card .card-name {
             font-size: 1.2rem; color: var(--accent);
@@ -349,6 +352,71 @@
             .msg-textarea { min-height: 64px; }
             .msg-items { max-height: 150px; }
         }
+
+        /* 下一个按钮 */
+        .next-btn {
+            display: inline-block; margin-top: 8px;
+            padding: 8px 20px;
+            background: rgba(236,72,153,0.08);
+            border: 1px solid rgba(236,72,153,0.2);
+            border-radius: 30px;
+            color: #ec4899; font-size: 0.85rem;
+            cursor: pointer; font-family: inherit;
+            transition: all 0.3s; touch-action: manipulation;
+        }
+        .next-btn:hover {
+            background: rgba(236,72,153,0.12);
+            border-color: rgba(236,72,153,0.35);
+        }
+
+        /* 二维码弹窗 */
+        .qrcode-overlay {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.45);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 9999; opacity: 0; pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+        .qrcode-overlay.show {
+            opacity: 1; pointer-events: auto;
+        }
+        .qrcode-modal {
+            background: #fff; border-radius: 20px;
+            padding: 40px 36px 30px;
+            text-align: center;
+            box-shadow: 0 24px 80px rgba(0,0,0,0.2);
+            max-width: 320px; width: 85%;
+            transform: scale(0.9); transition: transform 0.3s ease;
+        }
+        .qrcode-overlay.show .qrcode-modal {
+            transform: scale(1);
+        }
+        .qrcode-modal img {
+            width: 180px; height: 180px;
+            border-radius: 12px; margin-bottom: 16px;
+            display: block; margin-left: auto; margin-right: auto;
+        }
+        .qrcode-modal .qrcode-title {
+            font-size: 1.1rem; color: #1e293b;
+            font-weight: 500; margin-bottom: 6px;
+        }
+        .qrcode-modal .qrcode-sub {
+            font-size: 0.85rem; color: #94a3b8; margin-bottom: 16px;
+        }
+        .qrcode-close {
+            display: inline-block; padding: 6px 22px;
+            background: rgba(59,130,246,0.06);
+            border: 1px solid rgba(59,130,246,0.12);
+            border-radius: 30px; color: #64748b;
+            font-size: 0.8rem; cursor: pointer;
+            font-family: inherit; transition: all 0.3s;
+        }
+        .qrcode-close:hover {
+            background: rgba(59,130,246,0.1);
+        }
     </style>
 </head>
 <body>
@@ -371,7 +439,18 @@
         <div class="card-divider"></div>
         <div class="card-msg" id="cardStats"></div>
         <button class="save-btn" id="saveBtn">📷 保存图片</button>
+        <button class="next-btn" id="nextBtn">下一个 ➜</button>
         <button class="msg-btn" id="msgBtn">💬 留言</button>
+    </div>
+
+    <!-- 二维码弹窗 -->
+    <div class="qrcode-overlay" id="qrcodeOverlay">
+        <div class="qrcode-modal">
+            <img src="qrcode.png" alt="收款码" id="qrCodeImg">
+            <div class="qrcode-title">🧋 请你喝奶茶</div>
+            <div class="qrcode-sub">扫码领取 10 元红包 🧧</div>
+            <div class="qrcode-close" id="qrClose">关闭</div>
+        </div>
     </div>
 
     <!-- 留言板弹窗 -->
@@ -950,91 +1029,73 @@
                 const diffMs = Date.now() - birthDate;
                 const daysAlive = Math.floor(diffMs / 86400000);
                 const hoursAlive = Math.floor(diffMs / 3600000);
+                const bdayNum = new Date().getFullYear() - 2011;
+                card.querySelector('.card-name').textContent = `机长 · 农友维 ${bdayNum}岁生日快乐`;
                 stats.innerHTML =
-                    `度过了 <strong>${hoursAlive.toLocaleString()}</strong> 小时<br>` +
-                    `来到世上 <strong>${daysAlive.toLocaleString()}</strong> 天<br>` +
-                    `这是你的 <strong>15</strong> 岁生日 🎉`;
+                    `今天是你的 <strong>第${bdayNum}个生日</strong> 🎂<br>` +
+                    `这是你来到世界的 <strong>第${daysAlive.toLocaleString()}天</strong>`;
                 card.classList.add('show');
             }
 
             function saveBlessingImage() {
-                const lines = [
-                    "农友维，生日快乐！",
-                    "愿新的一岁，每一天都闪闪发光",
-                    "保持热爱，奔赴山海，前程似锦",
-                    "平安喜乐，万事顺遂，友谊长存"
-                ];
                 const c = document.createElement('canvas');
                 const W = 600, H = 800;
                 c.width = W; c.height = H;
                 const ctx = c.getContext('2d');
 
-                ctx.fillStyle = '#ece6e0';
+                // 暖色背景
+                ctx.fillStyle = '#fdf6f0';
                 ctx.fillRect(0, 0, W, H);
-                const grad = ctx.createRadialGradient(300, 400, 0, 300, 400, 350);
-                grad.addColorStop(0, 'rgba(59, 130, 246, 0.05)');
-                grad.addColorStop(1, 'rgba(59, 130, 246, 0)');
-                ctx.fillStyle = grad;
-                ctx.fillRect(0, 0, W, H);
-                for (let i = 0; i < 30; i++) {
-                    ctx.fillStyle = `rgba(59, 130, 246, ${0.04 + Math.random() * 0.08})`;
-                    ctx.beginPath();
-                    ctx.arc(Math.random() * W, Math.random() * H, 1 + Math.random() * 3, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-                ctx.shadowColor = 'rgba(59, 130, 246, 0.1)';
-                ctx.shadowBlur = 50;
-                ctx.fillStyle = 'rgba(255,255,255,0.75)';
-                roundRect(ctx, 50, 80, 500, 640, 24);
-                ctx.fill();
-                ctx.shadowBlur = 0;
+
+                // 白色卡片
+                ctx.shadowColor = 'rgba(0,0,0,0.06)'; ctx.shadowBlur = 40;
+                ctx.fillStyle = '#ffffff';
+                roundRect(ctx, 60, 60, 480, 650, 20);
+                ctx.fill(); ctx.shadowBlur = 0;
+
+                // 顶部蓝色装饰条
                 ctx.fillStyle = '#3b82f6';
-                roundRect(ctx, 250, 110, 100, 3, 2);
-                ctx.fill();
-                ctx.fillStyle = '#3b82f6';
-                ctx.font = '32px "PingFang SC", "Microsoft YaHei", sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText('来自机长的祝福', 300, 210);
-                ctx.strokeStyle = 'rgba(59, 130, 246, 0.15)';
-                ctx.lineWidth = 1.5;
-                ctx.beginPath();
-                ctx.moveTo(180, 235);
-                ctx.lineTo(420, 235);
-                ctx.stroke();
+                roundRect(ctx, 260, 90, 80, 3, 2); ctx.fill();
+
+                // 标题
                 ctx.fillStyle = '#1e293b';
-                ctx.font = '20px "PingFang SC", "Microsoft YaHei", sans-serif';
-                ctx.textAlign = 'center';
-                let y = 310;
-                for (const line of lines) {
-                    ctx.fillText(line, 300, y);
-                    y += 65;
-                }
-                const birthDate = new Date(2011, 6, 24);
-                const diffMs = Date.now() - birthDate;
-                const daysAlive = Math.floor(diffMs / 86400000);
-                const hoursAlive = Math.floor(diffMs / 3600000);
+                ctx.font = 'bold 28px "PingFang SC", "Microsoft YaHei", sans-serif';
+                ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+                ctx.fillText('生日快乐', 300, 120);
+
+                // 名字
+                ctx.fillStyle = '#3b82f6';
+                ctx.font = '18px "PingFang SC", "Microsoft YaHei", sans-serif';
+                ctx.fillText('农友维', 300, 170);
+
+                // 分隔线
+                ctx.strokeStyle = 'rgba(59,130,246,0.12)';
+                ctx.lineWidth = 1; ctx.beginPath();
+                ctx.moveTo(180, 210); ctx.lineTo(420, 210); ctx.stroke();
+
+                // 祝福正文
+                ctx.fillStyle = '#475569';
+                ctx.font = '17px "PingFang SC", "Microsoft YaHei", sans-serif';
+                const year = new Date().getFullYear();
+                ctx.fillText(`🎂 祝你 ${year} 岁生日快乐`, 300, 248);
+                const bdayNum = new Date().getFullYear() - 2011;
+                ctx.fillText(`🥳 第${bdayNum}个生日 · 开开心心`, 300, 288);
+                ctx.fillText('⚽ 保持对足球的热爱，取得成功', 300, 328);
+                ctx.fillText('🤝 希望我们永远是好朋友', 300, 368);
+
+                // 祝福语
                 ctx.fillStyle = '#64748b';
                 ctx.font = '15px "PingFang SC", "Microsoft YaHei", sans-serif';
-                ctx.fillText(`已度过 ${hoursAlive.toLocaleString()} 小时 · 来到世上 ${daysAlive.toLocaleString()} 天`, 300, y + 15);
-                ctx.fillStyle = '#3b82f6';
-                ctx.font = '17px "PingFang SC", "Microsoft YaHei", sans-serif';
-                ctx.fillText('这是你的 15 岁生日 🎉', 300, y + 48);
-                ctx.fillStyle = 'rgba(59, 130, 246, 0.06)';
-                ctx.beginPath();
-                ctx.arc(300, 560, 80, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.fillStyle = 'rgba(59, 130, 246, 0.04)';
-                ctx.beginPath();
-                ctx.arc(300, 560, 120, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.fillStyle = '#64748b';
-                ctx.font = '14px "PingFang SC", "Microsoft YaHei", sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText('— 机长 · 祝福 —', 300, 670);
-                const now = new Date();
+                ctx.fillText('愿每一年你都可以开开心心', 300, 440);
+
+                // 落款
                 ctx.fillStyle = '#94a3b8';
-                ctx.font = '12px "PingFang SC", sans-serif';
-                ctx.fillText(`${now.getFullYear()}年${now.getMonth()+1}月`, 300, 700);
+                ctx.font = '13px "PingFang SC", sans-serif';
+                const now = new Date();
+                ctx.fillText('—— 机长 · 祝福 ——', 300, 520);
+                ctx.fillText(`${now.getFullYear()}年${now.getMonth()+1}月 · 第${bdayNum}个生日`, 300, 550);
+
+                // 触发下载
                 const link = document.createElement('a');
                 link.download = '来自机长的祝福-农友维.png';
                 link.href = c.toDataURL('image/png');
@@ -1059,6 +1120,18 @@
             document.getElementById('saveBtn').addEventListener('click', saveBlessingImage);
 
             // ---- Crypto helper (XOR + Base64) ----
+
+            // ---- 下一个：二维码弹窗 ----
+            document.getElementById('nextBtn').addEventListener('click', () => {
+                document.getElementById('qrcodeOverlay').classList.add('show');
+            });
+            document.getElementById('qrClose').addEventListener('click', () => {
+                document.getElementById('qrcodeOverlay').classList.remove('show');
+            });
+            document.getElementById('qrcodeOverlay').addEventListener('click', (e) => {
+                if (e.target === e.currentTarget)
+                    document.getElementById('qrcodeOverlay').classList.remove('show');
+            });
             function xorDecrypt(b64, key) {
                 const str = atob(b64);
                 let r = '';
@@ -1197,3 +1270,4 @@
     </script>
 </body>
 </html>
+

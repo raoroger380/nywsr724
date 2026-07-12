@@ -832,7 +832,7 @@
         <div class="happy-birthday-text" id="happyText">happy birthday</div>
         <button id="micBtn"> 吹蜡烛</button>
         <div id="blowMeter"><i id="meterFill"></i></div>
-        <div class="hint" id="cakeHint">对着麦克风吹气，蜡烛熄灭愿望成真 ✨</div>
+        <div class="hint" id="cakeHint">对着麦克风吹气，蜡烛熄灭愿望成真 ❤️</div>
         <div class="hint skip-hint hidden" id="skipBlow">点击跳过</div>
     </section>
 
@@ -841,7 +841,7 @@
             <div class="bless-content">
                 <h2 class="bless-title">来自机长的祝福</h2>
                 <div class="bless-text" id="blessText"></div>
-                <div class="enter-link" id="enterLink" style="display:none;">✨ 点击进入拍照留念 ✨</div>
+                <div class="enter-link" id="enterLink" style="display:none;">点击进入拍照留念</div>
             </div>
         </div>
     </section>
@@ -873,22 +873,22 @@
                     <input type="text" id="photoNote" placeholder="为这张照片写个备注（选填）" maxlength="50">
                 </div>
                 <div class="photo-actions">
-                    <button class="photo-btn photo-btn-primary" id="photoCaptureBtn">📷 拍照</button>
+                    <button class="photo-btn photo-btn-primary" id="photoCaptureBtn">📷拍照</button>
                     <button class="photo-btn hidden" id="photoRejectBtn">重新拍摄</button>
-                    <button class="photo-btn photo-btn-success hidden" id="photoSaveBtn">💾 保存留念</button>
+                    <button class="photo-btn photo-btn-success hidden" id="photoSaveBtn">💾保存留念</button>
                 </div>
             </section>
         </div>
 
         <nav class="photo-bottom-bar">
-            <div class="enter-link" id="photoEnterLink">✨ 点击进入惊喜 ✨</div>
+            <div class="enter-link" id="photoEnterLink">点击进入惊喜</div>
             <div style="font-size:0.78rem;color:var(--text-secondary);opacity:0.35;cursor:pointer;letter-spacing:0.5px;" id="photoSkipLink">跳过拍照</div>
         </nav>
     </section>
 
     <div id="wishOverlay">
         <div class="wish-card">
-            <div class="wish-emoji">🕯️</div>
+            <div class="wish-emoji">❤️</div>
             <div class="wish-title">许个愿吧</div>
             <div class="wish-desc">
                 闭上眼睛，默默许下心愿<br>
@@ -909,7 +909,7 @@
                 <div class="msg-form">
                     <input type="text" id="msgName" placeholder="你的名字（选填）" class="msg-input" maxlength="20">
                     <textarea id="msgContent" placeholder="写下你的祝福..." class="msg-textarea" maxlength="200"></textarea>
-                    <button id="msgSubmit" class="msg-submit">发送祝福 ✨</button>
+                    <button id="msgSubmit" class="msg-submit">发送祝福</button>
                 </div>
                 <div class="msg-list">
                     <div class="msg-list-title">已有祝福</div>
@@ -1447,10 +1447,10 @@
 
             async function playBlessing() {
                 const lines = [
-                    "农友维，生日快乐！",
-                    "愿新的一岁，每一天都闪闪发光",
-                    "保持热爱，奔赴山海，前程似锦",
-                    "平安喜乐，万事顺遂，友谊长存"
+                    "农友维，祝你生日快乐！",
+                    "愿每一年你都可以开开心心",
+                    "保持对足球的热爱，取得成功",
+                    "希望我们永远是好朋友"
                 ];
                 blessText.textContent = "";
                 for (const line of lines) {
