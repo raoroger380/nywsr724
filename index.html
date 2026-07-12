@@ -622,161 +622,6 @@
             border-color: rgba(59,130,246,0.3);
         }
 
-        /* ===== 拍照留念页面 ===== */
-        #photoScreen {
-            position: relative; z-index: 4;
-            min-height: 100vh;
-            display: flex; flex-direction: column;
-            background: var(--bg);
-            padding: 28px 18px 34px;
-        }
-        #photoScreen.hidden { display: none; }
-        .photo-header { text-align: center; margin-bottom: 12px; }
-        .photo-header h2 {
-            margin: 0 0 6px;
-            color: var(--accent);
-            font-weight: 400;
-            letter-spacing: 2px;
-            font-size: clamp(1.4rem, 4vw, 2rem);
-        }
-        .photo-header p {
-            margin: 0;
-            color: var(--text-secondary);
-            font-size: 0.88rem;
-            line-height: 1.6;
-        }
-        .photo-layout {
-            width: min(960px, 100%);
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: minmax(200px, 0.7fr) minmax(280px, 1.3fr);
-            gap: 16px;
-            align-items: start;
-            flex: 1;
-        }
-        .photo-timeline, .photo-camera {
-            background: rgba(255,255,255,0.5);
-            border: 1px solid rgba(59,130,246,0.12);
-            border-radius: var(--radius-lg);
-            backdrop-filter: blur(22px);
-            -webkit-backdrop-filter: blur(22px);
-            box-shadow: 0 8px 30px rgba(59,130,246,0.06);
-        }
-        .photo-timeline {
-            padding: 18px 16px;
-            min-height: 400px;
-        }
-        .tl-heading {
-            color: var(--accent);
-            font-size: 0.95rem;
-            letter-spacing: 1px;
-            margin-bottom: 14px;
-        }
-        .tl-items { display: grid; gap: 10px; }
-        .tl-item {
-            display: grid;
-            grid-template-columns: 10px 1fr;
-            gap: 10px;
-            align-items: start;
-            padding: 10px;
-            border: 1px solid rgba(59,130,246,0.08);
-            border-radius: 12px;
-            background: rgba(255,255,255,0.38);
-            cursor: pointer;
-        }
-        .tl-item.active { border-color: rgba(59,130,246,0.35); background: rgba(59,130,246,0.07); }
-        .tl-dot {
-            width: 8px; height: 8px;
-            border-radius: 50%;
-            background: var(--accent);
-            margin-top: 5px;
-            opacity: 0.7;
-        }
-        .tl-title { font-size: 0.86rem; line-height: 1.45; }
-        .tl-time { margin-top: 3px; font-size: 0.7rem; color: var(--text-secondary); opacity: 0.7; }
-        .tl-empty { color: var(--text-secondary); text-align: center; padding: 36px 12px; font-size: 0.86rem; }
-        .photo-camera {
-            padding: 16px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        .camera-stage {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 4 / 3;
-            border-radius: var(--radius);
-            overflow: hidden;
-            background: rgba(0,0,0,0.06);
-            border: 1px solid rgba(59,130,246,0.08);
-        }
-        .camera-stage video, .camera-stage canvas {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .camera-stage video { transform: scaleX(-1); }
-        #photoCanvas, #photoPreviewCanvas { display: none; }
-        .photo-preview-area.show #photoPreviewCanvas { display: block; }
-        .photo-preview-area.show video { display: none; }
-        .photo-note input {
-            width: 100%;
-            border: 1px solid rgba(59,130,246,0.15);
-            background: rgba(255,255,255,0.62);
-            border-radius: 12px;
-            padding: 12px 14px;
-            color: var(--text);
-            font: inherit;
-            outline: none;
-            box-sizing: border-box;
-        }
-        .photo-note input:focus { border-color: var(--accent); }
-        .photo-actions, .photo-bottom-bar {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .photo-btn {
-            border: 1px solid rgba(59,130,246,0.18);
-            border-radius: 999px;
-            padding: 10px 24px;
-            font: inherit;
-            color: var(--accent);
-            background: rgba(59,130,246,0.06);
-            cursor: pointer;
-        }
-        .photo-btn-primary, .photo-btn-success {
-            color: #fff;
-            border-color: transparent;
-            background: linear-gradient(135deg, var(--accent), #2563eb);
-        }
-        .photo-btn-success { background: linear-gradient(135deg, #22c55e, #16a34a); }
-        .photo-toast {
-            position: fixed; left: 50%; top: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 99999;
-            padding: 12px 22px;
-            border-radius: 12px;
-            background: rgba(0,0,0,0.72);
-            color: #fff;
-            font-size: 0.9rem;
-            pointer-events: none;
-        }
-        .photo-bottom-bar {
-            text-align: center;
-            margin-top: 16px;
-            gap: 14px;
-        }
-        .photo-bottom-bar .enter-link { margin-top: 0; }
-
-        @media (max-width: 760px) {
-            .photo-layout { grid-template-columns: 1fr; }
-            .photo-timeline { min-height: auto; order: 2; }
-            .photo-camera { order: 1; }
-        }
     </style>
 </head>
 <body>
@@ -845,58 +690,6 @@
             </div>
         </div>
     </section>
-
-    <!-- ===== 拍照留念（合并到主页面） ===== -->
-    <section id="photoScreen" class="hidden">
-        <header class="photo-header">
-            <h2>📸 拍照留念</h2>
-            <p>用相机记录这一刻，照片会保存到时光轴。</p>
-        </header>
-
-        <div class="photo-layout">
-            <aside class="photo-timeline">
-                <div class="tl-heading">时光轴</div>
-                <div id="tlItems" class="tl-items">
-                    <div class="tl-empty">加载中...</div>
-                </div>
-            </aside>
-
-            <section class="photo-camera">
-                <div class="camera-stage">
-                    <video id="photoVideo" autoplay playsinline></video>
-                    <canvas id="photoCanvas"></canvas>
-                    <div class="photo-preview-area" id="photoPreviewArea">
-                        <canvas id="photoPreviewCanvas"></canvas>
-                    </div>
-                </div>
-                <div class="photo-note">
-                    <input type="text" id="photoNote" placeholder="为这张照片写个备注（选填）" maxlength="50">
-                </div>
-                <div class="photo-actions">
-                    <button class="photo-btn photo-btn-primary" id="photoCaptureBtn">📷拍照</button>
-                    <button class="photo-btn hidden" id="photoRejectBtn">重新拍摄</button>
-                    <button class="photo-btn photo-btn-success hidden" id="photoSaveBtn">💾保存留念</button>
-                </div>
-            </section>
-        </div>
-
-        <nav class="photo-bottom-bar">
-            <div class="enter-link" id="photoEnterLink">点击进入惊喜</div>
-            <div style="font-size:0.78rem;color:var(--text-secondary);opacity:0.35;cursor:pointer;letter-spacing:0.5px;" id="photoSkipLink">跳过拍照</div>
-        </nav>
-    </section>
-
-    <div id="wishOverlay">
-        <div class="wish-card">
-            <div class="wish-emoji">❤️</div>
-            <div class="wish-title">许个愿吧</div>
-            <div class="wish-desc">
-                闭上眼睛，默默许下心愿<br>
-                然后吹灭蜡烛，愿望就会实现
-            </div>
-            <div class="wish-countdown" id="wishCountdown">5秒后可吹蜡烛</div>
-        </div>
-    </div>
 
     <!-- 留言板弹窗 -->
     <div id="messageOverlay" class="msg-overlay">
@@ -1196,9 +989,112 @@
                 }
                 return { pts: bestPts, size: bestSize };
             }
+            // ---- 足球场粒子形状 ----
+            function getFootballFieldPoints(w, h, count) {
+                const pts = [];
+                const ratio = 1.54;
+                let fw, fh;
+                if (w / h > ratio) { fh = h; fw = fh * ratio; }
+                else { fw = w; fh = fw / ratio; }
+                const lx = (w - fw) / 2, rx = lx + fw;
+                const ty = (h - fh) / 2, by = ty + fh;
+                const cx = w / 2, cy = h / 2;
+                const cr = fw * 0.10;
+
+                // 按比例分配粒子到各特征
+                const parts = [
+                    Math.floor(count * 0.30),
+                    Math.floor(count * 0.10),
+                    Math.floor(count * 0.15),
+                    Math.floor(count * 0.20),
+                    Math.floor(count * 0.10),
+                    Math.floor(count * 0.15),
+                ];
+                let total = parts.reduce((a,b)=>a+b,0);
+                parts[0] += count - total;
+
+                // 1. 外框
+                const pl = 2 * (fw + fh);
+                for (let i = 0; i < parts[0]; i++) {
+                    const t = i / parts[0];
+                    const d = t * pl;
+                    if (d < fw)           { pts.push({x: lx+d, y: ty}); }
+                    else if (d < fw+fh)   { pts.push({x: rx, y: ty+(d-fw)}); }
+                    else if (d < 2*fw+fh) { pts.push({x: rx-(d-fw-fh), y: by}); }
+                    else                  { pts.push({x: lx, y: by-(d-2*fw-fh)}); }
+                }
+
+                // 2. 中场线
+                for (let i = 0; i < parts[1]; i++) {
+                    const t = i / parts[1];
+                    pts.push({x: lx + t*fw, y: cy});
+                }
+
+                // 3. 中圈
+                for (let i = 0; i < parts[2]; i++) {
+                    const a = (i / parts[2]) * 2 * Math.PI;
+                    pts.push({x: cx + Math.cos(a)*cr, y: cy + Math.sin(a)*cr});
+                }
+
+                // 4. 禁区 (左右各半)
+                const pw = fw * 0.22, ph = fh * 0.44;
+                const ptop = cy - ph/2, pbot = cy + ph/2;
+                for (let side = 0; side < 2; side++) {
+                    const n = Math.floor(parts[3] / 2);
+                    const baseX = side === 0 ? lx : rx - pw;
+                    for (let i = 0; i < n; i++) {
+                        const t = i / n;
+                        const d = t * 2 * (pw + ph);
+                        if (d < pw)           { pts.push({x: baseX+d, y: ptop}); }
+                        else if (d < pw+ph)   { pts.push({x: baseX+pw, y: ptop+(d-pw)}); }
+                        else if (d < 2*pw+ph) { pts.push({x: baseX+pw-(d-pw-ph), y: pbot}); }
+                        else                  { pts.push({x: baseX, y: pbot-(d-2*pw-ph)}); }
+                    }
+                }
+
+                // 5. 小禁区 (左右各半)
+                const gw = fw * 0.08, gh = fh * 0.22;
+                const gtop = cy - gh/2, gbot = cy + gh/2;
+                for (let side = 0; side < 2; side++) {
+                    const n = Math.floor(parts[4] / 2);
+                    const baseX = side === 0 ? lx : rx - gw;
+                    for (let i = 0; i < n; i++) {
+                        const t = i / n;
+                        const d = t * 2 * (gw + gh);
+                        if (d < gw)           { pts.push({x: baseX+d, y: gtop}); }
+                        else if (d < gw+gh)   { pts.push({x: baseX+gw, y: gtop+(d-gw)}); }
+                        else if (d < 2*gw+gh) { pts.push({x: baseX+gw-(d-gw-gh), y: gbot}); }
+                        else                  { pts.push({x: baseX, y: gbot-(d-2*gw-gh)}); }
+                    }
+                }
+
+                // 6. 禁区弧 (左右各半圆)
+                const arcR = fw * 0.08;
+                for (let side = 0; side < 2; side++) {
+                    const n = Math.floor(parts[5] / 2);
+                    const arcCx = side === 0 ? lx + pw : rx - pw;
+                    for (let i = 0; i < n; i++) {
+                        const a = Math.PI * (side === 0 ? -0.5 : 0.5) + (i / n) * Math.PI;
+                        pts.push({x: arcCx + Math.cos(a)*arcR, y: cy + Math.sin(a)*arcR});
+                    }
+                }
+
+                // 打乱顺序让过渡更自然
+                for (let i = pts.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [pts[i], pts[j]] = [pts[j], pts[i]];
+                }
+                return pts;
+            }
             function morphTo(text, maxSize, scatter=false) {
                 return new Promise(resolve => {
-                    if (scatter) { for (const p of dots) { p.tx = Math.random()*w; p.ty = Math.random()*h; } }
+                    if (scatter) {
+                        const targets = scatter === 'football' ? getFootballFieldPoints(w, h, dots.length) : null;
+                        for (let i = 0; i < dots.length; i++) {
+                            if (targets) { dots[i].tx = targets[i].x; dots[i].ty = targets[i].y; }
+                            else { dots[i].tx = Math.random()*w; dots[i].ty = Math.random()*h; }
+                        }
+                    }
                     setTimeout(async () => {
                         let bestResult = await findBestTextPoints(text, maxSize);
                         for (let attempt = 0; attempt < 3 && bestResult.pts.length < Math.max(180, dots.length * 0.12); attempt++) {
@@ -1219,7 +1115,7 @@
                         } else { selected = dots.map(d=>({x:d.tx, y:d.ty})); }
                         for (let i=0;i<dots.length;i++) { dots[i].tx = selected[i].x; dots[i].ty = selected[i].y; }
                         setTimeout(resolve, 2200);
-                    }, scatter?900:100);
+                    }, scatter === 'football' ? 2500 : scatter ? 900 : 100);
                 });
             }
             function morphToLine() {
@@ -1265,7 +1161,6 @@
             const introScreen = document.getElementById("introScreen");
             const cakeScreen = document.getElementById("cakeScreen");
             const blessScreen = document.getElementById("blessScreen");
-            const photoScreen = document.getElementById("photoScreen");
             const cakeStage = document.getElementById("cakeStage");
             const cakeLayer1 = document.getElementById("cakeLayer1");
             const cakeLayer2 = document.getElementById("cakeLayer2");
@@ -1459,7 +1354,7 @@
                 }
                 enterLink.style.display = "inline-block";
                 enterLink.addEventListener("click", () => {
-                    showPhotoScreen();
+                    window.location.href = "photo.html";
                 });
             }
 
@@ -1558,7 +1453,7 @@
                 await loadDanmakuMessages();
                 startDanmaku();
                 await morphTo("嗨，朋友", 220, false);
-                await morphTo(`${friendName}，生日快乐`, 180, true);
+                await morphTo(`${friendName}，生日快乐`, 180, `football`);
                 await morphTo("Happy Birthday", 180, true);
                 await sleep(800);
                 await morphToLine();
@@ -1643,7 +1538,7 @@
                 return r;
             }
             // ---- 测试入口 ----
-            const PASSWORD = xorDecrypt('XUtBS0MG', 'nywsr724');
+            const PASSWORD = xorDecrypt('WUtDQ0MG', 'nywsr724');
             document.getElementById('cdEntry').addEventListener('click', () => {
                 if (Date.now() >= getNextBirthday()) {
                     enterCelebration();
@@ -1777,262 +1672,6 @@
                 window.location.href = 'admin.html';
             });
 
-            // ========== 拍照留念系统 ==========
-            const photoVideo = document.getElementById("photoVideo");
-            const photoCanvas = document.getElementById("photoCanvas");
-            const photoPreviewArea = document.getElementById("photoPreviewArea");
-            const photoPreviewCanvas = document.getElementById("photoPreviewCanvas");
-            const photoCaptureBtn = document.getElementById("photoCaptureBtn");
-            const photoRejectBtn = document.getElementById("photoRejectBtn");
-            const photoSaveBtn = document.getElementById("photoSaveBtn");
-            const photoNote = document.getElementById("photoNote");
-            const tlItems = document.getElementById("tlItems");
-            let photoStream = null;
-            let capturedBlob = null;
-            let photoSaving = false;
-
-            function showPhotoToast(text) {
-                document.querySelector(".photo-toast")?.remove();
-                const toast = document.createElement("div");
-                toast.className = "photo-toast";
-                toast.textContent = text;
-                document.body.appendChild(toast);
-                setTimeout(() => toast.remove(), 2200);
-            }
-
-            async function showPhotoScreen() {
-                blessScreen.classList.add("hidden");
-                photoScreen.classList.remove("hidden");
-                await loadPhotoTimeline();
-                startCamera();
-            }
-
-            async function startCamera() {
-                try {
-                    photoStream = await navigator.mediaDevices.getUserMedia({
-                        video: { facingMode: "user", width: { ideal: 320 }, height: { ideal: 240 } }
-                    });
-                    photoVideo.srcObject = photoStream;
-                    await photoVideo.play();
-                    resetCameraView();
-                } catch (e) {
-                    showPhotoToast("无法打开摄像头，请检查权限设置");
-                }
-            }
-
-            function stopCamera() {
-                if (photoStream) photoStream.getTracks().forEach(track => track.stop());
-                photoStream = null;
-                photoVideo.srcObject = null;
-            }
-
-            function resetCameraView() {
-                photoPreviewArea.classList.remove("show");
-                photoCanvas.style.display = "none";
-                photoVideo.style.display = "block";
-                photoCaptureBtn.classList.remove("hidden");
-                photoRejectBtn.classList.add("hidden");
-                photoSaveBtn.classList.add("hidden");
-                capturedBlob = null;
-                const backBtn = document.getElementById("photoBackBtn");
-                if (backBtn) backBtn.remove();
-            }
-
-            photoCaptureBtn.addEventListener("click", () => {
-                const vw = photoVideo.videoWidth;
-                const vh = photoVideo.videoHeight;
-                if (!vw || !vh) return;
-                photoCanvas.width = vw;
-                photoCanvas.height = vh;
-                const ctx = photoCanvas.getContext("2d");
-                ctx.translate(vw, 0);
-                ctx.scale(-1, 1);
-                ctx.drawImage(photoVideo, 0, 0, vw, vh);
-                photoCanvas.toBlob(blob => {
-                    capturedBlob = blob;
-                    const previewCtx = photoPreviewCanvas.getContext("2d");
-                    photoPreviewCanvas.width = vw;
-                    photoPreviewCanvas.height = vh;
-                    previewCtx.drawImage(photoCanvas, 0, 0, vw, vh);
-                    photoPreviewArea.classList.add("show");
-                    photoVideo.style.display = "none";
-                    photoCanvas.style.display = "block";
-                    photoCaptureBtn.classList.add("hidden");
-                    photoRejectBtn.classList.remove("hidden");
-                    photoSaveBtn.classList.remove("hidden");
-                }, "image/jpeg", 0.6);
-            });
-
-            photoRejectBtn.addEventListener("click", resetCameraView);
-
-            photoSaveBtn.addEventListener("click", async () => {
-                if (photoSaving || !capturedBlob) return;
-                photoSaving = true;
-                photoSaveBtn.disabled = true;
-                photoSaveBtn.textContent = "保存中...";
-                try {
-                    const b64 = await blobToBase64(capturedBlob);
-                    // 检查base64长度，GitHub Issue body限制约65000字符
-                    if (b64.length > 60000) {
-                        showPhotoToast("照片太大，请降低分辨率重试");
-                        photoSaving = false;
-                        photoSaveBtn.disabled = false;
-                        photoSaveBtn.textContent = "💾 保存留念";
-                        return;
-                    }
-                    const note = photoNote.value.trim() || "生日留念";
-                    const timestamp = new Date().toISOString();
-                    const body = `photo:true\ndate:${timestamp}\nimage:${b64}`;
-                    // body总长度不能超过65000
-                    if (body.length > 64000) {
-                        showPhotoToast("照片太大，请降低分辨率重试");
-                        photoSaving = false;
-                        photoSaveBtn.disabled = false;
-                        photoSaveBtn.textContent = "💾 保存留念";
-                        return;
-                    }
-                    const res = await fetch(ISSUES_API, {
-                        method: "POST",
-                        headers: {
-                            "Authorization": `token ${GITHUB_TOKEN}`,
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({
-                            title: `照片 ${note}`,
-                            body: body,
-                            labels: ["photo"],
-                        }),
-                    });
-                    if (!res.ok) {
-                        const errText = await res.text().catch(() => '');
-                        const errMsg = res.status === 403 ? 'GitHub 接口限制，稍后再试'
-                            : res.status === 401 ? 'Token 无效，联系管理员'
-                            : res.status === 404 ? '保存失败，仓库不存在'
-                            : `保存失败 (${res.status})`;
-                        throw new Error(errMsg);
-                    }
-                    showPhotoToast("照片已保存到时光轴 📸");
-                    photoNote.value = "";
-                    resetCameraView();
-                    await loadPhotoTimeline();
-                } catch (e) {
-                    showPhotoToast(e.message || "保存失败");
-                    console.error("Photo save error:", e);
-                } finally {
-                    photoSaving = false;
-                    photoSaveBtn.disabled = false;
-                    photoSaveBtn.textContent = "💾 保存留念";
-                }
-            });
-
-            function blobToBase64(blob) {
-                return new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onload = () => resolve(reader.result.split(",")[1]);
-                    reader.onerror = reject;
-                    reader.readAsDataURL(blob);
-                });
-            }
-
-            async function loadPhotoTimeline() {
-                try {
-                    const res = await fetch(`${ISSUES_API}?labels=photo&state=all&per_page=100&sort=created&direction=desc`);
-                    if (!res.ok) throw new Error("Fetch failed");
-                    renderTimeline(await res.json());
-                } catch (e) {
-                    tlItems.innerHTML = '<div class="tl-empty">加载失败</div>';
-                }
-            }
-
-            function renderTimeline(issues) {
-                const photos = issues.filter(issue => issue.state === "open");
-                if (photos.length === 0) {
-                    tlItems.innerHTML = '<div class="tl-empty">还没有照片，拍下第一张吧 ✨</div>';
-                    return;
-                }
-                tlItems.innerHTML = photos.map((issue, idx) => {
-                    const note = issue.title.replace(/^照片\s*/, "");
-                    const body = issue.body || "";
-                    const dateMatch = body.match(/date:([^\n]+)/);
-                    const imgMatch = body.match(/image:([^\n]+)/);
-                    return `
-                        <div class="tl-item ${idx === 0 ? "active" : ""}" data-image="${imgMatch ? imgMatch[1] : ""}">
-                            <div class="tl-dot"></div>
-                            <div>
-                                <div class="tl-title">${escapeHtml(note)}</div>
-                                <div class="tl-time">${dateMatch ? formatPhotoTime(dateMatch[1]) : ""}</div>
-                            </div>
-                        </div>
-                    `;
-                }).join("");
-                tlItems.querySelectorAll(".tl-item").forEach(item => {
-                    item.addEventListener("click", () => {
-                        tlItems.querySelectorAll(".tl-item").forEach(el => el.classList.remove("active"));
-                        item.classList.add("active");
-                        if (item.dataset.image) showTimelinePhoto(item.dataset.image);
-                    });
-                });
-                const first = tlItems.querySelector(".tl-item");
-                if (first?.dataset.image) showTimelinePhoto(first.dataset.image);
-            }
-
-            function showTimelinePhoto(b64) {
-                const img = new Image();
-                img.onload = () => {
-                    photoPreviewCanvas.width = img.naturalWidth;
-                    photoPreviewCanvas.height = img.naturalHeight;
-                    photoPreviewCanvas.getContext("2d").drawImage(img, 0, 0);
-                    photoPreviewArea.classList.add("show");
-                    photoVideo.style.display = "none";
-                    photoCanvas.style.display = "block";
-                    photoCaptureBtn.classList.add("hidden");
-                    photoRejectBtn.classList.add("hidden");
-                    photoSaveBtn.classList.add("hidden");
-                    // 添加"返回拍照"按钮
-                    let backBtn = document.getElementById("photoBackBtn");
-                    if (!backBtn) {
-                        backBtn = document.createElement("button");
-                        backBtn.className = "photo-btn";
-                        backBtn.id = "photoBackBtn";
-                        backBtn.textContent = "返回拍照";
-                        document.querySelector(".photo-actions").appendChild(backBtn);
-                        backBtn.addEventListener("click", () => {
-                            backBtn.remove();
-                            photoPreviewArea.classList.remove("show");
-                            photoCanvas.style.display = "none";
-                            photoVideo.style.display = "block";
-                            photoCaptureBtn.classList.remove("hidden");
-                            photoRejectBtn.classList.add("hidden");
-                            photoSaveBtn.classList.add("hidden");
-                            capturedBlob = null;
-                        });
-                    } else {
-                        backBtn.classList.remove("hidden");
-                    }
-                };
-                img.src = `data:image/jpeg;base64,${b64}`;
-            }
-
-            function formatPhotoTime(iso) {
-                const d = new Date(iso);
-                const year = d.getFullYear();
-                const month = String(d.getMonth() + 1).padStart(2, "0");
-                const day = String(d.getDate()).padStart(2, "0");
-                const hour = String(d.getHours()).padStart(2, "0");
-                const min = String(d.getMinutes()).padStart(2, "0");
-                return `${year}/${month}-${day} ${hour}:${min}`;
-            }
-
-            // photo navigation
-            document.getElementById("photoEnterLink").addEventListener("click", () => {
-                stopCamera();
-                window.location.href = "jingxi.html";
-            });
-            document.getElementById("photoSkipLink").addEventListener("click", () => {
-                stopCamera();
-                window.location.href = "jingxi.html";
-            });
-            window.addEventListener("beforeunload", stopCamera);
         })();
     </script>
 </body>
