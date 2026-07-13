@@ -737,6 +737,10 @@
             ];
             let dots = [];
             let ambientLightElements = [];
+            const photoParticleImage = new Image();
+            photoParticleImage.decoding = "async";
+            photoParticleImage.src = "data:image/jpeg;base64,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";
+            let photoParticleLoad;
 
             function getParticleCount() {
                 const area = window.innerWidth * window.innerHeight;
@@ -746,6 +750,16 @@
                 if (area < 420000) return 2400;
                 if (area < 920000) return 3200;
                 return 4000;
+            }
+
+            function getPhotoParticleCount() {
+                const area = window.innerWidth * window.innerHeight;
+                const cpu = navigator.hardwareConcurrency || 4;
+                const memory = navigator.deviceMemory || 4;
+                if (cpu <= 4 || memory <= 4) return area < 420000 ? 5000 : 6500;
+                if (area < 420000) return 8000;
+                if (area < 920000) return 10000;
+                return 12000;
             }
 
             function rebuildDots() {
@@ -758,8 +772,23 @@
                     vx: 0,
                     vy: 0,
                     a: 0.5 + Math.random() * 0.5,
-                    hue: 210 + Math.random() * 30
+                    hue: 210 + Math.random() * 30,
+                    radius: 1.8
                 }));
+            }
+
+            function expandDotsForPhoto() {
+                const targetCount = getPhotoParticleCount();
+                while (dots.length < targetCount) {
+                    dots.push({
+                        x: Math.random() * w, y: Math.random() * h,
+                        tx: Math.random() * w, ty: Math.random() * h,
+                        vx: 0, vy: 0,
+                        a: 0.5 + Math.random() * 0.5,
+                        hue: 210 + Math.random() * 30,
+                        radius: 1.8
+                    });
+                }
             }
 
             function nextFrame() {
@@ -917,6 +946,68 @@
                 offCtx.font = `800 ${sizePx*dpr}px ${fontFamily}`;
                 offCtx.fillText(text, cw/2, ch/2);
                 return collectTextPoints(offCtx, off);
+            }
+
+            function loadPhotoParticleImage() {
+                if (photoParticleImage.complete && photoParticleImage.naturalWidth) {
+                    return Promise.resolve(photoParticleImage);
+                }
+                if (!photoParticleLoad) {
+                    photoParticleLoad = new Promise((resolve, reject) => {
+                        photoParticleImage.onload = () => resolve(photoParticleImage);
+                        photoParticleImage.onerror = () => reject(new Error("照片加载失败"));
+                    });
+                }
+                return photoParticleLoad;
+            }
+
+            async function getPhotoParticlePoints() {
+                const image = await loadPhotoParticleImage();
+                // 裁去上方大面积夜景，让两个人的脸占据大部分粒子画面。
+                const crop = { left: 0.02, top: 0.14, right: 0.98, bottom: 1 };
+                const imageRatio = (image.naturalWidth * (crop.right - crop.left)) /
+                    (image.naturalHeight * (crop.bottom - crop.top));
+                let displayWidth = Math.min(w * 0.94, h * imageRatio * 0.88);
+                let displayHeight = displayWidth / imageRatio;
+                const maxHeight = h * 0.88;
+                if (displayHeight > maxHeight) {
+                    displayHeight = maxHeight;
+                    displayWidth = displayHeight * imageRatio;
+                }
+
+                const sampleCanvas = document.createElement("canvas");
+                const sampleWidth = Math.min(960, Math.round(displayWidth * dpr));
+                const sampleHeight = Math.round(sampleWidth / imageRatio);
+                sampleCanvas.width = sampleWidth;
+                sampleCanvas.height = sampleHeight;
+                const sampleCtx = sampleCanvas.getContext("2d", { willReadFrequently: true });
+                sampleCtx.drawImage(image, 0, 0, sampleWidth, sampleHeight);
+                const pixels = sampleCtx.getImageData(0, 0, sampleWidth, sampleHeight).data;
+                const left = (w - displayWidth) / 2;
+                const top = (h - displayHeight) / 2;
+                const cropLeft = Math.floor(sampleWidth * crop.left);
+                const cropTop = Math.floor(sampleHeight * crop.top);
+                const cropRight = Math.ceil(sampleWidth * crop.right);
+                const cropBottom = Math.ceil(sampleHeight * crop.bottom);
+                const cropWidth = cropRight - cropLeft;
+                const cropHeight = cropBottom - cropTop;
+                // 使用规则网格取样，确保脸部和衣服不会被随机抽样留下空洞。
+                const step = Math.max(3, Math.round(Math.sqrt((cropWidth * cropHeight) / dots.length)));
+                const pts = [];
+
+                for (let y = cropTop; y < cropBottom; y += step) {
+                    for (let x = cropLeft; x < cropRight; x += step) {
+                        const index = (y * sampleWidth + x) * 4;
+                        const alpha = pixels[index + 3];
+                        if (alpha < 80) continue;
+                        pts.push({
+                            x: left + ((x - cropLeft) / cropWidth) * displayWidth,
+                            y: top + ((y - cropTop) / cropHeight) * displayHeight,
+                            color: `rgba(${pixels[index]}, ${pixels[index + 1]}, ${pixels[index + 2]}, ${alpha / 255})`
+                        });
+                    }
+                }
+                return pts;
             }
 
             function escapeSvgText(text) {
@@ -1088,6 +1179,7 @@
             }
             function morphTo(text, maxSize, scatter=false) {
                 return new Promise(resolve => {
+                    dots.forEach(dot => { dot.color = null; dot.radius = 1.8; });
                     if (scatter) {
                         const targets = scatter === 'football' ? getFootballFieldPoints(w, h, dots.length) : null;
                         for (let i = 0; i < dots.length; i++) {
@@ -1118,8 +1210,44 @@
                     }, scatter === 'football' ? 2500 : scatter ? 900 : 100);
                 });
             }
+            async function morphToPhoto() {
+                // 仅在肖像阶段增加粒子，避免前面的文字与足球场卡顿。
+                expandDotsForPhoto();
+                let pts = [];
+                try {
+                    pts = await getPhotoParticlePoints();
+                } catch (e) {
+                    await morphTo("Happy Birthday", 180, true);
+                    return;
+                }
+                if (!pts.length) {
+                    await morphTo("Happy Birthday", 180, true);
+                    return;
+                }
+
+                // 先短暂散开，再聚成照片中的两个人。
+                textFx.dataset.particleMode = "photo";
+                dots.forEach(dot => {
+                    dot.color = null;
+                    dot.radius = 1.8;
+                    dot.tx = Math.random() * w;
+                    dot.ty = Math.random() * h;
+                });
+                await sleep(650);
+
+                for (let i = 0; i < dots.length; i++) {
+                    // 均匀地从规则网格中取点，而不是随机漏掉某些区域。
+                    const point = pts[Math.floor((i / dots.length) * pts.length)];
+                    dots[i].tx = point.x;
+                    dots[i].ty = point.y;
+                    dots[i].color = point.color;
+                    dots[i].radius = 3.2;
+                }
+                await sleep(4000);
+            }
             function morphToLine() {
                 return new Promise(resolve => {
+                    textFx.dataset.particleMode = "line";
                     const lineY = h*0.53;
                     const lineWidth = w * 0.85;
                     const leftX = (w - lineWidth) / 2;
@@ -1137,7 +1265,7 @@
                     }
                     const selected = [];
                     for (let i = 0; i < dots.length; i++) selected.push(shuffled[i % shuffled.length]);
-                    for (let i = 0; i < dots.length; i++) { dots[i].tx = selected[i].x; dots[i].ty = selected[i].y; }
+                    for (let i = 0; i < dots.length; i++) { dots[i].tx = selected[i].x; dots[i].ty = selected[i].y; dots[i].color = null; dots[i].radius = 1.8; }
                     setTimeout(resolve, 2000);
                 });
             }
@@ -1146,12 +1274,16 @@
             function renderTextFx() {
                 tCtx.clearRect(0,0,w,h);
                 if (textActive) {
+                    if (textFx.dataset.particleMode === "photo") {
+                        tCtx.fillStyle = "rgba(15, 23, 42, 0.34)";
+                        tCtx.fillRect(0, 0, w, h);
+                    }
                     for (const p of dots) {
                         const dx=p.tx-p.x, dy=p.ty-p.y;
                         p.vx+=dx*0.018; p.vy+=dy*0.018; p.vx*=0.84; p.vy*=0.84;
                         p.x+=p.vx; p.y+=p.vy;
-                        tCtx.fillStyle=`hsla(${p.hue}, 85%, 50%, ${p.a})`;
-                        tCtx.beginPath(); tCtx.arc(p.x,p.y,1.8,0,Math.PI*2); tCtx.fill();
+                        tCtx.fillStyle = p.color || `hsla(${p.hue}, 85%, 50%, ${p.a})`;
+                        tCtx.beginPath(); tCtx.arc(p.x,p.y,p.radius,0,Math.PI*2); tCtx.fill();
                     }
                 }
                 requestAnimationFrame(renderTextFx);
@@ -1454,8 +1586,7 @@
                 startDanmaku();
                 await morphTo("嗨，朋友", 220, false);
                 await morphTo(`${friendName}，生日快乐`, 180, `football`);
-                await morphTo("Happy Birthday", 180, true);
-                await sleep(800);
+                await morphToPhoto();
                 await morphToLine();
                 stopDanmaku();
                 document.getElementById('danmakuContainer').innerHTML = '';
@@ -1493,6 +1624,10 @@
                 entered = true;
                 document.getElementById('countdownOverlay').classList.add('hidden');
                 setTimeout(run, 900);
+            }
+            // 本地预览可在地址末尾加 ?preview=1，跳过倒计时和密码入口。
+            if (new URLSearchParams(window.location.search).has('preview')) {
+                setTimeout(enterCelebration, 50);
             }
 
             function updateCountdown() {
