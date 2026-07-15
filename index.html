@@ -460,19 +460,38 @@
             font-weight: 200; margin: 0 2px;
             padding-bottom: 18px;
         }
-        .cd-sub {
-            font-size: 0.85rem; color: var(--text-secondary);
-            letter-spacing: 1px; font-weight: 300;
+        @keyframes slideUpIn { 0% { transform: translateY(100%); opacity: 0.4; } 100% { transform: translateY(0); opacity: 1; } }
+        .cd-realage {
+            margin-top: 16px;
+            font-size: 1rem;
+            color: var(--text-secondary);
+            letter-spacing: 2px;
+            font-weight: 300;
         }
-        .cd-birthday {
-            display: none;
-            font-size: clamp(1.6rem, 5vw, 2.4rem);
+        .cd-realage .age-num {
+            font-size: 1.6rem;
+            font-weight: 600;
             color: var(--accent);
-            letter-spacing: 3px;
-            font-weight: 400;
-            margin-top: 12px;
-            animation: cdFadeIn 0.6s ease;
+            text-shadow: 0 0 20px rgba(59,130,246,0.2);
+            font-variant-numeric: tabular-nums;
+            display: inline-block;
         }
+        .cd-realage .digit-cell {
+            display: inline-block;
+            height: 1.6rem;
+            overflow: hidden;
+            position: relative;
+            vertical-align: top;
+            min-width: 0.55em;
+            text-align: center;
+            line-height: 1.6rem;
+        }
+        .cd-realage .digit-item {
+            display: inline-block;
+            height: 1.6rem;
+            line-height: 1.6rem;
+        }
+
         .cd-entry {
             position: fixed; left: 16px; bottom: 16px;
             font-size: 0.78rem; color: var(--text-secondary);
@@ -654,8 +673,7 @@
                     <small>秒</small>
                 </div>
             </div>
-            <div class="cd-sub" id="cdSub">2026年7月24日 · 15岁生日</div>
-            <div class="cd-birthday" id="cdBirthday">🎂 生日快乐！🎉</div>
+            <div class="cd-realage" id="cdRealAge"></div>
         </div>
         <div style="text-align:center;margin-top:16px;">
             <button class="msg-btn-index" id="msgBtn">💬 留言</button>
@@ -1699,9 +1717,7 @@
             const cdHours = document.getElementById('cdHours');
             const cdMins = document.getElementById('cdMins');
             const cdSecs = document.getElementById('cdSecs');
-            const cdBirthday = document.getElementById('cdBirthday');
             const cdNumbers = document.querySelector('.cd-numbers');
-            const cdSub = document.getElementById('cdSub');
             let countdownTimer = null;
             let entered = false;
 
@@ -1720,14 +1736,11 @@
                 const now = Date.now();
                 const birthday = getNextBirthday();
                 const age = birthday.getFullYear() - BIRTH_YEAR;
-                cdSub.textContent = `${birthday.getFullYear()}年7月24日 · ${age}岁生日`;
 
                 const diff = birthday - now;
                 if (diff <= 0) {
                     if (!entered) {
                         cdNumbers.style.display = 'none';
-                        cdSub.style.display = 'none';
-                        cdBirthday.style.display = 'block';
                         document.querySelector('.cd-label').textContent = '今天就是生日';
                         var cdEntry = document.getElementById('cdEntry'); cdEntry.textContent = '🎉 进入'; cdEntry.className = 'msg-btn-index'; cdEntry.style.position = 'static'; cdEntry.style.display = 'inline-block'; var btnContainer2 = document.querySelector('#countdownOverlay > div:nth-child(2)'); if(btnContainer2) { btnContainer2.style.display = 'flex'; btnContainer2.style.justifyContent = 'center'; btnContainer2.style.gap = '12px'; btnContainer2.appendChild(cdEntry); }
                         if (countdownTimer) {
@@ -1750,6 +1763,60 @@
             }
             updateCountdown();
             countdownTimer = setInterval(updateCountdown, 1000);
+
+            // ---- 实时年龄 ----
+            const cdRealAge = document.getElementById('cdRealAge');
+            const BIRTH_MS = new Date(BIRTH_YEAR, BIRTH_MONTH, BIRTH_DAY).getTime();
+            const MS_PER_YEAR = 365.2425 * 864e5;
+            function updateRealAge() {
+                const age = (Date.now() - BIRTH_MS) / MS_PER_YEAR;
+                const ageStr = age.toFixed(7);
+                const el = cdRealAge.querySelector('.age-num');
+                if (!el) {
+                    cdRealAge.innerHTML = '你现在 <span class="age-num"></span> 岁';
+                    const ne = cdRealAge.querySelector('.age-num');
+                    buildDigits(ne, ageStr, '');
+                    return;
+                }
+                const oldDigits = [];
+                const cells = el.querySelectorAll('.digit-cell');
+                cells.forEach(function(cell) {
+                    var items = cell.querySelectorAll('.digit-item');
+                    if (items.length > 0) oldDigits.push(items[items.length - 1].textContent);
+                });
+                var oldStr = oldDigits.join('');
+                if (oldStr === ageStr) return;
+                buildDigits(el, ageStr, oldStr);
+            }
+            function buildDigits(container, newStr, oldStr) {
+                container.innerHTML = '';
+                for (var i = 0; i < newStr.length; i++) {
+                    var ch = newStr[i];
+                    var oldCh = i < oldStr.length ? oldStr[i] : '';
+                    var cell = document.createElement('span');
+                    cell.className = 'digit-cell';
+                    var span = document.createElement('span');
+                    span.className = 'digit-item';
+                    span.textContent = ch;
+                    cell.appendChild(span);
+                    container.appendChild(cell);
+                    if (oldCh !== '' && oldCh !== ch) {
+                        span.style.transform = 'translateY(100%)';
+                        span.style.opacity = '0.4';
+                        (function(s) {
+                            requestAnimationFrame(function() {
+                                requestAnimationFrame(function() {
+                                    s.style.transition = 'transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease';
+                                    s.style.transform = 'translateY(0)';
+                                    s.style.opacity = '1';
+                                });
+                            });
+                        })(span);
+                    }
+                }
+            }
+            updateRealAge();
+            setInterval(updateRealAge, 100);
 
             // ---- Crypto helper (XOR + Base64) ----
             function xorDecrypt(b64, key) {
