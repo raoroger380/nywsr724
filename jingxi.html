@@ -353,7 +353,7 @@
             .msg-items { max-height: 150px; }
         }
 
-        /* 下一个按钮 */
+        /* 惊喜按钮 */
         .next-btn {
             display: inline-block; margin-top: 8px;
             padding: 8px 20px;
@@ -426,6 +426,7 @@
         <div class="control-message">
             点击下方按钮<br>
             收获满满的生日祝福与惊喜
+            惊喜在最后！
         </div>
         <button id="startButton" class="control-button">开启祝福</button>
     </div>
@@ -439,7 +440,7 @@
         <div class="card-divider"></div>
         <div class="card-msg" id="cardStats"></div>
         <button class="save-btn" id="saveBtn">📷 保存图片</button>
-        <button class="next-btn" id="nextBtn">下一个 ➜</button>
+        <button class="next-btn" id="nextBtn">惊喜➜</button>
         <button class="msg-btn" id="msgBtn">💬 留言</button>
     </div>
 
@@ -988,8 +989,8 @@
                             canvas.style.display = 'none';
                             ctx.clearRect(0, 0, canvasW, canvasH);
                         }
-                    }, 600);
-                    setTimeout(showBlessCard, 800);
+                    }, 200);
+                    setTimeout(showBlessCard, 300);
                     return;
                 }
 
@@ -1121,7 +1122,7 @@
 
             // ---- Crypto helper (XOR + Base64) ----
 
-            // ---- 下一个：二维码弹窗 ----
+            // ---- 惊喜：二维码弹窗 ----
             document.getElementById('nextBtn').addEventListener('click', () => {
                 document.getElementById('qrcodeOverlay').classList.add('show');
             });
