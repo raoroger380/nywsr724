@@ -417,16 +417,95 @@
         .qrcode-close:hover {
             background: rgba(59,130,246,0.1);
         }
+
+        /* ===== 主题切换（全局） ===== */
+        :root {
+            --accent-rgb: 59, 130, 246;
+            --switch-bg: rgba(255,255,255,0.65);
+            --switch-border: rgba(0,0,0,0.08);
+            --switch-shadow: rgba(0,0,0,0.06);
+        }
+        body.dark {
+            --accent-rgb: 180, 180, 200;
+            --accent: #b4b4c8;
+            --bg: #080808;
+            --glass: rgba(25, 25, 35, 0.7);
+            --glass-border: rgba(180, 180, 200, 0.15);
+            --glass-hover: rgba(180, 180, 200, 0.06);
+            --accent-soft: rgba(180, 180, 200, 0.1);
+            --accent-glow: rgba(180, 180, 200, 0.12);
+            --text: #f0f0f5;
+            --text-muted: #b0b0c0;
+            --text-secondary: #9090a0;
+            --switch-bg: rgba(30, 30, 40, 0.8);
+            --switch-border: rgba(255,255,255,0.12);
+            --switch-shadow: rgba(0,0,0,0.4);
+            background: #080808;
+        }
+        body.dark [class*="card"], body.dark [class*="popup"], body.dark [class*="modal"],
+        body.dark [class*="overlay"], body.dark [class*="wrap"], body.dark [class*="panel"] {
+            background-color: rgba(25, 25, 35, 0.75) !important;
+        }
+        body.dark input, body.dark textarea { color: #f0f0f5 !important; }
+        body.dark ::placeholder { color: #707080 !important; }
+        body.dark small, body.dark [class*="muted"], body.dark [class*="hint"] {
+            color: #a0a0b0 !important;
+        }
+        .theme-toggle {
+            position: fixed; top: 20px; right: 20px; z-index: 100001;
+            display: flex; align-items: center; gap: 8px;
+            background: var(--switch-bg);
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--switch-border);
+            box-shadow: 0 2px 12px var(--switch-shadow);
+            border-radius: 28px; padding: 4px 6px 4px 14px;
+            cursor: pointer; user-select: none; -webkit-user-select: none;
+            transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+        }
+        .theme-toggle:hover { box-shadow: 0 4px 18px rgba(0,0,0,0.1); }
+        .theme-toggle .theme-label {
+            font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap;
+            transition: color 0.35s ease; pointer-events: none;
+        }
+        .theme-toggle .theme-knob-wrapper {
+            width: 48px; height: 26px; border-radius: 13px;
+            background: #e2e8f0; position: relative; flex-shrink: 0;
+            transition: background 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        body.dark .theme-toggle .theme-knob-wrapper { background: #334155; }
+        .theme-toggle .theme-knob {
+            position: absolute; top: 3px; left: 3px; width: 20px; height: 20px;
+            border-radius: 50%; background: #fff;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        body.dark .theme-toggle .theme-knob { transform: translateX(22px); }
+        .theme-toggle .theme-icon {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            font-size: 12px; line-height: 1; transition: opacity 0.25s ease; pointer-events: none;
+        }
+        .theme-toggle .theme-icon.sun { left: 5px; opacity: 1; }
+        .theme-toggle .theme-icon.moon { right: 5px; opacity: 0.3; }
+        body.dark .theme-toggle .theme-icon.sun { opacity: 0.3; }
+        body.dark .theme-toggle .theme-icon.moon { opacity: 1; }
+        @keyframes starBlink {
+            0% { opacity: 0.2; transform: scale(1); }
+            100% { opacity: 1; transform: scale(1.5); }
+        }
     </style>
 </head>
 <body>
+    <div class="theme-toggle" id="themeToggle" title="切换主题">
+        <span class="theme-label" id="themeLabel">浅色</span>
+        <div class="theme-knob-wrapper"><span class="theme-icon sun">☀️</span><span class="theme-icon moon">🌙</span><div class="theme-knob"></div></div>
+    </div>
 
     <div id="controlPanel" class="control-panel">
         <div class="control-title">生日快乐</div>
         <div class="control-message">
             点击下方按钮<br>
-            收获满满的生日祝福与惊喜
-            惊喜在最后！
+            收获满满的生日祝福与惊喜<br>
+            <span style="color: rgb(0, 0, 0);font-size: 22px;">！惊喜在最后哦！</span>
         </div>
         <button id="startButton" class="control-button">开启祝福</button>
     </div>
@@ -1266,6 +1345,36 @@
             // ---- 管理后台入口（隐藏） ----
             document.getElementById('adminEntry').addEventListener('click', () => {
                 window.location.href = 'admin.html';
+            });
+        })();
+
+        (function(){
+            var starContainer = null;
+            function createStars(){
+                if(starContainer) return;
+                starContainer = document.createElement("div");
+                starContainer.id = "starContainer";
+                starContainer.style.cssText = "position:fixed;inset:0;z-index:0;pointer-events:none;";
+                document.body.insertBefore(starContainer, document.body.firstChild);
+                var fragment = document.createDocumentFragment();
+                for(var i=0;i<120;i++){
+                    var star = document.createElement("div");
+                    var size = Math.random()*2.5+1;
+                    star.style.cssText = "position:absolute;width:"+size+"px;height:"+size+"px;background:#fff;border-radius:50%;left:"+Math.random()*100+"%;top:"+Math.random()*100+"%;opacity:"+(Math.random()*0.6+0.2)+";animation:starBlink "+(Math.random()*3+2)+"s ease-in-out "+(Math.random()*3)+"s infinite alternate;";
+                    fragment.appendChild(star);
+                }
+                starContainer.appendChild(fragment);
+            }
+            function removeStars(){ if(starContainer){ starContainer.remove(); starContainer = null; } }
+            function applyTheme(isDark){
+                document.body.classList.toggle("dark", isDark);
+                localStorage.setItem("theme", isDark ? "dark" : "light");
+                document.getElementById("themeLabel").textContent = isDark ? "深色" : "浅色";
+                if(isDark) createStars(); else removeStars();
+            }
+            applyTheme(localStorage.getItem("theme") === "dark");
+            document.getElementById("themeToggle").addEventListener("click", function(){
+                applyTheme(!document.body.classList.contains("dark"));
             });
         })();
     </script>
