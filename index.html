@@ -806,7 +806,7 @@
     <main id="mainContent">
     <section id="countdownOverlay" aria-labelledby="cdLabel">
         <article class="cd-card">
-            <h1 class="cd-title">农友维</h1>
+            <h1 class="cd-title" id="cdTitle">农友维</h1>
             <div class="cd-label" id="cdLabel">距离生日还有</div>
             <div class="cd-numbers">
                 <div class="cd-unit">
@@ -1932,6 +1932,7 @@
                 const diff = birthday - now;
                 if (diff <= 0) {
                     if (!entered) {
+                        document.getElementById('cdTitle').textContent = '农友维生日快乐';
                         cdNumbers.style.display = 'none';
                         document.querySelector('.cd-label').textContent = '今天就是生日';
                         var cdEntry = document.getElementById('cdEntry'); cdEntry.textContent = '🎉 进入'; cdEntry.className = 'msg-btn-index'; cdEntry.style.position = 'static'; cdEntry.style.display = 'inline-block'; var btnContainer2 = document.querySelector('#countdownOverlay > div:nth-child(2)'); if(btnContainer2) { btnContainer2.style.display = 'flex'; btnContainer2.style.justifyContent = 'center'; btnContainer2.style.gap = '12px'; btnContainer2.appendChild(cdEntry); }
