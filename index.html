@@ -7,14 +7,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #eee7dd;
-            --paper: rgba(255, 252, 247, 0.68);
-            --paper-strong: rgba(255, 252, 247, 0.86);
+            --bg: #ffffff;
+            --paper: rgba(255, 255, 255, 0.82);
+            --paper-strong: rgba(255, 255, 255, 0.94);
             --glass: var(--paper);
-            --glass-border: rgba(63, 127, 190, 0.16);
-            --glass-hover: rgba(63, 127, 190, 0.07);
-            --accent: #3f7fbe;
-            --accent-rgb: 63, 127, 190;
+            --glass-border: rgba(59, 130, 246, 0.18);
+            --glass-hover: rgba(59, 130, 246, 0.07);
+            --accent: #3b82f6;
+            --accent-rgb: 59, 130, 246;
             --accent-soft: rgba(var(--accent-rgb), 0.08);
             --accent-glow: rgba(var(--accent-rgb), 0.12);
             --candle: #d69b43;
@@ -35,9 +35,7 @@
         body {
             font-family: var(--font-body);
             overflow-x: hidden;
-            background:
-                radial-gradient(ellipse at 50% 30%, rgba(var(--accent-rgb), 0.04) 0%, transparent 60%),
-                var(--bg);
+            background: var(--bg);
         }
         body::before {
             content: "";
@@ -47,13 +45,13 @@
             z-index: 1;
             opacity: 0.24;
             background-image:
-                radial-gradient(circle at 20% 18%, rgba(255,255,255,0.7) 0 1px, transparent 1.5px),
-                radial-gradient(circle at 82% 12%, rgba(63,127,190,0.16) 0 1px, transparent 1.5px),
-                linear-gradient(135deg, rgba(255,255,255,0.24), transparent 42%);
+                radial-gradient(circle at 20% 18%, rgba(59,130,246,0.10) 0 1px, transparent 1.5px),
+                radial-gradient(circle at 82% 12%, rgba(37,99,235,0.09) 0 1px, transparent 1.5px),
+                linear-gradient(135deg, rgba(59,130,246,0.045), transparent 42%);
             background-size: 18px 18px, 26px 26px, 100% 100%;
             mix-blend-mode: soft-light;
         }
-        body.dark::before { opacity: 0.12; mix-blend-mode: screen; }
+        body.dark::before { opacity: 0; }
         :where(button, a, input, textarea, [role="button"], [tabindex]):focus-visible {
             outline: 2px solid var(--accent);
             outline-offset: 3px;
@@ -121,29 +119,97 @@
         .layer3 { width: 240px; height: 40px; background: #e8d4be; z-index: 1; }
         .drip-cream {
             position: absolute;
-            top: -20px; left: 50%; transform: translateX(-50%);
-            width: 180px; height: 30px;
-            background: rgba(255, 248, 240, 0.92);
-            border-radius: 50%;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            top: -86px; left: 50%; transform: translateX(-50%);
+            width: 188px; height: 38px;
+            background:
+                radial-gradient(circle at 22% 32%, rgba(255,255,255,0.72) 0 9px, transparent 10px),
+                radial-gradient(circle at 62% 24%, rgba(255,255,255,0.48) 0 7px, transparent 8px),
+                linear-gradient(180deg, rgba(255, 253, 248, 0.98), rgba(238, 222, 204, 0.96));
+            border-radius: 46% 54% 42% 58% / 66% 72% 38% 34%;
+            box-shadow:
+                inset 0 5px 9px rgba(255,255,255,0.62),
+                inset 0 -7px 12px rgba(196,150,112,0.16),
+                0 6px 14px rgba(87,60,40,0.09);
             z-index: 10; opacity: 0;
-            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            filter: url(#creamGoo);
+            transform-origin: center top;
+            will-change: transform, top, border-radius;
         }
-        .drip-cream.show { opacity: 1; top: -10px; animation: creamOoze 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        .drip-cream.show { opacity: 1; top: -14px; animation: creamFlowDrop 1.55s cubic-bezier(0.2, 0.82, 0.18, 1) forwards, creamSlowOoze 2.8s ease-in-out 1.15s infinite alternate; }
         @keyframes creamOoze {
             0% { transform: translateX(-50%) scaleX(0.4) scaleY(0.2); opacity: 0; border-radius: 50%; }
             50% { transform: translateX(-50%) scaleX(1.08) scaleY(0.9); opacity: 1; border-radius: 50%; }
             100% { transform: translateX(-50%) scaleX(1) scaleY(1); opacity: 1; border-radius: 50%; }
         }
+        @keyframes creamFlowDrop {
+            0% {
+                top: -96px;
+                opacity: 0;
+                transform: translateX(-50%) scaleX(0.48) scaleY(1.9);
+                border-radius: 50% 50% 46% 54% / 78% 78% 26% 26%;
+            }
+            38% {
+                top: -18px;
+                opacity: 1;
+                transform: translateX(-50%) scaleX(0.76) scaleY(1.28);
+                border-radius: 46% 54% 38% 62% / 62% 70% 34% 30%;
+            }
+            55% {
+                top: -11px;
+                transform: translateX(-50%) scaleX(1.22) scaleY(0.58);
+                border-radius: 38% 62% 36% 64% / 72% 64% 36% 30%;
+            }
+            72% {
+                top: -15px;
+                transform: translateX(-50%) scaleX(0.94) scaleY(1.12);
+            }
+            86% {
+                top: -13px;
+                transform: translateX(-50%) scaleX(1.05) scaleY(0.9);
+            }
+            100% {
+                top: -14px;
+                opacity: 1;
+                transform: translateX(-50%) scaleX(1) scaleY(1);
+                border-radius: 46% 54% 42% 58% / 66% 72% 38% 34%;
+            }
+        }
+        @keyframes creamSlowOoze {
+            0% {
+                transform: translateX(-50%) scaleX(1) scaleY(1);
+                border-radius: 46% 54% 42% 58% / 66% 72% 38% 34%;
+            }
+            100% {
+                transform: translateX(-50%) scaleX(1.025) scaleY(0.985);
+                border-radius: 50% 50% 40% 60% / 68% 70% 40% 32%;
+            }
+        }
         .drip-cream::after {
-            content: ""; position: absolute; bottom: -8px; left: 15px;
-            width: 14px; height: 14px; background: rgba(255, 248, 240, 0.92);
-            border-radius: 0 0 8px 8px; box-shadow: 0 3px 5px rgba(0,0,0,0.04);
+            content: ""; position: absolute; bottom: -22px; left: 17px;
+            width: 24px; height: 34px;
+            background: linear-gradient(180deg, rgba(255,253,248,0.98), rgba(235,216,198,0.96));
+            border-radius: 45% 55% 62% 38% / 22% 22% 76% 78%;
+            box-shadow:
+                48px -5px 0 -6px rgba(248,238,226,0.98),
+                86px 3px 0 -3px rgba(244,232,218,0.96),
+                124px -8px 0 -8px rgba(250,241,230,0.96),
+                inset 0 -5px 8px rgba(190,145,108,0.13);
+            animation: creamDripFlow 2.2s ease-in-out 1.05s infinite alternate;
         }
         .drip-cream::before {
-            content: ""; position: absolute; bottom: -12px; right: 20px;
-            width: 10px; height: 12px; background: rgba(255, 248, 240, 0.92);
-            border-radius: 0 0 6px 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+            content: ""; position: absolute; bottom: -14px; right: 18px;
+            width: 18px; height: 26px;
+            background: linear-gradient(180deg, rgba(255,253,248,0.98), rgba(235,216,198,0.96));
+            border-radius: 50% 50% 70% 30% / 20% 22% 78% 78%;
+            box-shadow:
+                -74px 6px 0 -5px rgba(246,234,220,0.96),
+                -112px -3px 0 -8px rgba(250,241,230,0.94),
+                inset 0 -5px 8px rgba(190,145,108,0.12);
+            animation: creamDripFlow 2.6s ease-in-out 1.25s infinite alternate-reverse;
+        }
+        @keyframes creamDripFlow {
+            0% { transform: translateY(-1px) scaleY(0.86) scaleX(1.05); }
+            100% { transform: translateY(5px) scaleY(1.18) scaleX(0.92); }
         }
         .candle {
             width: 14px; height: 36px;
@@ -550,8 +616,65 @@
             .cake-layer.layer1 { width: 140px; height: 40px; }
             .cake-layer.layer2 { width: 160px; height: 36px; }
             .cake-layer.layer3 { width: 180px; height: 32px; }
+            .drip-cream {
+                width: 146px;
+                height: 30px;
+                top: -72px;
+            }
+            .drip-cream.show {
+                top: -12px;
+                animation: creamFlowDropMobile 1.45s cubic-bezier(0.2, 0.82, 0.18, 1) forwards, creamSlowOoze 2.8s ease-in-out 1.05s infinite alternate;
+            }
+            .drip-cream::after {
+                bottom: -17px;
+                left: 13px;
+                width: 18px;
+                height: 26px;
+                box-shadow:
+                    38px -4px 0 -5px rgba(248,238,226,0.98),
+                    68px 2px 0 -4px rgba(244,232,218,0.96),
+                    100px -6px 0 -7px rgba(250,241,230,0.96),
+                    inset 0 -4px 7px rgba(190,145,108,0.13);
+            }
+            .drip-cream::before {
+                bottom: -12px;
+                right: 13px;
+                width: 14px;
+                height: 22px;
+                box-shadow:
+                    -58px 5px 0 -5px rgba(246,234,220,0.96),
+                    -88px -2px 0 -7px rgba(250,241,230,0.94),
+                    inset 0 -4px 7px rgba(190,145,108,0.12);
+            }
             .bless-wrap.expanded { width: 88%; min-height: 250px; }
             .danmaku { animation-duration: 5s !important; font-size: 13px !important; }
+        }
+        @keyframes creamFlowDropMobile {
+            0% {
+                top: -78px;
+                opacity: 0;
+                transform: translateX(-50%) scaleX(0.5) scaleY(1.75);
+                border-radius: 50% 50% 46% 54% / 78% 78% 26% 26%;
+            }
+            42% {
+                top: -15px;
+                opacity: 1;
+                transform: translateX(-50%) scaleX(0.78) scaleY(1.2);
+            }
+            58% {
+                top: -9px;
+                transform: translateX(-50%) scaleX(1.16) scaleY(0.6);
+            }
+            78% {
+                top: -13px;
+                transform: translateX(-50%) scaleX(0.96) scaleY(1.08);
+            }
+            100% {
+                top: -12px;
+                opacity: 1;
+                transform: translateX(-50%) scaleX(1) scaleY(1);
+                border-radius: 46% 54% 42% 58% / 66% 72% 38% 34%;
+            }
         }
 
         /* 留言板弹窗 */
@@ -693,24 +816,35 @@
         }
         .cd-card, .wish-title, .msg-title { font-family: var(--font-display); }
         body.dark {
-            --accent-rgb: 150, 174, 210;
-            --accent: #96aed2;
-            --bg: #12151c;
-            --paper: rgba(28, 32, 42, 0.72);
-            --paper-strong: rgba(34, 39, 51, 0.9);
+            --accent-rgb: 255, 255, 255;
+            --accent: #f5f5f5;
+            --bg: #000000;
+            --paper: rgba(12, 12, 12, 0.84);
+            --paper-strong: rgba(18, 18, 18, 0.94);
             --glass: var(--paper);
             --glass-border: rgba(255, 255, 255, 0.14);
             --glass-hover: rgba(255, 255, 255, 0.08);
             --accent-soft: rgba(var(--accent-rgb), 0.1);
             --accent-glow: rgba(var(--accent-rgb), 0.14);
-            --line: rgba(255, 255, 255, 0.14);
+            --line: rgba(255, 255, 255, 0.24);
             --shadow-soft: 0 24px 70px rgba(0, 0, 0, 0.32);
             --text: #f4efe7;
             --text-secondary: #aeb7c8;
             --switch-bg: rgba(30, 30, 40, 0.8);
             --switch-border: rgba(255,255,255,0.12);
             --switch-shadow: rgba(0,0,0,0.4);
-            background: #080808;
+            background: #000000;
+        }
+        html.dark,
+        html.dark body,
+        body.dark {
+            background-color: #000000 !important;
+        }
+        body.dark .screen,
+        body.dark #blessScreen,
+        body.dark #cakeScreen,
+        body.dark #introScreen {
+            background: transparent !important;
         }
         body.dark .cd-card, body.dark .msg-modal, body.dark .msg-item,
         body.dark .msg-input, body.dark .msg-textarea, body.dark .bless-wrap,
@@ -725,7 +859,7 @@
         body.dark .cake-layer.layer3 { background: #1e1e26; }
         body.dark .candle { background: linear-gradient(180deg, #2a2a32 0%, #1a1a22 80%); }
         body.dark .drip-cream, body.dark .drip-cream::after, body.dark .drip-cream::before {
-            background: rgba(30, 30, 38, 0.92);
+            background: linear-gradient(180deg, rgba(44, 42, 48, 0.98), rgba(24, 24, 30, 0.96));
         }
         body.dark .msg-btn { background: linear-gradient(135deg, var(--accent), #a0a0b4); }
         body.dark .cd-label, body.dark .cd-unit small, body.dark .msg-item-time,
@@ -795,6 +929,17 @@
 </style>
 </head>
 <body>
+    <svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute;overflow:hidden">
+        <filter id="creamGoo">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="2.6" result="blur" />
+            <feColorMatrix in="blur" mode="matrix" values="
+                1 0 0 0 0
+                0 1 0 0 0
+                0 0 1 0 0
+                0 0 0 18 -8" result="goo" />
+            <feBlend in="SourceGraphic" in2="goo" />
+        </filter>
+    </svg>
     <button class="theme-toggle" id="themeToggle" type="button" title="切换主题" aria-label="切换深浅主题" aria-pressed="false">
         <span class="theme-label" id="themeLabel">浅色</span>
         <span class="theme-knob-wrapper" aria-hidden="true">
@@ -916,7 +1061,43 @@
                 'sans-serif'
             ];
             let dots = [];
+            let bgDust = [];
+            let photoRemapToken = 0;
+            let lastParticleFrame = performance.now();
             let ambientLightElements = [];
+            const PARTICLE_THEME = {
+                light: {
+                    textHueBase: 213,
+                    textHueRange: 24,
+                    textSaturation: 82,
+                    textLightness: 46,
+                    line: "rgba(37, 99, 235, 0.9)",
+                    bgMist: "rgba(59, 130, 246, 0.72)",
+                    photoGlow: "rgba(59, 130, 246, 0.10)",
+                    photoDust: "rgba(37, 99, 235, 0.70)",
+                    star: "#2563eb",
+                    photoHue: 213,
+                    photoSaturation: 78,
+                    photoLightnessMin: 28,
+                    photoLightnessRange: 32
+                },
+                dark: {
+                    textHueBase: 0,
+                    textHueRange: 0,
+                    textSaturation: 0,
+                    textLightness: 94,
+                    line: "rgba(255, 255, 255, 0.88)",
+                    bgMist: "rgba(255, 255, 255, 0.54)",
+                    photoGlow: "rgba(255, 255, 255, 0.10)",
+                    photoDust: "rgba(255, 255, 255, 0.68)",
+                    star: "#ffffff",
+                    photoHue: 0,
+                    photoSaturation: 0,
+                    photoLightnessMin: 64,
+                    photoLightnessRange: 28
+                }
+            };
+            if (localStorage.getItem('theme') === 'dark') document.body.classList.add('dark');
             const photoParticleImage = new Image();
             photoParticleImage.decoding = "async";
             photoParticleImage.src = "data:image/jpeg;base64,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";
@@ -937,40 +1118,98 @@
                 const area = window.innerWidth * window.innerHeight;
                 const cpu = navigator.hardwareConcurrency || 4;
                 const memory = navigator.deviceMemory || 4;
-                if (reduceMotion) return area < 420000 ? 2600 : 4200;
-                if (cpu <= 4 || memory <= 4) return area < 420000 ? 5000 : 6500;
-                if (area < 420000) return 8000;
-                if (area < 920000) return 10000;
-                return 12000;
+                if (reduceMotion) return area < 420000 ? 1800 : 3000;
+                if (cpu <= 4 || memory <= 4) return area < 420000 ? 3200 : 4800;
+                if (area < 420000) return 5200;
+                if (area < 920000) return 6800;
+                return 8200;
             }
 
-            function rebuildDots() {
-                const particleCount = getParticleCount();
-                dots = Array.from({ length: particleCount }, () => ({
+            function getParticlePalette() {
+                return document.body.classList.contains("dark") ? PARTICLE_THEME.dark : PARTICLE_THEME.light;
+            }
+
+            function syncParticleColors() {
+                const palette = getParticlePalette();
+                dots.forEach(dot => {
+                    dot.hue = palette.textHueBase + (dot.seed - 0.5) * palette.textHueRange;
+                    if (!String(dot.mode || "").startsWith("photo")) dot.color = null;
+                });
+            }
+
+            function hash01(x, y) {
+                const n = Math.sin(x * 12.9898 + y * 78.233) * 43758.5453;
+                return n - Math.floor(n);
+            }
+
+            function shufflePoints(points) {
+                for (let i = points.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [points[i], points[j]] = [points[j], points[i]];
+                }
+                return points;
+            }
+
+            function createDot(mode = "text") {
+                const seed = Math.random();
+                const depth = Math.pow(Math.random(), 1.8);
+                return {
                     x: Math.random() * w,
                     y: Math.random() * h,
                     tx: Math.random() * w,
                     ty: Math.random() * h,
                     vx: 0,
                     vy: 0,
-                    a: 0.5 + Math.random() * 0.5,
-                    hue: 210 + Math.random() * 30,
-                    radius: 1.8
-                }));
+                    a: 0.42 + depth * 0.5,
+                    hue: getParticlePalette().textHueBase + (seed - 0.5) * getParticlePalette().textHueRange,
+                    radius: 0.9 + depth * 1.35,
+                    targetRadius: 1.05 + depth * 1.55,
+                    seed,
+                    delay: Math.random() * 0.4,
+                    targetSetAt: performance.now(),
+                    depth,
+                    twinkle: Math.random() * Math.PI * 2,
+                    color: null,
+                    mode
+                };
+            }
+
+            function rebuildDots() {
+                const particleCount = getParticleCount();
+                dots = Array.from({ length: particleCount }, () => createDot("text"));
             }
 
             function expandDotsForPhoto() {
                 const targetCount = getPhotoParticleCount();
                 while (dots.length < targetCount) {
-                    dots.push({
-                        x: Math.random() * w, y: Math.random() * h,
-                        tx: Math.random() * w, ty: Math.random() * h,
-                        vx: 0, vy: 0,
-                        a: 0.5 + Math.random() * 0.5,
-                        hue: 210 + Math.random() * 30,
-                        radius: 1.8
-                    });
+                    dots.push(createDot("photo"));
                 }
+            }
+
+            function getCurrentTargetParticleCount() {
+                const mode = textFx.dataset.particleMode || "text";
+                return mode.startsWith("photo") ? getPhotoParticleCount() : getParticleCount();
+            }
+
+            function rebuildBgDust() {
+                const count = reduceMotion ? 18 : 54;
+                bgDust = Array.from({ length: count }, () => ({
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    r: 0.35 + Math.random() * 1.7,
+                    a: 0.035 + Math.random() * 0.13,
+                    phase: Math.random() * Math.PI * 2,
+                    speed: 0.00045 + Math.random() * 0.0011
+                }));
+            }
+
+            async function remapPhotoTargetsAfterResize() {
+                const token = ++photoRemapToken;
+                try {
+                    const pts = getHeartParticlePoints();
+                    if (token !== photoRemapToken || !pts.length) return;
+                    assignPhotoTargets(pts, { immediate: false });
+                } catch (e) {}
             }
 
             function nextFrame() {
@@ -1021,9 +1260,15 @@
                 tCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
                 offCtx.setTransform(1, 0, 0, 1, 0, 0);
                 svgMaskCtx.setTransform(1, 0, 0, 1, 0, 0);
-                const nextParticleCount = getParticleCount();
+                const mode = textFx.dataset.particleMode || "text";
+                const nextParticleCount = getCurrentTargetParticleCount();
                 if (!dots.length || dots.length !== nextParticleCount) {
-                    rebuildDots();
+                    if (mode.startsWith("photo")) {
+                        while (dots.length < nextParticleCount) dots.push(createDot("photo"));
+                        if (dots.length > nextParticleCount) dots.length = nextParticleCount;
+                    } else {
+                        rebuildDots();
+                    }
                 } else {
                     dots.forEach(dot => {
                         dot.x = Math.min(Math.max(dot.x, 0), w);
@@ -1032,12 +1277,19 @@
                         dot.ty = Math.min(Math.max(dot.ty, 0), h);
                     });
                 }
+                rebuildBgDust();
+                if (mode.startsWith("photo")) remapPhotoTargetsAfterResize();
             }
             window.addEventListener("resize", resize);
             resize();
 
             const balloons = [];
-            const balloonColors = ['#3b82f6', '#60a5fa', '#2563eb', '#93c5fd', '#1d4ed8', '#7cb8ff', '#4a90d9'];
+            const balloonColors = [
+                "rgba(176, 196, 220, 0.32)",
+                "rgba(232, 210, 176, 0.28)",
+                "rgba(214, 185, 132, 0.30)",
+                "rgba(140, 172, 210, 0.26)"
+            ];
             for (let i=0; i<14; i++) {
                 balloons.push({
                     x: Math.random() * w, y: h + Math.random() * 200,
@@ -1045,7 +1297,7 @@
                     color: balloonColors[Math.floor(Math.random() * balloonColors.length)],
                     speed: 0.4 + Math.random() * 0.7,
                     wave: Math.random() * Math.PI*2, amplitude: 0.6 + Math.random() * 1.2,
-                    opacity: 0.6 + Math.random() * 0.3, stringLength: 40 + Math.random() * 30
+                    opacity: 0.36 + Math.random() * 0.18, stringLength: 40 + Math.random() * 30
                 });
             }
             function drawBalloons(ctx) {
@@ -1054,16 +1306,16 @@
                     ctx.beginPath();
                     ctx.ellipse(b.x, b.y, b.radius, b.radius*1.2, 0, 0, Math.PI*2);
                     ctx.fillStyle = b.color; ctx.fill();
-                    ctx.strokeStyle = 'rgba(59, 130, 246, 0.15)'; ctx.lineWidth = 1; ctx.stroke();
+                    ctx.strokeStyle = 'rgba(63, 127, 190, 0.12)'; ctx.lineWidth = 1; ctx.stroke();
                     ctx.beginPath();
                     ctx.ellipse(b.x - b.radius*0.25, b.y - b.radius*0.2, b.radius*0.15, b.radius*0.2, 0, 0, Math.PI*2);
-                    ctx.fillStyle = 'rgba(255,255,255,0.6)'; ctx.fill();
-                    ctx.fillStyle = 'rgba(59, 130, 246, 0.2)';
+                    ctx.fillStyle = 'rgba(196, 158, 92, 0.34)'; ctx.fill();
+                    ctx.fillStyle = 'rgba(63, 127, 190, 0.16)';
                     ctx.fillRect(b.x-3, b.y+b.radius*1.05, 6, 6);
                     ctx.beginPath();
                     ctx.moveTo(b.x, b.y+b.radius*1.2);
                     ctx.lineTo(b.x + Math.sin(b.x*0.01)*2, b.y+b.radius*1.2+b.stringLength);
-                    ctx.strokeStyle = 'rgba(59, 130, 246, 0.15)'; ctx.lineWidth = 1; ctx.stroke();
+                    ctx.strokeStyle = 'rgba(63, 127, 190, 0.12)'; ctx.lineWidth = 1; ctx.stroke();
                     ctx.restore();
                 }
             }
@@ -1079,96 +1331,53 @@
                 vx: -0.1 + Math.random() * 0.2, vy: -0.08 + Math.random() * 0.16,
                 r: 0.6 + Math.random() * 1.2, a: 0.06 + Math.random() * 0.1
             }));
-            let heartPhase = 0;
-
-            function drawGrainyHeart(ctx) {
+            function drawPhotoAtmosphere(ctx, time) {
+                const palette = getParticlePalette();
                 const cx = w / 2;
                 const cy = h / 2;
-                const baseSize = Math.min(w, h) * 0.45;
-                const beat = 1 + Math.sin(heartPhase) * 0.07;
-                const size = baseSize * beat;
+                const radius = Math.max(w, h) * 0.72;
+                const stage = ctx.createRadialGradient(cx, cy, Math.min(w, h) * 0.08, cx, cy, radius);
+                stage.addColorStop(0, palette.photoGlow);
+                stage.addColorStop(0.38, palette.bgMist.replace(/[\d.]+\)$/,'0.08)'));
+                stage.addColorStop(0.72, "rgba(18, 24, 34, 0.10)");
+                stage.addColorStop(1, "rgba(10, 14, 22, 0.22)");
+                ctx.fillStyle = stage;
+                ctx.fillRect(0, 0, w, h);
 
                 ctx.save();
-                ctx.translate(cx, cy);
-
-                ctx.shadowColor = 'rgba(255, 60, 100, 0.15)';
-                ctx.shadowBlur = 50;
-
-                ctx.beginPath();
-                const s = size / 100;
-                const step = 0.015;
-                for (let t = 0; t <= Math.PI * 2; t += step) {
-                    const x = 16 * Math.pow(Math.sin(t), 3) * s;
-                    const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) * s;
-                    if (t === 0) ctx.moveTo(x, y);
-                    else ctx.lineTo(x, y);
-                }
-                ctx.closePath();
-
-                ctx.clip();
-
-                const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, size);
-                grad.addColorStop(0, 'rgba(255, 80, 130, 0.20)');
-                grad.addColorStop(0.4, 'rgba(230, 40, 90, 0.12)');
-                grad.addColorStop(1, 'rgba(200, 20, 60, 0.05)');
-                ctx.fillStyle = grad;
-                ctx.fillRect(-size, -size, size * 2, size * 2);
-
-                const grainCount = Math.floor(size * 2.5);
-                for (let i = 0; i < grainCount; i++) {
-                    const gx = (Math.random() - 0.5) * size * 2.2;
-                    const gy = (Math.random() - 0.5) * size * 2.2;
-                    if (Math.abs(gx) > size * 0.9 || Math.abs(gy) > size * 0.9) continue;
-                    const gr = 0.3 + Math.random() * 1.8;
-                    const bright = 0.1 + Math.random() * 0.3;
-                    ctx.fillStyle = 'rgba(255, 200, 220, ' + (bright * 0.3) + ')';
+                ctx.globalCompositeOperation = "lighter";
+                for (const p of bgDust) {
+                    const twinkle = 0.48 + 0.52 * Math.sin(time * p.speed + p.phase);
+                    ctx.fillStyle = palette.photoDust.replace(/[\d.]+\)$/, `${p.a * twinkle})`);
                     ctx.beginPath();
-                    ctx.arc(gx, gy, gr, 0, Math.PI * 2);
+                    ctx.arc(p.x, p.y, p.r * (0.75 + twinkle * 0.5), 0, Math.PI * 2);
                     ctx.fill();
                 }
-
-                for (let i = 0; i < grainCount * 0.4; i++) {
-                    const gx = (Math.random() - 0.5) * size * 2.2;
-                    const gy = (Math.random() - 0.5) * size * 2.2;
-                    if (Math.abs(gx) > size * 0.9 || Math.abs(gy) > size * 0.9) continue;
-                    const gr = 0.4 + Math.random() * 1.2;
-                    ctx.fillStyle = 'rgba(120, 20, 50, ' + (0.05 + Math.random() * 0.1) + ')';
-                    ctx.beginPath();
-                    ctx.arc(gx, gy, gr, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-
                 ctx.restore();
-
-                ctx.save();
-                ctx.translate(cx, cy);
-                ctx.beginPath();
-                for (let t = 0; t <= Math.PI * 2; t += step) {
-                    const x = 16 * Math.pow(Math.sin(t), 3) * s;
-                    const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) * s;
-                    if (t === 0) ctx.moveTo(x, y);
-                    else ctx.lineTo(x, y);
-                }
-                ctx.closePath();
-                ctx.strokeStyle = 'rgba(255, 80, 120, 0.10)';
-                ctx.lineWidth = 1.5;
-                ctx.stroke();
-                ctx.restore();
-
-                heartPhase += 0.035;
             }
 
-            function renderBg() {
+            function drawGrainyHeart(ctx) {
+                drawPhotoAtmosphere(ctx, performance.now());
+            }
+
+            function renderBg(now = performance.now()) {
                 bgCtx.clearRect(0, 0, w, h);
-                if (textFx.dataset.particleMode === "photo") drawGrainyHeart(bgCtx);
+                const mode = textFx.dataset.particleMode || "text";
+                const palette = getParticlePalette();
+                if (mode.startsWith("photo")) drawPhotoAtmosphere(bgCtx, now);
                 for (const p of bgParticles) {
                     p.x += p.vx; p.y += p.vy;
                     if (p.x < -10) p.x = w + 10; if (p.x > w + 10) p.x = -10;
                     if (p.y < -10) p.y = h + 10; if (p.y > h + 10) p.y = -10;
-                    bgCtx.fillStyle = `rgba(59, 130, 246, ${p.a})`;
+                    bgCtx.fillStyle = palette.bgMist.replace(/[\d.]+\)$/, `${p.a * (mode.startsWith("photo") ? 0.45 : 0.9)})`);
                     bgCtx.beginPath(); bgCtx.arc(p.x, p.y, p.r, 0, Math.PI*2); bgCtx.fill();
                 }
-                updateBalloons(); drawBalloons(bgCtx);
+                const cakeEl = document.getElementById("cakeScreen");
+                const isCakeVisible = cakeEl && !cakeEl.classList.contains("hidden");
+                if (isCakeVisible || mode === "line") {
+                    updateBalloons();
+                    drawBalloons(bgCtx);
+                }
                 requestAnimationFrame(renderBg);
             }
             renderBg();
@@ -1187,13 +1396,33 @@
             }
             function collectTextPoints(sourceCtx, sourceCanvas) {
                 const cw = sourceCanvas.width, ch = sourceCanvas.height;
-                const cssStep = Math.max(1, Math.floor(Math.min(w,h)/260));
-                const step = cssStep * dpr;
+                if (!cw || !ch) return [];
+                const cssStep = Math.max(1, Math.floor(Math.min(w,h)/270));
+                const step = Math.max(1, Math.round(cssStep * dpr));
                 const img = sourceCtx.getImageData(0,0,cw,ch).data;
                 const pts = [];
+                const alphaAt = (x, y) => img[(Math.max(0, Math.min(ch - 1, y)) * cw + Math.max(0, Math.min(cw - 1, x))) * 4 + 3] || 0;
                 for (let y=0; y<ch; y+=step) {
                     for (let x=0; x<cw; x+=step) {
-                        if (img[(y*cw+x)*4+3] > 140) pts.push({x:x/dpr, y:y/dpr});
+                        const a = alphaAt(x, y);
+                        if (a <= 120) continue;
+                        const edge =
+                            Math.abs(a - alphaAt(x - step, y)) > 72 ||
+                            Math.abs(a - alphaAt(x + step, y)) > 72 ||
+                            Math.abs(a - alphaAt(x, y - step)) > 72 ||
+                            Math.abs(a - alphaAt(x, y + step)) > 72;
+                        const keep = edge || hash01(x, y) > 0.26;
+                        if (!keep) continue;
+                        const jitter = edge ? 0.18 : 0.72;
+                        const jx = (hash01(x + 17, y + 31) - 0.5) * step * jitter;
+                        const jy = (hash01(x + 43, y + 11) - 0.5) * step * jitter;
+                        pts.push({
+                            x: (x + jx) / dpr,
+                            y: (y + jy) / dpr,
+                            edge,
+                            weight: edge ? 1 : 0.72,
+                            jitter
+                        });
                     }
                 }
                 return pts;
@@ -1228,49 +1457,164 @@
                 const image = await loadPhotoParticleImage();
                 // 裁去上方大面积夜景，让两个人的脸占据大部分粒子画面。
                 const crop = { left: 0.02, top: 0.14, right: 0.98, bottom: 1 };
-                const imageRatio = (image.naturalWidth * (crop.right - crop.left)) /
-                    (image.naturalHeight * (crop.bottom - crop.top));
-                let displayWidth = Math.min(w * 0.94, h * imageRatio * 0.88);
-                let displayHeight = displayWidth / imageRatio;
-                const maxHeight = h * 0.88;
-                if (displayHeight > maxHeight) {
-                    displayHeight = maxHeight;
-                    displayWidth = displayHeight * imageRatio;
-                }
+                const displaySize = Math.min(w * 0.86, h * 0.84, 720);
+                const displayWidth = displaySize;
+                const displayHeight = displaySize;
 
                 const sampleCanvas = document.createElement("canvas");
-                const sampleWidth = Math.min(960, Math.round(displayWidth * dpr));
-                const sampleHeight = Math.round(sampleWidth / imageRatio);
+                const sampleWidth = Math.min(820, Math.round(displayWidth * dpr));
+                const sampleHeight = sampleWidth;
                 sampleCanvas.width = sampleWidth;
                 sampleCanvas.height = sampleHeight;
                 const sampleCtx = sampleCanvas.getContext("2d", { willReadFrequently: true });
-                sampleCtx.drawImage(image, 0, 0, sampleWidth, sampleHeight);
+                let sx = image.naturalWidth * crop.left;
+                let sy = image.naturalHeight * crop.top;
+                let sw = image.naturalWidth * (crop.right - crop.left);
+                let sh = image.naturalHeight * (crop.bottom - crop.top);
+                const cropRatio = sw / sh;
+                if (cropRatio > 1) {
+                    const nextSw = sh;
+                    sx += (sw - nextSw) / 2;
+                    sw = nextSw;
+                } else if (cropRatio < 1) {
+                    const nextSh = sw;
+                    sy += (sh - nextSh) * 0.42;
+                    sh = nextSh;
+                }
+                sampleCtx.drawImage(image, sx, sy, sw, sh, 0, 0, sampleWidth, sampleHeight);
                 const pixels = sampleCtx.getImageData(0, 0, sampleWidth, sampleHeight).data;
                 const left = (w - displayWidth) / 2;
                 const top = (h - displayHeight) / 2;
-                const cropLeft = Math.floor(sampleWidth * crop.left);
-                const cropTop = Math.floor(sampleHeight * crop.top);
-                const cropRight = Math.ceil(sampleWidth * crop.right);
-                const cropBottom = Math.ceil(sampleHeight * crop.bottom);
-                const cropWidth = cropRight - cropLeft;
-                const cropHeight = cropBottom - cropTop;
-                // 使用规则网格取样，确保脸部和衣服不会被随机抽样留下空洞。
-                const step = Math.max(3, Math.round(Math.sqrt((cropWidth * cropHeight) / dots.length)));
+                const centerX = sampleWidth / 2;
+                const centerY = sampleHeight / 2;
+                const maxCenterDist = Math.hypot(centerX, centerY) || 1;
+                const step = Math.max(2, Math.round(Math.sqrt((sampleWidth * sampleHeight) / Math.max(1, dots.length * 1.35))));
                 const pts = [];
+                const pixelIndex = (x, y) => (Math.max(0, Math.min(sampleHeight - 1, y)) * sampleWidth + Math.max(0, Math.min(sampleWidth - 1, x))) * 4;
+                const lumaAt = (x, y) => {
+                    const idx = pixelIndex(x, y);
+                    return 0.2126 * pixels[idx] + 0.7152 * pixels[idx + 1] + 0.0722 * pixels[idx + 2];
+                };
+                const isInsideHeart = (x, y) => {
+                    const nx = (x / sampleWidth - 0.5) * 2.34;
+                    const ny = (y / sampleHeight - 0.48) * -2.34;
+                    const v = nx * nx + ny * ny - 1;
+                    return (v * v * v - nx * nx * ny * ny * ny) <= 0;
+                };
+                const heartEdgeStrength = (x, y) => {
+                    const gap = step * 1.4;
+                    return (
+                        (isInsideHeart(x - gap, y) ? 0 : 1) +
+                        (isInsideHeart(x + gap, y) ? 0 : 1) +
+                        (isInsideHeart(x, y - gap) ? 0 : 1) +
+                        (isInsideHeart(x, y + gap) ? 0 : 1)
+                    );
+                };
 
-                for (let y = cropTop; y < cropBottom; y += step) {
-                    for (let x = cropLeft; x < cropRight; x += step) {
+                for (let y = 0; y < sampleHeight; y += step) {
+                    for (let x = 0; x < sampleWidth; x += step) {
+                        if (!isInsideHeart(x, y)) continue;
                         const index = (y * sampleWidth + x) * 4;
                         const alpha = pixels[index + 3];
                         if (alpha < 80) continue;
+                        const r = pixels[index];
+                        const g = pixels[index + 1];
+                        const b = pixels[index + 2];
+                        const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+                        const edgeStrength =
+                            Math.abs(luma - lumaAt(x - step, y)) +
+                            Math.abs(luma - lumaAt(x + step, y)) +
+                            Math.abs(luma - lumaAt(x, y - step)) +
+                            Math.abs(luma - lumaAt(x, y + step));
+                        const heartEdge = heartEdgeStrength(x, y) > 0;
+                        const edge = edgeStrength > 96 || heartEdge;
+                        const centerBias = 1 - Math.min(1, Math.hypot(x - centerX, y - centerY) / maxCenterDist);
+                        const lift = 8 + centerBias * 8;
+                        const warm = edge ? 1.025 : 1.005;
+                        const rr = Math.min(255, Math.round(r * warm + lift));
+                        const gg = Math.min(255, Math.round(g * (edge ? 1.012 : 1.004) + lift));
+                        const bb = Math.min(255, Math.round(b + lift * 0.58));
+                        const priority = (edge ? 2.25 : 1) + (heartEdge ? 0.65 : 0) + (luma > 128 ? 0.26 : 0) + centerBias * 0.72;
                         pts.push({
-                            x: left + ((x - cropLeft) / cropWidth) * displayWidth,
-                            y: top + ((y - cropTop) / cropHeight) * displayHeight,
-                            color: `rgba(${pixels[index]}, ${pixels[index + 1]}, ${pixels[index + 2]}, ${alpha / 255})`
+                            x: left + (x / sampleWidth) * displayWidth,
+                            y: top + (y / sampleHeight) * displayHeight,
+                            alpha: Math.max(0.72, alpha / 255),
+                            radius: heartEdge ? 1.02 : edge ? 1.08 : 1.34 + (luma / 255) * 0.72 + centerBias * 0.24,
+                            edge,
+                            heartEdge,
+                            luma,
+                            priority
                         });
                     }
                 }
+                shufflePoints(pts);
+                pts.sort((a, b) => b.priority - a.priority);
                 return pts;
+            }
+
+            function getHeartParticlePoints() {
+                const displaySize = Math.min(w * 0.74, h * 0.68, 560);
+                const centerX = w / 2;
+                const centerY = h * 0.48;
+                const step = Math.max(2, Math.round(Math.sqrt((displaySize * displaySize) / Math.max(1, dots.length * 1.35))));
+                const pts = [];
+                const maxDist = displaySize * 0.52;
+                const isInsideHeart = (px, py) => {
+                    const nx = ((px - centerX) / displaySize) * 2.34;
+                    const ny = -((py - centerY) / displaySize) * 2.34 + 0.12;
+                    const v = nx * nx + ny * ny - 1;
+                    return (v * v * v - nx * nx * ny * ny * ny) <= 0;
+                };
+                for (let y = centerY - displaySize * 0.58; y <= centerY + displaySize * 0.58; y += step) {
+                    for (let x = centerX - displaySize * 0.58; x <= centerX + displaySize * 0.58; x += step) {
+                        if (!isInsideHeart(x, y)) continue;
+                        const edge =
+                            !isInsideHeart(x - step * 1.7, y) ||
+                            !isInsideHeart(x + step * 1.7, y) ||
+                            !isInsideHeart(x, y - step * 1.7) ||
+                            !isInsideHeart(x, y + step * 1.7);
+                        const centerBias = 1 - Math.min(1, Math.hypot(x - centerX, y - centerY) / maxDist);
+                        const sparkle = hash01(Math.round(x), Math.round(y));
+                        pts.push({
+                            x,
+                            y,
+                            alpha: edge ? 0.98 : 0.72 + centerBias * 0.18,
+                            radius: edge ? 1.12 : 1.35 + centerBias * 0.58 + sparkle * 0.22,
+                            edge,
+                            heartEdge: edge,
+                            luma: edge ? 235 : 120 + centerBias * 95 + sparkle * 24,
+                            priority: (edge ? 2.4 : 1) + centerBias * 0.8 + sparkle * 0.18
+                        });
+                    }
+                }
+                shufflePoints(pts);
+                pts.sort((a, b) => b.priority - a.priority);
+                return pts;
+            }
+
+            function assignPhotoTargets(points, options = {}) {
+                if (!points || !points.length) return false;
+                expandDotsForPhoto();
+                const selected = [];
+                for (let i = 0; i < dots.length; i++) {
+                    selected.push(points[i % points.length]);
+                }
+                shufflePoints(selected);
+                for (let i = 0; i < dots.length; i++) {
+                    const point = selected[i];
+                    const dot = dots[i];
+                    dot.tx = point.x;
+                    dot.ty = point.y;
+                    dot.color = null;
+                    dot.photoLuma = point.luma;
+                    dot.photoAlpha = point.alpha;
+                    dot.targetRadius = point.radius;
+                    dot.delay = options.immediate ? 0 : (point.edge ? Math.random() * 0.18 : 0.12 + Math.random() * 0.45);
+                    dot.targetSetAt = performance.now();
+                    dot.a = point.edge ? 0.94 : 0.74 + Math.min(0.18, point.luma / 255 * 0.18);
+                    dot.mode = point.edge ? "heartEdge" : "heartFill";
+                }
+                return true;
             }
 
             function escapeSvgText(text) {
@@ -1442,15 +1786,28 @@
             }
             function morphTo(text, maxSize, scatter=false) {
                 return new Promise(resolve => {
-                    dots.forEach(dot => { dot.color = null; dot.radius = 1.8; });
+                    textFx.dataset.particleMode = scatter === "football" ? "lineArt" : "text";
+                    const setAt = performance.now();
+                    dots.forEach(dot => {
+                        dot.color = null;
+                        dot.targetRadius = scatter === "football" ? 1.05 + dot.depth * 0.45 : 1.2 + dot.depth * 0.8;
+                        dot.mode = scatter === "football" ? "lineArt" : "text";
+                        dot.delay = Math.random() * 0.18;
+                        dot.targetSetAt = setAt;
+                    });
                     if (scatter) {
                         const targets = scatter === 'football' ? getFootballFieldPoints(w, h, dots.length) : null;
                         for (let i = 0; i < dots.length; i++) {
-                            if (targets) { dots[i].tx = targets[i].x; dots[i].ty = targets[i].y; }
+                            if (targets) {
+                                dots[i].tx = targets[i].x;
+                                dots[i].ty = targets[i].y;
+                                dots[i].a = 0.48 + dots[i].depth * 0.32;
+                            }
                             else { dots[i].tx = Math.random()*w; dots[i].ty = Math.random()*h; }
                         }
                     }
                     setTimeout(async () => {
+                        textFx.dataset.particleMode = "text";
                         let bestResult = await findBestTextPoints(text, maxSize);
                         for (let attempt = 0; attempt < 3 && bestResult.pts.length < Math.max(180, dots.length * 0.12); attempt++) {
                             await nextFrame();
@@ -1462,13 +1819,25 @@
                         const { pts } = bestResult;
                         let selected;
                         if (pts.length >= dots.length) {
-                            const sh = [...pts]; for (let i=sh.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[sh[i],sh[j]]=[sh[j],sh[i]];}
+                            const sh = shufflePoints([...pts]);
                             selected = sh.slice(0,dots.length);
                         } else if (pts.length>0) {
-                            const sh = [...pts]; for (let i=sh.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[sh[i],sh[j]]=[sh[j],sh[i]];}
+                            const sh = shufflePoints([...pts]);
                             selected = []; for (let i=0;i<dots.length;i++) selected.push(sh[i%sh.length]);
                         } else { selected = dots.map(d=>({x:d.tx, y:d.ty})); }
-                        for (let i=0;i<dots.length;i++) { dots[i].tx = selected[i].x; dots[i].ty = selected[i].y; }
+                        const targetSetAt = performance.now();
+                        for (let i=0;i<dots.length;i++) {
+                            const target = selected[i];
+                            const wave = (target.x / Math.max(1, w)) * 0.45 + (target.y / Math.max(1, h)) * 0.25;
+                            dots[i].tx = target.x;
+                            dots[i].ty = target.y;
+                            dots[i].mode = "text";
+                            dots[i].color = null;
+                            dots[i].targetRadius = target.edge ? 1.58 + dots[i].depth * 0.32 : 1.02 + dots[i].depth * 0.46;
+                            dots[i].a = target.edge ? 0.86 + dots[i].depth * 0.1 : 0.48 + dots[i].depth * 0.24;
+                            dots[i].delay = wave + Math.random() * 0.16;
+                            dots[i].targetSetAt = targetSetAt;
+                        }
                         setTimeout(resolve, 2200);
                     }, scatter === 'football' ? 2500 : scatter ? 900 : 100);
                 });
@@ -1476,36 +1845,33 @@
             async function morphToPhoto() {
                 // 仅在肖像阶段增加粒子，避免前面的文字与足球场卡顿。
                 expandDotsForPhoto();
-                let pts = [];
-                try {
-                    pts = await getPhotoParticlePoints();
-                } catch (e) {
-                    await morphTo("Happy Birthday", 180, true);
-                    return;
-                }
+                const pts = getHeartParticlePoints();
                 if (!pts.length) {
                     await morphTo("Happy Birthday", 180, true);
                     return;
                 }
 
-                // 先短暂散开，再聚成照片中的两个人。
-                textFx.dataset.particleMode = "photo";
-                dots.forEach(dot => {
+                // 先聚成柔和星云，再收束成跳动的爱心。
+                textFx.dataset.particleMode = "photoReveal";
+                const cx = w / 2;
+                const cy = h / 2;
+                const rx = Math.min(w * 0.34, 380);
+                const ry = Math.min(h * 0.26, 270);
+                const setAt = performance.now();
+                dots.forEach((dot, i) => {
+                    const a = i * 2.399963;
+                    const r = Math.sqrt(i / Math.max(1, dots.length));
                     dot.color = null;
-                    dot.radius = 1.8;
-                    dot.tx = Math.random() * w;
-                    dot.ty = Math.random() * h;
+                    dot.mode = "heartReveal";
+                    dot.targetRadius = 0.9 + dot.depth * 1.15;
+                    dot.tx = cx + Math.cos(a) * rx * r;
+                    dot.ty = cy + Math.sin(a) * ry * r;
+                    dot.delay = r * 0.32;
+                    dot.targetSetAt = setAt;
                 });
-                await sleep(650);
-
-                for (let i = 0; i < dots.length; i++) {
-                    // 均匀地从规则网格中取点，而不是随机漏掉某些区域。
-                    const point = pts[Math.floor((i / dots.length) * pts.length)];
-                    dots[i].tx = point.x;
-                    dots[i].ty = point.y;
-                    dots[i].color = point.color;
-                    dots[i].radius = 3.2;
-                }
+                await sleep(760);
+                textFx.dataset.particleMode = "photo";
+                assignPhotoTargets(pts);
                 await sleep(4000);
             }
             function morphToLine() {
@@ -1514,40 +1880,116 @@
                     const lineY = h*0.53;
                     const lineWidth = w * 0.85;
                     const leftX = (w - lineWidth) / 2;
-                    const lineHeight = 4;
                     const pts = [];
-                    for (let y = lineY - lineHeight/2; y <= lineY + lineHeight/2; y += 2) {
-                        for (let x = leftX; x <= leftX + lineWidth; x += 2) {
-                            pts.push({ x, y });
-                        }
+                    for (let x = leftX; x <= leftX + lineWidth; x += 2) {
+                        const t = (x - leftX) / lineWidth;
+                        const wave = Math.sin(t * Math.PI) * 6;
+                        const fade = Math.sin(t * Math.PI);
+                        pts.push({ x, y: lineY + wave + (hash01(x, lineY) - 0.5) * 1.4, fade });
                     }
-                    const shuffled = [...pts];
-                    for (let i = shuffled.length - 1; i > 0; i--) {
-                        const j = Math.floor(Math.random() * (i + 1));
-                        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-                    }
+                    const shuffled = shufflePoints([...pts]);
                     const selected = [];
                     for (let i = 0; i < dots.length; i++) selected.push(shuffled[i % shuffled.length]);
-                    for (let i = 0; i < dots.length; i++) { dots[i].tx = selected[i].x; dots[i].ty = selected[i].y; dots[i].color = null; dots[i].radius = 1.8; }
+                    const setAt = performance.now();
+                    for (let i = 0; i < dots.length; i++) {
+                        dots[i].tx = selected[i].x;
+                        dots[i].ty = selected[i].y;
+                        dots[i].color = null;
+                        dots[i].mode = "line";
+                        dots[i].a = 0.36 + (selected[i].fade || 0.5) * 0.46;
+                        dots[i].targetRadius = 0.92 + (selected[i].fade || 0.5) * 0.7;
+                        dots[i].delay = Math.random() * 0.24;
+                        dots[i].targetSetAt = setAt;
+                    }
                     setTimeout(resolve, 2000);
                 });
             }
 
             let textActive = true;
-            function renderTextFx() {
-                tCtx.clearRect(0,0,w,h);
-                if (textActive) {
-                    if (textFx.dataset.particleMode === "photo") {
-                        tCtx.fillStyle = "rgba(15, 23, 42, 0.34)";
+            function updateDot(p, dt, now, mode) {
+                const elapsed = Math.max(0, (now - (p.targetSetAt || now)) / 1000);
+                const delayFactor = Math.min(1, Math.max(0, (elapsed - (p.delay || 0)) * 3.2));
+                const photoMode = mode.startsWith("photo");
+                const spring = photoMode ? 0.016 : 0.018;
+                const friction = photoMode ? 0.875 : 0.842;
+                const dx = p.tx - p.x;
+                const dy = p.ty - p.y;
+                p.vx += dx * spring * delayFactor * dt;
+                p.vy += dy * spring * delayFactor * dt;
+                const drift = p.mode === "text" ? 0.018 : (photoMode ? 0.002 : 0.008);
+                p.vx += Math.sin(now * 0.001 + p.seed * 20) * drift * p.depth * dt;
+                p.vy += Math.cos(now * 0.0012 + p.seed * 17) * drift * p.depth * dt;
+                p.vx *= Math.pow(friction, dt);
+                p.vy *= Math.pow(friction, dt);
+                p.x += p.vx * dt;
+                p.y += p.vy * dt;
+                p.radius += ((p.targetRadius || p.radius) - p.radius) * 0.08 * dt;
+            }
+
+            function drawDot(ctx, p, now, mode) {
+                const palette = getParticlePalette();
+                const speed = Math.min(1, Math.hypot(p.vx, p.vy) / 12);
+                const pulse = 0.84 + 0.16 * Math.sin(now * 0.003 + p.twinkle);
+                const isPhoto = mode.startsWith("photo");
+                const isHeart = p.mode === "heartEdge" || p.mode === "heartFill";
+                ctx.globalAlpha = Math.min(1, p.a * pulse + speed * (isPhoto ? 0.08 : 0.18));
+                if (isPhoto && typeof p.photoLuma === "number") {
+                    const lumaRatio = Math.max(0, Math.min(1, p.photoLuma / 255));
+                    const light = palette.photoLightnessMin + lumaRatio * palette.photoLightnessRange;
+                    ctx.globalAlpha = Math.min(1, (p.photoAlpha || p.a) * pulse + speed * 0.06);
+                    ctx.fillStyle = `hsla(${palette.photoHue}, ${palette.photoSaturation}%, ${light}%, 1)`;
+                } else if (p.color) {
+                    ctx.fillStyle = p.color;
+                } else if (p.mode === "line") {
+                    ctx.fillStyle = palette.line.replace(/[\d.]+\)$/, `${Math.min(1, p.a + 0.08)})`);
+                } else {
+                    const light = p.mode === "lineArt" ? palette.textLightness + 3 : palette.textLightness;
+                    const sat = p.mode === "lineArt" ? Math.max(42, palette.textSaturation - 10) : palette.textSaturation;
+                    ctx.fillStyle = `hsla(${p.hue}, ${sat}%, ${light}%, 1)`;
+                }
+                const r = Math.max(0.45, p.radius * (1 + speed * (isPhoto ? 0.22 : 0.45)));
+                let drawX = p.x;
+                let drawY = p.y;
+                if (isHeart && !reduceMotion) {
+                    const beat = 1 + Math.pow(Math.max(0, Math.sin(now * 0.0058)), 2.8) * 0.075;
+                    drawX = w / 2 + (p.x - w / 2) * beat;
+                    drawY = h * 0.48 + (p.y - h * 0.48) * beat;
+                }
+                ctx.beginPath();
+                ctx.arc(drawX, drawY, r, 0, Math.PI * 2);
+                ctx.fill();
+
+                if (!isPhoto && speed > 0.16 && !reduceMotion) {
+                    ctx.globalAlpha *= 0.24;
+                    ctx.beginPath();
+                    ctx.arc(p.x - p.vx * 0.82, p.y - p.vy * 0.82, r * 1.85, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            function renderTextFx(now = performance.now()) {
+                const dt = Math.min(2, (now - lastParticleFrame) / 16.67);
+                lastParticleFrame = now;
+                const mode = textFx.dataset.particleMode || "text";
+                const isDarkTheme = document.body.classList.contains("dark");
+                if (mode.startsWith("photo")) {
+                    tCtx.clearRect(0, 0, w, h);
+                } else {
+                    if (isDarkTheme) {
+                        tCtx.fillStyle = mode === "line" ? "rgba(0, 0, 0, 0.30)" : "rgba(0, 0, 0, 0.22)";
                         tCtx.fillRect(0, 0, w, h);
+                    } else {
+                        tCtx.clearRect(0, 0, w, h);
                     }
+                }
+                if (textActive) {
+                    tCtx.save();
+                    tCtx.globalCompositeOperation = (!mode.startsWith("photo") && isDarkTheme) ? "lighter" : "source-over";
                     for (const p of dots) {
-                        const dx=p.tx-p.x, dy=p.ty-p.y;
-                        p.vx+=dx*0.018; p.vy+=dy*0.018; p.vx*=0.84; p.vy*=0.84;
-                        p.x+=p.vx; p.y+=p.vy;
-                        tCtx.fillStyle = p.color || `hsla(${p.hue}, 85%, 50%, ${p.a})`;
-                        tCtx.beginPath(); tCtx.arc(p.x,p.y,p.radius,0,Math.PI*2); tCtx.fill();
+                        updateDot(p, dt, now, mode);
+                        drawDot(tCtx, p, now, mode);
                     }
+                    tCtx.restore();
                 }
                 requestAnimationFrame(renderTextFx);
             }
@@ -1857,6 +2299,11 @@
             async function showWishPopup() {
                 const overlay = document.getElementById('wishOverlay');
                 const countdown = document.getElementById('wishCountdown');
+                if (!overlay || !countdown) {
+                    micBtn.style.opacity = '1';
+                    micBtn.style.pointerEvents = 'auto';
+                    return;
+                }
                 overlay.classList.add('show');
                 micBtn.style.opacity = '0.35';
                 micBtn.style.pointerEvents = 'none';
@@ -2169,6 +2616,7 @@
             let starContainer = null;
             function createThemeStars() {
                 if (starContainer) return;
+                const palette = getParticlePalette();
                 starContainer = document.createElement('div');
                 starContainer.id = 'starContainer';
                 starContainer.style.cssText = 'position:fixed;inset:0;z-index:0;pointer-events:none;';
@@ -2179,7 +2627,7 @@
                     const star = document.createElement('div');
                     const size = Math.random() * 2.5 + 1;
                     star.style.cssText =
-                        'position:absolute;width:' + size + 'px;height:' + size + 'px;background:#fff;border-radius:50%;left:' +
+                        'position:absolute;width:' + size + 'px;height:' + size + 'px;background:' + palette.star + ';border-radius:50%;left:' +
                         Math.random() * 100 + '%;top:' + Math.random() * 100 + '%;opacity:' +
                         (Math.random() * 0.6 + 0.2) + ';animation:starBlink ' +
                         (Math.random() * 3 + 2) + 's ease-in-out ' + (Math.random() * 3) + 's infinite alternate;';
@@ -2194,10 +2642,14 @@
                 }
             }
             function applyTheme(isDark) {
+                document.documentElement.classList.toggle('dark', isDark);
                 document.body.classList.toggle('dark', isDark);
                 localStorage.setItem('theme', isDark ? 'dark' : 'light');
                 document.getElementById('themeLabel').textContent = isDark ? '深色' : '浅色';
                 document.getElementById('themeToggle').setAttribute('aria-pressed', String(isDark));
+                syncParticleColors();
+                bgCtx.clearRect(0, 0, w, h);
+                tCtx.clearRect(0, 0, w, h);
                 if (isDark && !reduceMotion) createThemeStars();
                 else removeThemeStars();
             }
