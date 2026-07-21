@@ -72,17 +72,19 @@
         }
 
         #bg, #textFx {
-            position: fixed; inset: 0; width: 100vw; height: 100vh; display: block;
+            position: fixed; inset: 0; width: 100vw; height: 100vh; height: 100dvh; display: block;
         }
         #bg { z-index: 0; }
         #textFx { z-index: 2; pointer-events: none; }
         .screen {
             min-height: 100vh;
+            min-height: 100dvh;
             position: relative;
             z-index: 3;
             display: grid;
             place-items: center;
             padding: 20px;
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
         }
         .hidden { display: none !important; }
 
@@ -93,7 +95,11 @@
             align-items: center;
             justify-content: flex-start;
             padding: 30px 20px;
+            padding-bottom: max(30px, env(safe-area-inset-bottom));
+            min-height: 100vh;
+            min-height: 100dvh;
             height: 100vh;
+            height: 100dvh;
             overflow: hidden;
         }
         .cake-stage {
@@ -272,6 +278,7 @@
             font-family: inherit;
             touch-action: manipulation;
             -webkit-tap-highlight-color: transparent;
+            margin-bottom: env(safe-area-inset-bottom);
         }
         #micBtn:hover {
             background: rgba(59, 130, 246, 0.06);
@@ -506,6 +513,11 @@
             background: var(--bg);
             background: radial-gradient(ellipse at 50% 30%, rgba(59,130,246,0.04) 0%, transparent 60%), var(--bg);
             transition: opacity 0.8s ease;
+            min-height: 100vh;
+            min-height: 100dvh;
+            padding: 20px;
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
+            box-sizing: border-box;
         }
         #countdownOverlay.hidden { opacity: 0; pointer-events: none; }
         .cd-card {
@@ -710,6 +722,60 @@
             margin-bottom: 16px;
         }
         .msg-title { font-size: 1.2rem; color: var(--accent); letter-spacing: 2px; }
+        .preview-modal {
+            gap: 12px;
+        }
+        .preview-desc {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 0.92rem;
+            line-height: 1.7;
+        }
+        .preview-input {
+            width: 100%;
+            border: 1px solid rgba(59,130,246,0.16);
+            border-radius: 16px;
+            background: rgba(255,255,255,0.58);
+            color: var(--text);
+            padding: 13px 14px;
+            font: inherit;
+            outline: none;
+            box-sizing: border-box;
+        }
+        .preview-input:focus {
+            border-color: rgba(59,130,246,0.42);
+            box-shadow: 0 0 0 4px rgba(59,130,246,0.12);
+        }
+        .preview-error {
+            min-height: 1.2em;
+            color: #d14b5f;
+            font-size: 0.86rem;
+            margin: 0;
+        }
+        .preview-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+        .preview-submit,
+        .preview-cancel {
+            border: 1px solid rgba(59,130,246,0.16);
+            border-radius: 999px;
+            padding: 11px 18px;
+            font: inherit;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+        .preview-submit {
+            background: var(--accent);
+            color: #fff;
+            border-color: transparent;
+        }
+        .preview-cancel {
+            background: rgba(255,255,255,0.54);
+            color: var(--text);
+        }
         .msg-close {
             font-size: 1.6rem; color: var(--text-secondary); cursor: pointer;
             padding: 0 8px; line-height: 1;
@@ -981,6 +1047,22 @@
         </div>
         <button class="cd-entry" id="cdEntry" type="button">测试入口</button>
     </section>
+
+    <div id="previewPasswordOverlay" class="msg-overlay" aria-hidden="true" inert hidden>
+        <div class="msg-modal preview-modal" role="dialog" aria-modal="true" aria-labelledby="previewPasswordTitle" tabindex="-1">
+            <div class="msg-header">
+                <div class="msg-title" id="previewPasswordTitle">测试入口</div>
+                <button class="msg-close" id="previewPasswordClose" type="button" aria-label="关闭">×</button>
+            </div>
+            <p class="preview-desc">请输入测试密码，验证通过后会直接进入生日流程。</p>
+            <input class="preview-input" id="previewPasswordInput" type="password" inputmode="text" autocomplete="off" placeholder="输入测试密码">
+            <p class="preview-error" id="previewPasswordError" aria-live="polite"></p>
+            <div class="preview-actions">
+                <button class="preview-cancel" id="previewPasswordCancel" type="button">取消</button>
+                <button class="preview-submit" id="previewPasswordSubmit" type="button">进入</button>
+            </div>
+        </div>
+    </div>
 
     <canvas id="bg"></canvas>
     <div class="confetti-container" id="confettiContainer"></div>
@@ -2467,16 +2549,63 @@
             }
             // ---- 测试入口 ----
             const PASSWORD = xorDecrypt('WUtDQ0MG', 'nywsr724');
-            document.getElementById('cdEntry').addEventListener('click', () => {
+            const cdEntryBtn = document.getElementById('cdEntry');
+            const previewPasswordOverlay = document.getElementById('previewPasswordOverlay');
+            const previewPasswordModal = previewPasswordOverlay.querySelector('.preview-modal');
+            const previewPasswordInput = document.getElementById('previewPasswordInput');
+            const previewPasswordError = document.getElementById('previewPasswordError');
+            const previewPasswordSubmit = document.getElementById('previewPasswordSubmit');
+
+            function openPreviewPasswordDialog() {
+                previewPasswordInput.value = '';
+                previewPasswordError.textContent = '';
+                previewPasswordOverlay.hidden = false;
+                previewPasswordOverlay.removeAttribute('inert');
+                previewPasswordOverlay.setAttribute('aria-hidden', 'false');
+                previewPasswordOverlay.classList.add('show');
+                requestAnimationFrame(() => previewPasswordInput.focus());
+            }
+
+            function closePreviewPasswordDialog() {
+                previewPasswordOverlay.classList.remove('show');
+                previewPasswordOverlay.setAttribute('aria-hidden', 'true');
+                previewPasswordOverlay.setAttribute('inert', '');
+                previewPasswordOverlay.hidden = true;
+                cdEntryBtn.focus();
+            }
+
+            function submitPreviewPassword() {
+                if (previewPasswordInput.value === PASSWORD) {
+                    closePreviewPasswordDialog();
+                    enterCelebration();
+                    return;
+                }
+                previewPasswordError.textContent = '密码错误';
+                previewPasswordInput.select();
+                previewPasswordInput.focus();
+            }
+
+            cdEntryBtn.addEventListener('click', () => {
                 if (Date.now() >= getNextBirthday()) {
                     enterCelebration();
                     return;
                 }
-                const input = prompt('请输入测试密码：');
-                if (input === PASSWORD) {
-                    enterCelebration();
-                } else if (input !== null) {
-                    alert('密码错误');
+                openPreviewPasswordDialog();
+            });
+            previewPasswordSubmit.addEventListener('click', submitPreviewPassword);
+            document.getElementById('previewPasswordClose').addEventListener('click', closePreviewPasswordDialog);
+            document.getElementById('previewPasswordCancel').addEventListener('click', closePreviewPasswordDialog);
+            previewPasswordOverlay.addEventListener('click', (e) => {
+                if (e.target === previewPasswordOverlay) closePreviewPasswordDialog();
+            });
+            previewPasswordModal.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    submitPreviewPassword();
+                }
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                    closePreviewPasswordDialog();
                 }
             });
             // ---- 留言板（GitHub Issues API） ----
