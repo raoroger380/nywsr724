@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>农友维 · 生日快乐</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="favicon.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="favicon.png">
     <style>
         :root {
             --bg: #eee7dd;
@@ -1283,7 +1286,10 @@
                 const diffMs = Date.now() - birthDate;
                 const daysAlive = Math.floor(diffMs / 86400000);
                 const hoursAlive = Math.floor(diffMs / 3600000);
-                const bdayNum = new Date().getFullYear() - 2011;
+                const nowBD = new Date();
+                let bdayNum = nowBD.getFullYear() - 2011;
+                const thisYearBD = new Date(nowBD.getFullYear(), 6, 24);
+                if (nowBD < thisYearBD) bdayNum--;
                 card.querySelector('.card-name').textContent = `机长 · 农友维 ${bdayNum}岁生日快乐`;
                 stats.innerHTML =
                     `今天是你的 <strong>第${bdayNum}个生日</strong> 🎂<br>` +
@@ -1333,10 +1339,11 @@
                 // 祝福正文
                 ctx.fillStyle = '#475569';
                 ctx.font = '17px "PingFang SC", "Microsoft YaHei", sans-serif';
-                const year = new Date().getFullYear();
-                ctx.fillText(`🎂 祝你 ${year} 岁生日快乐`, 300, 248);
-                const bdayNum = new Date().getFullYear() - 2011;
-                ctx.fillText(`🥳 第${bdayNum}个生日 · 开开心心`, 300, 288);
+                const nowImg = new Date();
+                let ageImg = nowImg.getFullYear() - 2011;
+                if (nowImg < new Date(nowImg.getFullYear(), 6, 24)) ageImg--;
+                ctx.fillText(`🎂 祝你 ${ageImg} 岁生日快乐`, 300, 248);
+                ctx.fillText(`🥳 第${ageImg}个生日 · 开开心心`, 300, 288);
                 ctx.fillText('⚽ 保持对足球的热爱，取得成功', 300, 328);
                 ctx.fillText('🤝 希望我们永远是好朋友', 300, 368);
 
@@ -1350,7 +1357,7 @@
                 ctx.font = '13px "PingFang SC", sans-serif';
                 const now = new Date();
                 ctx.fillText('—— 机长 · 祝福 ——', 300, 520);
-                ctx.fillText(`${now.getFullYear()}年${now.getMonth()+1}月 · 第${bdayNum}个生日`, 300, 550);
+                ctx.fillText(`${now.getFullYear()}年${now.getMonth()+1}月 · 第${ageImg}个生日`, 300, 550);
 
                 // 触发下载
                 const link = document.createElement('a');

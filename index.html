@@ -4,6 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>农友维 · 生日祝福</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="favicon.png">
+    <link rel="apple-touch-icon" sizes="192x192" href="favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -2456,7 +2459,10 @@
             function updateCountdown() {
                 const now = Date.now();
                 const birthday = getNextBirthday();
-                const age = birthday.getFullYear() - BIRTH_YEAR;
+                const nextYear = birthday.getFullYear();
+                const isBeforeThisYear = nextYear === new Date().getFullYear();
+                // 如果是今年的生日且还没到，年龄 = 今年 - 出生年 - 1
+                const age = isBeforeThisYear ? nextYear - BIRTH_YEAR - 1 : nextYear - BIRTH_YEAR;
 
                 const diff = birthday - now;
                 if (diff <= 0) {
@@ -2488,10 +2494,21 @@
 
             // ---- 实时年龄 ----
             const cdRealAge = document.getElementById('cdRealAge');
-            const BIRTH_MS = new Date(BIRTH_YEAR, BIRTH_MONTH, BIRTH_DAY).getTime();
-            const MS_PER_YEAR = 365.2425 * 864e5;
             function updateRealAge() {
-                const age = (Date.now() - BIRTH_MS) / MS_PER_YEAR;
+                const now = new Date();
+                let ageInt;
+                let lastBD;
+                const thisYearBD = new Date(now.getFullYear(), BIRTH_MONTH, BIRTH_DAY);
+                if (now >= thisYearBD) {
+                    ageInt = now.getFullYear() - BIRTH_YEAR;
+                    lastBD = thisYearBD;
+                } else {
+                    ageInt = now.getFullYear() - BIRTH_YEAR - 1;
+                    lastBD = new Date(now.getFullYear() - 1, BIRTH_MONTH, BIRTH_DAY);
+                }
+                const nextBD = new Date(lastBD.getFullYear() + 1, BIRTH_MONTH, BIRTH_DAY);
+                const yearFrac = (now - lastBD) / (nextBD - lastBD);
+                const age = ageInt + yearFrac;
                 const ageStr = age.toFixed(7);
                 const el = cdRealAge.querySelector('.age-num');
                 if (!el) {
